@@ -1,0 +1,9 @@
+
+Fitting run # 1
+p1 p3 p5 
+ 0  3  2 
+7.84551273315717e-17 
+7.84551273315717e-17 
+No results file present. Current parameters saved.
+
+Status file updated. Fitting done.

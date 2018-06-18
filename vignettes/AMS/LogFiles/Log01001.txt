@@ -1,0 +1,10 @@
+
+Fitting run # 1
+       p2        p5 
+-4.995486  0.000000 
+185920.652572397 
+118166.794484097 
+118166.794484097 
+No results file present. Current parameters saved.
+
+Status file updated. Fitting done.
