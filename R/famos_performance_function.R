@@ -5,6 +5,7 @@
 #' @param path If \code{input} is the string of an FAMoS run, the directory containing the AMS results folder needs to be supplied as well. Default to \code{\link{getwd()}}.
 #' @param ic The information criterion the model selection will be based on. Options are "AICc", "AIC" and "BIC". Default to "AICc".
 #' @param save.output A string containing the location and name under which the figure should be saved (format is .pdf). Default to NULL.
+#' @param log If true, the results are plotted on a logarithmic scale. Default to FALSE.
 #' @details The upper plot shows the improvement of the selected information criterion over each FAMoS iteration. The best value is shown on the right axis. The lower plot depicts the corresponding best model of each iteration. Here, green circles show added, red circles removed and blue circles swapped parameters. The parameters of the final model are printed bold.
 #' @return A plot showing the value of the corresponding information criterion and best model of each FAMoS iteration.
 #' @export
@@ -13,7 +14,7 @@
 #' famos.performance(input = famos.run)
 
 
-famos.performance <- function(input, path = getwd(), ic = "AICc", save.output = NULL){
+famos.performance <- function(input, path = getwd(), ic = "AICc", save.output = NULL, log = FALSE){
 
   switch (ic,
           "AICc" = {ic.index <- 1},
@@ -84,8 +85,13 @@ famos.performance <- function(input, path = getwd(), ic = "AICc", save.output = 
                           0.2,
                           0.2 + 0.1 * nchar(as.character(round(get.best[ic.index,ncol(get.best)],1)))))
     #plot AICc
+    if(log == FALSE || (min(get.best[ic.index,]) <= 0)){
+      plot.log = ""
+    }else{
+      plot.log = "y"
+    }
     graphics::plot(unique(mt[4,]), get.best[ic.index,],
-                   log = "y",
+                   log = plot.log,
                    xlab = "",
                    ylab = ic,
                    type = "o",

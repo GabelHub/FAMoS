@@ -158,6 +158,7 @@ famos <- function(init.par,
 
   if(length(swap.parameters) == 0){
     no.swap <- TRUE
+    swap.parms <- list()
   }else{
     no.swap <- FALSE
     swap.parms <- set.crit.parms(critical.parameters = swap.parameters,
@@ -404,9 +405,10 @@ famos <- function(init.par,
 
         # if swap method fails to provide new valid models, the algorithm is being terminated
         if(sum(curr.model.all)==0) {
-          cat("swap method does not yield any valid model. Algorithm stopped.", sep = "\n")
+          cat("swap method does not yield any valid model. FAMoS terminated.", sep = "\n")
           cat(paste0("Time needed: ", round(difftime(Sys.time(),start)[[1]],2), " ",units(difftime(Sys.time(),start))), sep = "\n")
-          break
+          final.results <- return.results(homedir, mrun, ic = information.criterion)
+          return(final.results)
         }
 
         cat(paste0("Exchange ", all.names[parms.left[,2]], " for ", all.names[parms.left[,1]], "\n"))

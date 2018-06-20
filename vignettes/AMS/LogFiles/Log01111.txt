@@ -1,9 +1,0 @@
-
-Fitting run # 1
-           p2            p3            p4            p5 
--1.595576e-08  3.000000e+00  0.000000e+00  2.000000e+00 
-5.92739744757443e-16 
-1.35990502420969e-16 
-No results file present. Current parameters saved.
-
-Status file updated. Fitting done.
