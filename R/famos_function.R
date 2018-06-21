@@ -355,7 +355,6 @@ famos <- function(init.par,
         }
       }, "swap" = {#swap ####
         #swap method exchanges parameter values used within the recent best model with those not used
-        #Right now, the algorithm checks for parameter sets of critical parameters and only switches between parameters within those sets
 
         #get parameter sets for testing
         parm.comb <- c(crit.parms, swap.parms)
@@ -383,8 +382,9 @@ famos <- function(init.par,
             for(j in 1:nrow(cmb)) {
               curr.model <- rep(0,length(init.par))
               curr.model[pick.model.prev] <- 1
-              curr.model[as.numeric(cmb[j,])] <- curr.model[as.numeric(cmb[j,])]-1
+              curr.model[as.numeric(cmb[j,])] <- abs(curr.model[as.numeric(cmb[j,])]-1)
 
+              cat(paste0("Replace ", all.names[parms.left[j,1]], " by ", all.names[parms.left[j,2]], "\n"))
               #check if model has been tested before while refitting is not enabled
               if(is.element(0,colSums(abs(models.tested-curr.model))) && refit==FALSE){
                 cat("Combination has been tested before", sep = "\n")
@@ -392,6 +392,7 @@ famos <- function(init.par,
               }
 
               #test if model violates the critical conditions
+              pick.model <- which(curr.model != 0)
               if(model.appr(pick.model, crit.parms,do.not.fit = do.not.fit) == FALSE){
                 cat(paste("Model ", paste0(curr.model, collapse=""), " violates critical parameter specifications. Model skipped."), sep = "\n")
                 next
@@ -410,9 +411,6 @@ famos <- function(init.par,
           final.results <- return.results(homedir, mrun, ic = information.criterion)
           return(final.results)
         }
-
-        cat(paste0("Exchange ", all.names[parms.left[,2]], " for ", all.names[parms.left[,1]], "\n"))
-
 
       }
       )}
