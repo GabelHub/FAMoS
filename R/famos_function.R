@@ -719,6 +719,10 @@ famos <- function(init.par,
                          path = homedir,
                          ic = information.criterion,
                          save.output = paste0(homedir,"/AMS/Figures/Performance",mrun,".pdf"))
+
+        famos.performance(input = saveModelsTested,
+                          path = homedir,
+                          ic = information.criterion)
       }
     }
 

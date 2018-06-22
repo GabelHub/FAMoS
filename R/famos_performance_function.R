@@ -24,7 +24,7 @@ famos.performance <- function(input, path = getwd(), ic = "AICc", save.output = 
   if(is.character(input)){
   #read in the tested models
   if(file.exists(paste0(path,"/AMS/ModelsTested/ModelsTested",input,".rds")) == FALSE){
-    stop("The specified file does not exist!")
+    stop(paste0("The specified file in ", paste0(path,"/AMS/ModelsTested/ModelsTested",input,".rds"), " does not exist. If the directory is incorrect, use 'path' to specify a new one."))
   }
   mt <- readRDS(paste0(path,"/AMS/ModelsTested/ModelsTested",input,".rds"))
   if(is.null(mt) || ncol(mt) < 2){
@@ -99,11 +99,12 @@ famos.performance <- function(input, path = getwd(), ic = "AICc", save.output = 
                    axes = F,
                    main = "FAMoS performance")
     graphics::box()
-    graphics::axis(2, las = 1)
+    graphics::axis(2, las = 1, cex.axis = 0.7)
     graphics::axis(side   = 4,
                    at     = round(get.best[ic.index,ncol(get.best)],1),
                    tick   = TRUE,
-                   las = 1)
+                   las = 1,
+                   cex.axis = 0.7)
 
     graphics::par(mai = c(1,
                           0.5 + 0.06 * max(nchar(all.names)),
