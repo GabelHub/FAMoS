@@ -6,6 +6,7 @@
 #' @param ic The information criterion the model selection will be based on. Options are "AICc", "AIC" and "BIC". Default to "AICc".
 #' @param save.output A string containing the location and name under which the figure should be saved (format is .pdf). Default to NULL.
 #' @param log If true, the results are plotted on a logarithmic scale. Default to FALSE.
+#' @param plot.style Changes the style of the plot. Options are either "cross" (default) or "block".
 #' @details The upper plot shows the improvement of the selected information criterion over each FAMoS iteration. The best value is shown on the right axis. The lower plot depicts the corresponding best model of each iteration. Here, green circles show added, red circles removed and blue circles swapped parameters. The parameters of the final model are printed bold.
 #' @return A plot showing the value of the corresponding information criterion and best model of each FAMoS iteration.
 #' @export
@@ -14,7 +15,7 @@
 #' famos.performance(input = famos.run)
 
 
-famos.performance <- function(input, path = getwd(), ic = "AICc", save.output = NULL, log = FALSE){
+famos.performance <- function(input, path = getwd(), ic = "AICc", save.output = NULL, log = FALSE, plot.style = "cross"){
 
   switch (ic,
           "AICc" = {ic.index <- 1},
@@ -22,14 +23,14 @@ famos.performance <- function(input, path = getwd(), ic = "AICc", save.output = 
           "BIC"  = {ic.index <- 3}
   )
   if(is.character(input)){
-  #read in the tested models
-  if(file.exists(paste0(path,"/AMS/ModelsTested/ModelsTested",input,".rds")) == FALSE){
-    stop(paste0("The specified file in ", paste0(path,"/AMS/ModelsTested/ModelsTested",input,".rds"), " does not exist. If the directory is incorrect, use 'path' to specify a new one."))
-  }
-  mt <- readRDS(paste0(path,"/AMS/ModelsTested/ModelsTested",input,".rds"))
-  if(is.null(mt) || ncol(mt) < 2){
-    stop("famos.performance needs at least two completed runs for plotting.")
-  }
+    #read in the tested models
+    if(file.exists(paste0(path,"/AMS/ModelsTested/ModelsTested",input,".rds")) == FALSE){
+      stop(paste0("The specified file in ", paste0(path,"/AMS/ModelsTested/ModelsTested",input,".rds"), " does not exist. If the directory is incorrect, use 'path' to specify a new one."))
+    }
+    mt <- readRDS(paste0(path,"/AMS/ModelsTested/ModelsTested",input,".rds"))
+    if(is.null(mt) || ncol(mt) < 2){
+      stop("famos.performance needs at least two completed runs for plotting.")
+    }
   }else if(is.matrix(input)){
     mt <- input
   }else{
@@ -76,45 +77,48 @@ famos.performance <- function(input, path = getwd(), ic = "AICc", save.output = 
   }
 
 
-    #plot improvement in AICc and the corresponding models
-    graphics::layout(matrix(c(1,1,2,2),ncol = 2, byrow = TRUE),
-                     widths=c(3,1), heights=c(1,3))
+  #plot improvement in AICc and the corresponding models
+  graphics::layout(matrix(c(1,1,2,2),ncol = 2, byrow = TRUE),
+                   widths=c(3,1), heights=c(1,3))
 
-    graphics::par(mai = c(0,
-                          0.5 + 0.06*max(nchar(all.names)),
-                          0.2,
-                          0.2 + 0.1 * nchar(as.character(round(get.best[ic.index,ncol(get.best)],1)))))
-    #plot AICc
-    if(log == FALSE || (min(get.best[ic.index,]) <= 0)){
-      plot.log = ""
-    }else{
-      plot.log = "y"
-    }
-    graphics::plot(unique(mt[4,]), get.best[ic.index,],
-                   log = plot.log,
-                   xlab = "",
-                   ylab = ic,
-                   type = "o",
-                   lwd = 2,
-                   axes = F,
-                   main = "FAMoS performance")
-    graphics::box()
-    graphics::axis(2, las = 1, cex.axis = 0.7)
-    graphics::axis(side   = 4,
-                   at     = round(get.best[ic.index,ncol(get.best)],1),
-                   tick   = TRUE,
-                   las = 1,
-                   cex.axis = 0.7)
+  graphics::par(mai = c(0,
+                        0.5 + 0.06*max(nchar(all.names)),
+                        0.2,
+                        0.2 + 0.1 * nchar(as.character(round(get.best[ic.index,ncol(get.best)],1)))))
+  #plot AICc
+  if(log == FALSE || (min(get.best[ic.index,]) <= 0)){
+    plot.log = ""
+  }else{
+    plot.log = "y"
+  }
+  graphics::plot(unique(mt[4,]), get.best[ic.index,],
+                 log = plot.log,
+                 xlab = "",
+                 ylab = ic,
+                 type = "o",
+                 lwd = 2,
+                 axes = F,
+                 main = "FAMoS performance")
+  graphics::box()
+  graphics::axis(2, las = 1, cex.axis = 0.7)
+  graphics::axis(side   = 4,
+                 at     = round(get.best[ic.index,ncol(get.best)],1),
+                 tick   = TRUE,
+                 las = 1,
+                 cex.axis = 0.7)
 
-    graphics::par(mai = c(1,
-                          0.5 + 0.06 * max(nchar(all.names)),
-                          0.2,
-                          0.2 + 0.1 * nchar(as.character(round(get.best[ic.index,ncol(get.best)],1)))))
+  graphics::par(mai = c(1,
+                        0.5 + 0.06 * max(nchar(all.names)),
+                        0.2,
+                        0.2 + 0.1 * nchar(as.character(round(get.best[ic.index,ncol(get.best)],1)))))
+
+
+  if(plot.style == "cross"){
     #plot the corresponding models
     graphics::plot(0,0,
                    type = "n",
                    axes = F,
-                   xlab = "run",
+                   xlab = "iteration",
                    ylab = "",
                    xlim = c(1, max(mt[4,])),
                    ylim = c(1, nrow(mt) - 4))
@@ -155,7 +159,53 @@ famos.performance <- function(input, path = getwd(), ic = "AICc", save.output = 
                      font = get.best[4 + i,ncol(get.best)] + 1)
     }
 
+    grid(nx = ncol(get.best), ny = 0, lty = 1)
+    for(i in 2:(nrow(get.best) - 4)){
+      abline(h = i - 0.5, col = "lightgray")
+    }
 
+  }else if(plot.style == "block"){
+
+    image.matrix <- get.best[-c(1:4),]
+    plot.matrix <- image.matrix
+    for(i in 2:ncol(image.matrix)){
+      image.matrix[,i] <- get.best[-c(1:4),i] - get.best[-c(1:4),i-1]
+      if(is.element(-1, image.matrix[,i]) && is.element(1, image.matrix[,i])){
+        plot.matrix[which(image.matrix[,i] == 1),i] <- 4
+        plot.matrix[which(image.matrix[,i] == -1),i] <- 4
+      }else if(is.element(-1, image.matrix[,i])){
+        plot.matrix[which(image.matrix[,i] == -1),i] <- 2
+      }else if(is.element(1, image.matrix[,i])){
+        plot.matrix[which(image.matrix[,i] == 1),i] <- 3
+      }
+    }
+
+    for(i in 1:ncol(plot.matrix)){
+      plot.matrix[,i] <- rev(plot.matrix[,i])
+    }
+
+    image( 1:ncol(get.best),1:(nrow(get.best) - 4), t(plot.matrix),
+           col = c("white", "black","red", "chartreuse4" , "blue"),
+           breaks = c(0,0.5,1.5,2.5,3.5,4.5),
+           xlab = c("iteration"),
+           ylab = c(""),
+           axes = F)
+
+    graphics::box()
+    graphics::axis(1, las = 1)
+
+    for(i in 1:length(all.names)){
+      graphics::axis(side   = 2,
+                     at     = length(all.names) + 1 - i,
+                     labels = all.names[i],
+                     tick   = TRUE,
+                     las = 2,
+                     cex.axis = 0.7,
+                     font = get.best[4 + i,ncol(get.best)] + 1)
+    }
+
+    grid(nx = ncol(plot.matrix), ny = nrow(plot.matrix), lty = 1)
+  }
   if(is.null(save.output) == FALSE){
     grDevices::dev.off()
 
