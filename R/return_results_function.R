@@ -61,10 +61,10 @@ return.results <- function(homedir, mrun, ic = "AICc"){
   cat("Best model found. Algorithm stopped.", sep = "\n")
   cat(paste0("FAMoS run ", mrun), sep = "\n")
   #get information criterion of best model
-  bm <- readRDS(paste0(homedir, "/AMS/BestModel/BestModel", mrun,".rds"))
+  bm <- readRDS(paste0(homedir, "/FAMoS-Results/BestModel/BestModel", mrun,".rds"))
   cat(paste0(ic, " of best model: ", round(bm[ic], 2)), sep = "\n")
   #get best model
-  mt <- readRDS(paste0(homedir, "/AMS/ModelsTested/ModelsTested", mrun,".rds"))
+  mt <- readRDS(paste0(homedir, "/FAMoS-Results/TestedModels/TestedModels", mrun,".rds"))
   min.index <- as.numeric(which(mt[ic.index,] == min(mt[ic.index,], na.rm = TRUE)))
 
   cat(paste0("Best model (binary): ", paste(mt[-c(1:4), min.index], collapse="")), sep = "\n")

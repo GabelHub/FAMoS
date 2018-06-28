@@ -1,7 +1,7 @@
 #' Plot Model Information Criteria
 #'
 #' Plots the information criteria of the tested models in ascending order.
-#' @param input Either a string containing the directory which holds the AMS results folder or a matrix containing the tested models along with the respective information criteria. Default to \code{getwd()}.
+#' @param input Either a string containing the directory which holds the "FAMoS-Results" folder or a matrix containing the tested models along with the respective information criteria. Default to \code{getwd()}.
 #' @param mrun A string giving the number of the corresponding FAMoS run, e.g "004". If NULL (default), all FAMoS runs in the folder will be used for evaluation.
 #' @param number Specifies the number of models that will be plotted. If NULL (default), all tested models will be used for plotting.
 #' @param ic  The information criterion the model selection will be based on. Options are "AICc", "AIC" and "BIC". Default to "AICc".
@@ -25,7 +25,7 @@ ic.order <- function(input = getwd(), mrun = NULL, number = NULL, ic = "AICc", c
   if(is.character(input)){
     #read in files (either a specific one or all)
     if(is.null(mrun)){
-      filenames <- list.files(paste0(input,"/AMS/ModelsTested/"), pattern="*.rds", full.names=TRUE)
+      filenames <- list.files(paste0(input,"/FAMoS-Results/TestedModels/"), pattern="*.rds", full.names=TRUE)
       if(length(filenames) == 0){
         stop("No files in the given folder!")
       }
@@ -35,10 +35,10 @@ ic.order <- function(input = getwd(), mrun = NULL, number = NULL, ic = "AICc", c
       }
       mt <- store.res
     }else{
-      if(file.exists(paste0(input,"/AMS/ModelsTested/ModelsTested",mrun,".rds")) == FALSE){
+      if(file.exists(paste0(input,"/FAMoS-Results/TestedModels/TestedModels",mrun,".rds")) == FALSE){
         stop("The specified file does not exist!")
       }
-      mt <- readRDS(paste0(input,"/AMS/ModelsTested/ModelsTested",mrun,".rds"))
+      mt <- readRDS(paste0(input,"/FAMoS-Results/TestedModels/TestedModels",mrun,".rds"))
     }
   }else if(is.matrix(input)){
     mt <- input

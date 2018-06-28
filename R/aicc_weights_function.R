@@ -1,8 +1,8 @@
 #' Plot evidence ratios
 #'
 #' Calculates the evidence ratios for each parameter based on Akaike weights and plots them.
-#' @param input Either a string containing the directory which holds the AMS results folder or a matrix containing the tested models along with the respective information criteria. Default to \code{getwd()}.
-#' @param mrun A string giving the number of the corresponding FAMoS run, e.g "004". If NULL (default), all FAMoS runs in the "AMS/ModelsTested/" folder will be used for evaluation.
+#' @param input Either a string containing the directory which holds the "FAMoS-Results" folder or a matrix containing the tested models along with the respective information criteria. Default to \code{getwd()}.
+#' @param mrun A string giving the number of the corresponding FAMoS run, e.g "004". If NULL (default), all FAMoS runs in the "FAMoS-Results/TestedModels/" folder will be used for evaluation.
 #' @param reorder If TRUE, results will be ordered by evidence ratios (descending). If FALSE, the order of parameters will be the same as the order specified in \code{init.par} in \code{\link{famos}}. Default to TRUE.
 #' @param save.output A string containing the location and name under which the figure should be saved (format is pdf). Default to NULL.
 #' @details The plot shows the relative support or evidence ratio for each parameter. Parameters included in the best model are printed bold and the corresponding lines are coloured in red.
@@ -16,7 +16,7 @@ aicc.weights <- function(input = getwd(), mrun = NULL, reorder = TRUE, save.outp
   if(is.character(input)){
     #read in files (either a specific one or all)
     if(is.null(mrun)){
-      filenames <- list.files(paste0(input,"/AMS/ModelsTested/"), pattern="*.rds", full.names=TRUE)
+      filenames <- list.files(paste0(input,"/FAMoS-Results/TestedModels/"), pattern="*.rds", full.names=TRUE)
       if(length(filenames) == 0){
         stop("No files in the given folder!")
       }
@@ -26,10 +26,10 @@ aicc.weights <- function(input = getwd(), mrun = NULL, reorder = TRUE, save.outp
       }
       mt <- store.res
     }else{
-      if(file.exists(paste0(input,"/AMS/ModelsTested/ModelsTested",mrun,".rds")) == FALSE){
+      if(file.exists(paste0(input,"/FAMoS-Results/TestedModels/TestedModels",mrun,".rds")) == FALSE){
         stop("The specified file does not exist!")
       }
-      mt <- readRDS(paste0(input,"/AMS/ModelsTested/ModelsTested",mrun,".rds"))
+      mt <- readRDS(paste0(input,"/FAMoS-Results/TestedModels/TestedModels",mrun,".rds"))
       if(is.null(mt)){
         stop("File is empty!")
       }

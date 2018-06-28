@@ -62,8 +62,8 @@ base.optim <- function(binary,
                        control.optim = list(maxit = 1000),
                        ...) {
 
-  #sink to output to a log file
-  sink(paste0(homedir, "/AMS/LogFiles/Log", paste(binary, collapse=""), ".txt"), split = TRUE)
+  #sink output to a log file
+  sink(paste0(homedir, "/FAMoS-Results/LogFiles/Log", paste(binary, collapse=""), ".txt"), split = TRUE)
 
   #get the vectors of the fitted and the not-fitted parameters
   no.fit <- which(binary == 0)
@@ -91,7 +91,7 @@ base.optim <- function(binary,
     cat(paste0("\nFitting run # ", k, "\n"))
 
     # update status file to number of current fit run
-    saveRDS(object = k, file = paste0(homedir, "/AMS/Status/status", paste(binary, collapse=""), ".rds"))
+    saveRDS(object = k, file = paste0(homedir, "/FAMoS-Results/Status/status", paste(binary, collapse=""), ".rds"))
 
     #check if initial parameters set is working
     if(k == 1){
@@ -213,23 +213,23 @@ base.optim <- function(binary,
 
       #saves progress if the recent fit is the first or better than any previously saved one
       #check if this model has already been tested
-      if(file.exists(paste0(homedir, "/AMS/Fits/Model",paste(binary, collapse =""), ".rds")) == TRUE){
+      if(file.exists(paste0(homedir, "/FAMoS-Results/Fits/Model",paste(binary, collapse =""), ".rds")) == TRUE){
         result_old <- readRDS(file = paste0(homedir,
-                                            "/AMS/Fits/Model",
+                                            "/FAMoS-Results/Fits/Model",
                                             paste(binary, collapse =""),
                                             ".rds"))
         #overwrite output file only if current fit is better than the previous one
         if(result_old[which(names(result_old) == information.criterion)] > result[which(names(result) == information.criterion)]){
           cat("Current fit better than previous best fit. Results overwritten.\n")
           saveRDS(object = result, file = paste0(homedir,
-                                                 "/AMS/Fits/Model",
+                                                 "/FAMoS-Results/Fits/Model",
                                                  paste(binary, collapse =""),
                                                  ".rds"))
         }
 
       }else{
         saveRDS(object = result, file = paste0(homedir,
-                                               "/AMS/Fits/Model",
+                                               "/FAMoS-Results/Fits/Model",
                                                paste(binary, collapse =""),
                                                ".rds"))
         cat("No results file present. Current parameters saved.\n")
@@ -251,7 +251,7 @@ base.optim <- function(binary,
   status <-"done"
   saveRDS(object = status,
           file = paste0(homedir,
-                        "/AMS/Status/status",
+                        "/FAMoS-Results/Status/status",
                         paste(binary, collapse=""),
                         ".rds"))
   cat("\nStatus file updated. Fitting done.\n")

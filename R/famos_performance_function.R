@@ -2,7 +2,7 @@
 #'
 #' For each FAMoS run \code{famos.performance} plots the corresponding best model and information criterion.
 #' @param input Either a string giving the three-digit number of the corresponding FAMoS run, e.g "004", or a matrix containing the tested models along with the respective information criteria.
-#' @param path If \code{input} is the string of an FAMoS run, the directory containing the AMS results folder needs to be supplied as well. Default to \code{\link{getwd()}}.
+#' @param path If \code{input} is the string of an FAMoS run, the directory containing the "FAMoS-Results" folder needs to be supplied as well. Default to \code{\link{getwd()}}.
 #' @param ic The information criterion the model selection will be based on. Options are "AICc", "AIC" and "BIC". Default to "AICc".
 #' @param save.output A string containing the location and name under which the figure should be saved (format is .pdf). Default to NULL.
 #' @param log If true, the results are plotted on a logarithmic scale. Default to FALSE.
@@ -24,10 +24,10 @@ famos.performance <- function(input, path = getwd(), ic = "AICc", save.output = 
   )
   if(is.character(input)){
     #read in the tested models
-    if(file.exists(paste0(path,"/AMS/ModelsTested/ModelsTested",input,".rds")) == FALSE){
-      stop(paste0("The specified file in ", paste0(path,"/AMS/ModelsTested/ModelsTested",input,".rds"), " does not exist. If the directory is incorrect, use 'path' to specify a new one."))
+    if(file.exists(paste0(path,"/FAMoS-Results/TestedModels/TestedModels",input,".rds")) == FALSE){
+      stop(paste0("The specified file in ", paste0(path,"/FAMoS-Results/TestedModels/TestedModels",input,".rds"), " does not exist. If the directory is incorrect, use 'path' to specify a new one."))
     }
-    mt <- readRDS(paste0(path,"/AMS/ModelsTested/ModelsTested",input,".rds"))
+    mt <- readRDS(paste0(path,"/FAMoS-Results/TestedModels/TestedModels",input,".rds"))
     if(is.null(mt) || ncol(mt) < 2){
       stop("famos.performance needs at least two completed runs for plotting.")
     }
@@ -44,7 +44,7 @@ famos.performance <- function(input, path = getwd(), ic = "AICc", save.output = 
   #create storage for individual runs and the corresponding number of jobs performed
   split.run <- list()
   jobs.per.run <- c()
-  #split ModelsTested into smaller chunks per model run
+  #split TestedModels into smaller chunks per model run
   for(i in unique(mt[4,])){
     jobs.per.run <- c(jobs.per.run, length(which(mt[4,] == i)))
     split.run[[i]] <- mt[,which(mt[4,] == i)]

@@ -17,7 +17,7 @@
 #' @param random.borders The ranges from which the random initial parameter conditions for all \code{optim.runs} larger than one are sampled. Can be either given as a vector containing the relative deviations for all parameters or as a matrix containing in its first column the lower and in its second column the upper border values. Parameters are uniformly sampled based on \code{\link{runif}}. Default to 1 (100\% deviation of all parameters).
 #' @param con.tol The absolute convergence tolerance of each fitting run (see Details). Default is set to 0.1.
 #' @param control.optim Control parameters passed along to \code{optim}. For more details, see \code{\link{optim}}.
-#' @param save.performance Logical. If TRUE, the performance of \code{FAMoS} will be evaluated in each iteration via \code{\link{famos.performance}}, which will save the corresponding plot into the folder "AMS/Figures/" (starting from iteration 3) and simultaneously show it on screen. Default to TRUE.
+#' @param save.performance Logical. If TRUE, the performance of \code{FAMoS} will be evaluated in each iteration via \code{\link{famos.performance}}, which will save the corresponding plot into the folder "FAMoS-Results/Figures/" (starting from iteration 3) and simultaneously show it on screen. Default to TRUE.
 #' @param ... Other arguments that will be passed along to \code{\link{future}}, \code{\link{optim}} or the user-specified cost function \code{fit.fn}.
 #' @details In each iteration, the FAMoS finds all neighbouring models based on the current model and method, and subsequently tests them. If one of the tested models performs better than the current model, the model, but not the method, will be updated. Otherwise, the method, but not the model, will be adaptively changed, depending on the previously used methods.
 #' @export
@@ -122,6 +122,10 @@ famos <- function(init.par,
   }
   cat("\nInitializing...", sep = "\n")
 
+  #set working directory for use of 'futures'
+  old.directory <- getwd()
+  setwd(homedir)
+
   #set starting time
   start <- Sys.time()
   #create FAMoS directory
@@ -129,12 +133,12 @@ famos <- function(init.par,
   make.directories(homedir)
 
   #get mrun for unique labelling of this run
-  mrun_old <- list.files(path = paste0(homedir, "/AMS/ModelsTested/"),
-                         pattern = "ModelsTested.*.rds")
+  mrun_old <- list.files(path = paste0(homedir, "/FAMoS-Results/TestedModels/"),
+                         pattern = "TestedModels.*.rds")
   if (length(mrun_old) == 0) {
     mrun <- 1
   } else {
-    mrun_old <- as.double(gsub(".rds", "", gsub("ModelsTested", "", mrun_old)))
+    mrun_old <- as.double(gsub(".rds", "", gsub("TestedModels", "", mrun_old)))
     mrun <- max(mrun_old) + 1
   }
   mrun <- formatC(mrun, width = 3, format = "d", flag = "0") # width determines maximum amount of runs, 3 = 999, 4 = 9999 and so on
@@ -208,7 +212,7 @@ famos <- function(init.par,
   model.run <- 1
   #create storage for models tested
   models.tested <- c()
-  saveRDS(models.tested, paste0(homedir, "/AMS/ModelsTested/ModelsTested",mrun,".rds"))
+  saveRDS(models.tested, paste0(homedir, "/FAMoS-Results/TestedModels/TestedModels",mrun,".rds"))
   models.per.run <- c()
   #create storage for AICCs for the tested models
   save.AICC <- c()
@@ -409,6 +413,7 @@ famos <- function(init.par,
           cat("swap method does not yield any valid model. FAMoS terminated.", sep = "\n")
           cat(paste0("Time needed: ", round(difftime(Sys.time(),start)[[1]],2), " ",units(difftime(Sys.time(),start))), sep = "\n")
           final.results <- return.results(homedir, mrun, ic = information.criterion)
+          setwd(old.directory)
           return(final.results)
         }
 
@@ -442,18 +447,18 @@ famos <- function(init.par,
     #Job submission####
     #submit each individual model to the cluster if it hasn't been tested before
     for(j in 1:ncol(curr.model.all)){
-      if(file.exists(paste0(homedir, "/AMS/Fits/Model",paste(curr.model.all[,j], collapse =""), ".rds")) == FALSE  ||
+      if(file.exists(paste0(homedir, "/FAMoS-Results/Fits/Model",paste(curr.model.all[,j], collapse =""), ".rds")) == FALSE  ||
          refit  ||
          ifelse(file.exists(paste0(homedir,
-                                   "/AMS/Status/status",
+                                   "/FAMoS-Results/Status/status",
                                    paste(curr.model.all[,j], collapse=""),
                                    ".rds")),
                 readRDS(paste0(homedir,
-                               "/AMS/Status/status",
+                               "/FAMoS-Results/Status/status",
                                paste(curr.model.all[,j], collapse=""),
                                ".rds")) != "done",
                 T)){
-        cat(paste0("Job ID for model ", formatC(j, width = 2, format = "d", flag = "0"), " - ", paste(curr.model.all[,j], collapse=""), ":"), sep = "\n")
+        cat(paste0("Job ID for model ", formatC(j, width = 2, format = "d", flag = "0"), " - ", paste(curr.model.all[,j], collapse="")), sep = "\n")
 
         assign(paste0("model",j),
                future::future({
@@ -498,7 +503,7 @@ famos <- function(init.par,
         }else{
 
           while(inherits(try(readRDS(paste0(homedir,
-                                            "/AMS/Status/status",
+                                            "/FAMoS-Results/Status/status",
                                             paste(curr.model.all[,j], collapse=""),
                                             ".rds")),
                              silent = T),
@@ -509,7 +514,7 @@ famos <- function(init.par,
 
           #check if model is done
           if(readRDS(paste0(homedir,
-                            "/AMS/Status/status",
+                            "/FAMoS-Results/Status/status",
                             paste(curr.model.all[,j], collapse=""),
                             ".rds")) != "done"){
 
@@ -583,7 +588,7 @@ famos <- function(init.par,
       #this checks if the connection to the fit results file can be made and waits if this is not the case
       waiting <- T
       options(warn = -1)
-      while(inherits(try(readRDS(paste0(homedir, "/AMS/Fits/Model",paste(curr.model.all[,j], collapse =""), ".rds")), silent = T), "try-error")){
+      while(inherits(try(readRDS(paste0(homedir, "/FAMoS-Results/Fits/Model",paste(curr.model.all[,j], collapse =""), ".rds")), silent = T), "try-error")){
         if(waiting) {
           waiting <- F
           cat(paste0("Trying to read in results file of model ", paste(curr.model.all[,j], collapse =""), "..."), sep = "\n")
@@ -595,7 +600,7 @@ famos <- function(init.par,
       #waiting is over, read out file
       get.AICC <- cbind(get.AICC,
                         readRDS(paste0(homedir,
-                                       "/AMS/Fits/Model",
+                                       "/FAMoS-Results/Fits/Model",
                                        paste(curr.model.all[,j], collapse =""),
                                        ".rds")))
     }
@@ -606,10 +611,10 @@ famos <- function(init.par,
     save.AICC <- cbind(save.AICC, Aicc)
 
     #save AICcs with the corresponding models
-    saveModelsTested <- rbind(save.AICC, models.per.run)
-    row.names(saveModelsTested) <- c("AICc", "AIC", "BIC", "iteration", all.names)
-    colnames(saveModelsTested) <- 1:length(colnames(saveModelsTested))
-    saveRDS(saveModelsTested, paste0(homedir, "/AMS/ModelsTested/ModelsTested",mrun,".rds"))
+    saveTestedModels <- rbind(save.AICC, models.per.run)
+    row.names(saveTestedModels) <- c("AICc", "AIC", "BIC", "iteration", all.names)
+    colnames(saveTestedModels) <- 1:length(colnames(saveTestedModels))
+    saveRDS(saveTestedModels, paste0(homedir, "/FAMoS-Results/TestedModels/TestedModels",mrun,".rds"))
 
     #if more than one model was tested, order them according to their performance
     if(ncol(get.AICC) > 1){
@@ -635,7 +640,7 @@ famos <- function(init.par,
 
       bm.bin <- curr.model.all[,index.AICC]
 
-      saveRDS(get.AICC, paste0(homedir, "/AMS/BestModel/BestModel",mrun,".rds"))
+      saveRDS(get.AICC, paste0(homedir, "/FAMoS-Results/BestModel/BestModel",mrun,".rds"))
 
     }else{# if it's not the first run, we know what the previous and current method are
       if((curr.AICC) < old.AICC ){#update the model if a better model is found
@@ -663,7 +668,7 @@ famos <- function(init.par,
         )
 
         #save best AICc
-        saveRDS(get.AICC, paste0(homedir, "/AMS/BestModel/BestModel",mrun,".rds"))
+        saveRDS(get.AICC, paste0(homedir, "/FAMoS-Results/BestModel/BestModel",mrun,".rds"))
 
       }else{# if method did not return a better result
         switch(method, "forward" = {#if forward failed
@@ -676,6 +681,7 @@ famos <- function(init.par,
 
               final.results <- return.results(homedir, mrun, ic = information.criterion)
               cat(paste0("Time needed: ", round(difftime(Sys.time(),start)[[1]],2), " ",units(difftime(Sys.time(),start))), sep = "\n")
+              setwd(old.directory)
               return(final.results)
             }
           }else if(previous == "swap"){
@@ -692,6 +698,7 @@ famos <- function(init.par,
 
               final.results <- return.results(homedir, mrun, ic = information.criterion)
               cat(paste0("Time needed: ", round(difftime(Sys.time(),start)[[1]],2), " ",units(difftime(Sys.time(),start))), sep = "\n")
+              setwd(old.directory)
               return(final.results)
             }
 
@@ -704,6 +711,7 @@ famos <- function(init.par,
           # algorithm ends once swap method fails
           final.results <- return.results(homedir, mrun, ic = information.criterion)
           cat(paste0("Time needed: ", round(difftime(Sys.time(),start)[[1]],2), " ",units(difftime(Sys.time(),start))), sep = "\n")
+          setwd(old.directory)
           return(final.results)
 
         }
@@ -714,13 +722,13 @@ famos <- function(init.par,
 
     if(save.performance == T){
       #save FAMoS performance
-      if(ncol(saveModelsTested) > 3){
-        famos.performance(input = saveModelsTested,
+      if(ncol(saveTestedModels) > 3){
+        famos.performance(input = saveTestedModels,
                          path = homedir,
                          ic = information.criterion,
-                         save.output = paste0(homedir,"/AMS/Figures/Performance",mrun,".pdf"))
+                         save.output = paste0(homedir,"/FAMoS-Results/Figures/Performance",mrun,".pdf"))
 
-        famos.performance(input = saveModelsTested,
+        famos.performance(input = saveTestedModels,
                           path = homedir,
                           ic = information.criterion)
       }

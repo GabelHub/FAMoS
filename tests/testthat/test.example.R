@@ -2,8 +2,8 @@ context("Test basic example")
 library(future.batchtools)
 plan(sequential)
 
-system("rm -r tests/testthat/AMS")
-system("rm -r AMS")
+system("rm -r tests/testthat/FAMoS-Results")
+system("rm -r FAMoS-Results")
 
 inits <- c(p1 = 3, p2 = 4, p3 = -2, p4 = 2, p5 = 0)
 
@@ -47,8 +47,8 @@ res <- famos(init.par = inits,
              y.vals = y.values,
              sd.y = sd.y.values)
 
-system("rm -r tests/testthat/AMS")
-system("rm -r AMS")
+system("rm -r tests/testthat/FAMoS-Results")
+system("rm -r FAMoS-Results")
 
 test_that("Gives the correct output", {
   expect_match(res$binary, "00101")

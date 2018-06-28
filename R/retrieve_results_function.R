@@ -48,14 +48,14 @@
 retrieve.results <- function(model, homedir = getwd(), all.names = NULL){
   options(warn = -1)
   if(is.numeric(model)){
-    if(file.exists(paste0(homedir, "/AMS/Fits/Model",  paste(model, collapse=""),".rds"))){
-      res <- readRDS(paste0(homedir, "/AMS/Fits/Model",  paste(model, collapse=""),".rds"))
+    if(file.exists(paste0(homedir, "/FAMoS-Results/Fits/Model",  paste(model, collapse=""),".rds"))){
+      res <- readRDS(paste0(homedir, "/FAMoS-Results/Fits/Model",  paste(model, collapse=""),".rds"))
     }else{
       stop("The specified file does not exist.")
     }
   }else if(is.character(model) && sum(is.na(as.numeric(model))) == 0){
-    if(file.exists(paste0(homedir, "/AMS/Fits/Model", model,".rds"))){
-      res <- readRDS(paste0(homedir, "/AMS/Fits/Model", model,".rds"))
+    if(file.exists(paste0(homedir, "/FAMoS-Results/Fits/Model", model,".rds"))){
+      res <- readRDS(paste0(homedir, "/FAMoS-Results/Fits/Model", model,".rds"))
     }else{
       stop("The specified file does not exist.")
     }
@@ -65,8 +65,8 @@ retrieve.results <- function(model, homedir = getwd(), all.names = NULL){
     }else{
       res.vec <- rep(0, length(all.names))
       res.vec[all.names %in% model] <- 1
-      if(file.exists(paste0(homedir, "/AMS/Fits/Model",  paste(res.vec, collapse=""),".rds"))){
-        res <- readRDS(paste0(homedir, "/AMS/Fits/Model",  paste(res.vec, collapse=""),".rds"))
+      if(file.exists(paste0(homedir, "/FAMoS-Results/Fits/Model",  paste(res.vec, collapse=""),".rds"))){
+        res <- readRDS(paste0(homedir, "/FAMoS-Results/Fits/Model",  paste(res.vec, collapse=""),".rds"))
       }else{
         stop("The specified file does not exist.")
       }

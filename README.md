@@ -338,4 +338,4 @@ Specifies the absolute convergence tolerance used for *optim* (see *optim.runs* 
 
 #### save.performance
 
-If true, a plot of the current FAMoS performance is stored in the folder "AMS/Figures/", which will be updated during each iteration.
+If true, a plot of the current FAMoS performance is stored in the folder "FAMoS-Results/Figures/", which will be updated during each iteration.
