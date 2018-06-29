@@ -122,9 +122,9 @@ famos <- function(init.par,
   }
   cat("\nInitializing...", sep = "\n")
 
-  #set working directory for use of 'futures'
-  old.directory <- getwd()
-  setwd(homedir)
+  # #set working directory for use of 'futures'
+  # old.directory <- getwd()
+  # setwd(homedir)
 
   #set starting time
   start <- Sys.time()
@@ -413,7 +413,7 @@ famos <- function(init.par,
           cat("swap method does not yield any valid model. FAMoS terminated.", sep = "\n")
           cat(paste0("Time needed: ", round(difftime(Sys.time(),start)[[1]],2), " ",units(difftime(Sys.time(),start))), sep = "\n")
           final.results <- return.results(homedir, mrun, ic = information.criterion)
-          setwd(old.directory)
+          #setwd(old.directory)
           return(final.results)
         }
 
@@ -681,7 +681,7 @@ famos <- function(init.par,
 
               final.results <- return.results(homedir, mrun, ic = information.criterion)
               cat(paste0("Time needed: ", round(difftime(Sys.time(),start)[[1]],2), " ",units(difftime(Sys.time(),start))), sep = "\n")
-              setwd(old.directory)
+              #setwd(old.directory)
               return(final.results)
             }
           }else if(previous == "swap"){
@@ -698,7 +698,7 @@ famos <- function(init.par,
 
               final.results <- return.results(homedir, mrun, ic = information.criterion)
               cat(paste0("Time needed: ", round(difftime(Sys.time(),start)[[1]],2), " ",units(difftime(Sys.time(),start))), sep = "\n")
-              setwd(old.directory)
+              #setwd(old.directory)
               return(final.results)
             }
 
@@ -711,7 +711,7 @@ famos <- function(init.par,
           # algorithm ends once swap method fails
           final.results <- return.results(homedir, mrun, ic = information.criterion)
           cat(paste0("Time needed: ", round(difftime(Sys.time(),start)[[1]],2), " ",units(difftime(Sys.time(),start))), sep = "\n")
-          setwd(old.directory)
+          #setwd(old.directory)
           return(final.results)
 
         }

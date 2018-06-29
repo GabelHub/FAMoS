@@ -8,7 +8,7 @@ Description: Given a set of parameters describing model dynamics and a correspon
     the UMSA attempts to find the most suitable parameter subset in terms of a specified information
     criterion. Works on any cost function that returns a negative log-likelihood.
 License: GPL-3
-Depends: R (>= 3.3)
+Depends: R (>= 3.4)
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.0.1
