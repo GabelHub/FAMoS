@@ -339,3 +339,7 @@ Specifies the absolute convergence tolerance used for *optim* (see *optim.runs* 
 #### save.performance
 
 If true, a plot of the current FAMoS performance is stored in the folder "FAMoS-Results/Figures/", which will be updated during each iteration.
+
+#### future.off
+
+Initially, FAMoS can be tricky to set up. To this end, the use of *futures* can be switched off, which prints all function output and error messages directly into the console. This can be quite useful for debugging.

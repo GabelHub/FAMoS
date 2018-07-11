@@ -18,6 +18,7 @@
 #' @param con.tol The absolute convergence tolerance of each fitting run (see Details). Default is set to 0.1.
 #' @param control.optim Control parameters passed along to \code{optim}. For more details, see \code{\link{optim}}.
 #' @param save.performance Logical. If TRUE, the performance of \code{FAMoS} will be evaluated in each iteration via \code{\link{famos.performance}}, which will save the corresponding plot into the folder "FAMoS-Results/Figures/" (starting from iteration 3) and simultaneously show it on screen. Default to TRUE.
+#' @param future.off Logical. If TRUE, FAMoS runs without the use of \code{futures}. Useful for debugging.
 #' @param ... Other arguments that will be passed along to \code{\link{future}}, \code{\link{optim}} or the user-specified cost function \code{fit.fn}.
 #' @details In each iteration, the FAMoS finds all neighbouring models based on the current model and method, and subsequently tests them. If one of the tested models performs better than the current model, the model, but not the method, will be updated. Otherwise, the method, but not the model, will be adaptively changed, depending on the previously used methods.
 #' @export
@@ -68,23 +69,24 @@
 #'             y.vals = y.values)
 
 famos <- function(init.par,
-                 fit.fn,
-                 nr.of.data,
-                 homedir = getwd(),
-                 do.not.fit = NULL,
-                 method = "forward",
-                 init.model.type = "random",
-                 refit = FALSE,
-                 optim.runs = 5,
-                 information.criterion = "AICc",
-                 default.val = NULL,
-                 swap.parameters = NULL,
-                 critical.parameters = NULL,
-                 random.borders = 1,
-                 control.optim = list(maxit = 1000),
-                 con.tol = 0.1,
-                 save.performance = T,
-                 ...
+                  fit.fn,
+                  nr.of.data,
+                  homedir = getwd(),
+                  do.not.fit = NULL,
+                  method = "forward",
+                  init.model.type = "random",
+                  refit = FALSE,
+                  optim.runs = 5,
+                  information.criterion = "AICc",
+                  default.val = NULL,
+                  swap.parameters = NULL,
+                  critical.parameters = NULL,
+                  random.borders = 1,
+                  control.optim = list(maxit = 1000),
+                  con.tol = 0.1,
+                  save.performance = T,
+                  future.off = F,
+                  ...
 ) {
   #test the appropriateness of parameters
   if(is.vector(init.par) == FALSE || is.null(names(init.par))){
@@ -114,17 +116,13 @@ famos <- function(init.par,
   if(method == "swap" && is.null(swap.parameters) && is.null(critical.parameters) ){
     stop("Please supply either a swap or a critical parameter set or change the initial search method.")
   }
-  if(class(try(future::plan()))[1] == "try-error"){
+  if(future.off == F && class(try(future::plan()))[1] == "try-error"){
     stop("Please specify a plan from the future-package. See ?future::plan for more information.")
   }
   if(is.vector(random.borders) == FALSE && is.matrix(random.borders) == FALSE){
     stop("random.borders must either be a number, a vector or a matrix.")
   }
   cat("\nInitializing...", sep = "\n")
-
-  # #set working directory for use of 'futures'
-  # old.directory <- getwd()
-  # setwd(homedir)
 
   #set starting time
   start <- Sys.time()
@@ -460,126 +458,144 @@ famos <- function(init.par,
                 T)){
         cat(paste0("Job ID for model ", formatC(j, width = 2, format = "d", flag = "0"), " - ", paste(curr.model.all[,j], collapse="")), sep = "\n")
 
-        assign(paste0("model",j),
-               future::future({
-                 base.optim(binary = curr.model.all[,j],
-                            parms = best.par,
-                            fit.fn = fit.fn,
-                            nr.of.data = nr.of.data,
-                            homedir = homedir,
-                            optim.runs = optim.runs,
-                            information.criterion = information.criterion,
-                            default.val = default.val,
-                            random.borders = random.borders,
-                            control.optim = control.optim,
-                            con.tol = con.tol,
-                            ...)
-               },
-               label = paste0("Model", paste(curr.model.all[,j], collapse ="")),
-               ...
-               )
-        )
+        if(future.off == F){
+          assign(paste0("model",j),
+                 future::future({
+                   base.optim(binary = curr.model.all[,j],
+                              parms = best.par,
+                              fit.fn = fit.fn,
+                              nr.of.data = nr.of.data,
+                              homedir = homedir,
+                              optim.runs = optim.runs,
+                              information.criterion = information.criterion,
+                              default.val = default.val,
+                              random.borders = random.borders,
+                              control.optim = control.optim,
+                              con.tol = con.tol,
+                              ...)
+                 },
+                 label = paste0("Model", paste(curr.model.all[,j], collapse ="")),
+                 ...
+                 )
+          )
+        }else{
+          base.optim(binary = curr.model.all[,j],
+                     parms = best.par,
+                     fit.fn = fit.fn,
+                     nr.of.data = nr.of.data,
+                     homedir = homedir,
+                     optim.runs = optim.runs,
+                     information.criterion = information.criterion,
+                     default.val = default.val,
+                     random.borders = random.borders,
+                     control.optim = control.optim,
+                     con.tol = con.tol,
+                     ...)
+        }
+
+
       }else{
         assign(paste0("model",j), "no.refit")
         cat(paste0("Model fit for ", paste(curr.model.all[,j], collapse="")," exists and refitting is not enabled."), sep = "\n")
       }
     }
 
-    #set looping variable
-    waiting <- TRUE
-    waited.models <- rep(1,ncol(curr.model.all))
-    time.waited <- Sys.time()
-    time.passed <- 0
+    if(future.off == F){
+      #set looping variable
+      waiting <- TRUE
+      waited.models <- rep(1,ncol(curr.model.all))
+      time.waited <- Sys.time()
+      time.passed <- 0
 
-    #check if the status file has been set to 'done', if not check if job is still running. If the job is not running anymore restart.
-    while(waiting == TRUE){
-      update.log <- FALSE
-      waiting <- FALSE
-      #cycle through all models
-      for(j in which(waited.models == 1)){
+      #check if the status file has been set to 'done', if not check if job is still running. If the job is not running anymore restart.
+      while(waiting == TRUE){
+        update.log <- FALSE
+        waiting <- FALSE
+        #cycle through all models
+        for(j in which(waited.models == 1)){
 
-        if(future::resolved(get(paste0("model", j))) == FALSE){
-          waiting <- TRUE
-        }else{
-
-          while(inherits(try(readRDS(paste0(homedir,
-                                            "/FAMoS-Results/Status/status",
-                                            paste(curr.model.all[,j], collapse=""),
-                                            ".rds")),
-                             silent = T),
-                         "try-error")){
-            Sys.sleep(5)
-            time.passed <- time.passed + 5
-          }
-
-          #check if model is done
-          if(readRDS(paste0(homedir,
-                            "/FAMoS-Results/Status/status",
-                            paste(curr.model.all[,j], collapse=""),
-                            ".rds")) != "done"){
-
-            assign(paste0("model",j),
-                   future::future({
-                     base.optim(binary = curr.model.all[,j],
-                                parms = best.par,
-                                fit.fn = fit.fn,
-                                nr.of.data = nr.of.data,
-                                homedir = homedir,
-                                optim.runs = optim.runs,
-                                information.criterion = information.criterion,
-                                default.val = default.val,
-                                random.borders = random.borders,
-                                control.optim = control.optim,
-                                con.tol = con.tol,
-                                ...)
-                   },
-                   label = paste0("Model", paste(curr.model.all[,j], collapse ="")),
-                   ...
-                   )
-            )
-            cat(paste0("Model ",j," was resubmitted"), sep = "\n")
-
+          if(future::resolved(get(paste0("model", j))) == FALSE){
             waiting <- TRUE
           }else{
-            #update waiting variable
-            waiting <- waiting || FALSE
-            #update waiting log
-            waited.models[j] <- 0
-            update.log <- TRUE
+
+            while(inherits(try(readRDS(paste0(homedir,
+                                              "/FAMoS-Results/Status/status",
+                                              paste(curr.model.all[,j], collapse=""),
+                                              ".rds")),
+                               silent = T),
+                           "try-error")){
+              Sys.sleep(5)
+              time.passed <- time.passed + 5
+            }
+
+            #check if model is done
+            if(readRDS(paste0(homedir,
+                              "/FAMoS-Results/Status/status",
+                              paste(curr.model.all[,j], collapse=""),
+                              ".rds")) != "done"){
+
+              assign(paste0("model",j),
+                     future::future({
+                       base.optim(binary = curr.model.all[,j],
+                                  parms = best.par,
+                                  fit.fn = fit.fn,
+                                  nr.of.data = nr.of.data,
+                                  homedir = homedir,
+                                  optim.runs = optim.runs,
+                                  information.criterion = information.criterion,
+                                  default.val = default.val,
+                                  random.borders = random.borders,
+                                  control.optim = control.optim,
+                                  con.tol = con.tol,
+                                  ...)
+                     },
+                     label = paste0("Model", paste(curr.model.all[,j], collapse ="")),
+                     ...
+                     )
+              )
+              cat(paste0("Model ",j," was resubmitted"), sep = "\n")
+
+              waiting <- TRUE
+            }else{
+              #update waiting variable
+              waiting <- waiting || FALSE
+              #update waiting log
+              waited.models[j] <- 0
+              update.log <- TRUE
+            }
+
           }
-
         }
-      }
-      if(waiting == TRUE){
-        #print("Waiting ...")
-        if(time.passed == 0){
-          cat("Waiting for model fits ...", sep = "\n")
-        }
-        Sys.sleep(5)
-        time.passed <- time.passed + 5
-      }
-
-      #output the log for the models that is waited for (every 5 min)
-      if( (time.passed %% 300) == 0 && (time.passed != 0)){
-        nr.running <-  length(which(waited.models == 1))
-        if(update.log == TRUE || time.passed == 300){
-          #calculate difference in time
-          if(nr.running == ncol(curr.model.all)){
-            cat("Waiting for fits of all models", sep = "\n")
-          }else{
-            cat("Waiting for fits of these models:", sep = "\n")
-            cat(paste0(which(waited.models == 1)))
+        if(waiting == TRUE){
+          #print("Waiting ...")
+          if(time.passed == 0){
+            cat("Waiting for model fits ...", sep = "\n")
           }
-          cat(paste0("\nTime spent waiting: ",
-                     round(difftime(Sys.time(),time.waited)[[1]],2),
-                     " ",
-                     units(difftime(Sys.time(),time.waited))),
-              sep = "\n")
+          Sys.sleep(5)
+          time.passed <- time.passed + 5
         }
-      }
 
+        #output the log for the models that is waited for (every 5 min)
+        if( (time.passed %% 300) == 0 && (time.passed != 0)){
+          nr.running <-  length(which(waited.models == 1))
+          if(update.log == TRUE || time.passed == 300){
+            #calculate difference in time
+            if(nr.running == ncol(curr.model.all)){
+              cat("Waiting for fits of all models", sep = "\n")
+            }else{
+              cat("Waiting for fits of these models:", sep = "\n")
+              cat(paste0(which(waited.models == 1)))
+            }
+            cat(paste0("\nTime spent waiting: ",
+                       round(difftime(Sys.time(),time.waited)[[1]],2),
+                       " ",
+                       units(difftime(Sys.time(),time.waited))),
+                sep = "\n")
+          }
+        }
+
+      }
     }
-
     #read in files
     get.AICC <- c()
     cat("Evaluate results ...", sep = "\n")
@@ -724,9 +740,9 @@ famos <- function(init.par,
       #save FAMoS performance
       if(ncol(saveTestedModels) > 3){
         famos.performance(input = saveTestedModels,
-                         path = homedir,
-                         ic = information.criterion,
-                         save.output = paste0(homedir,"/FAMoS-Results/Figures/Performance",mrun,".pdf"))
+                          path = homedir,
+                          ic = information.criterion,
+                          save.output = paste0(homedir,"/FAMoS-Results/Figures/Performance",mrun,".pdf"))
 
         famos.performance(input = saveTestedModels,
                           path = homedir,

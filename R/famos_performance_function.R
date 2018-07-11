@@ -6,16 +6,16 @@
 #' @param ic The information criterion the model selection will be based on. Options are "AICc", "AIC" and "BIC". Default to "AICc".
 #' @param save.output A string containing the location and name under which the figure should be saved (format is .pdf). Default to NULL.
 #' @param log If true, the results are plotted on a logarithmic scale. Default to FALSE.
-#' @param plot.style Changes the style of the plot. Options are either "cross" (default) or "block".
+#' @param plot.style Changes the style of the plot. Options are either "cross" or "block" (default).
 #' @details The upper plot shows the improvement of the selected information criterion over each FAMoS iteration. The best value is shown on the right axis. The lower plot depicts the corresponding best model of each iteration. Here, green circles show added, red circles removed and blue circles swapped parameters. The parameters of the final model are printed bold.
 #' @return A plot showing the value of the corresponding information criterion and best model of each FAMoS iteration.
 #' @export
 #' @examples
 #' #plot the performance of an FAMoS run
-#' famos.performance(input = famos.run)
+#' famos.performance(input = famos.run, log = T)
 
 
-famos.performance <- function(input, path = getwd(), ic = "AICc", save.output = NULL, log = FALSE, plot.style = "cross"){
+famos.performance <- function(input, path = getwd(), ic = "AICc", save.output = NULL, log = FALSE, plot.style = "block"){
 
   switch (ic,
           "AICc" = {ic.index <- 1},
@@ -185,7 +185,7 @@ famos.performance <- function(input, path = getwd(), ic = "AICc", save.output = 
     }
 
     image( 1:ncol(get.best),1:(nrow(get.best) - 4), t(plot.matrix),
-           col = c("white", "black","red", "chartreuse4" , "blue"),
+           col = c("white", "gray40","red", "chartreuse4" , "blue"),
            breaks = c(0,0.5,1.5,2.5,3.5,4.5),
            xlab = c("iteration"),
            ylab = c(""),
