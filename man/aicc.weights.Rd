@@ -8,9 +8,9 @@ aicc.weights(input = getwd(), mrun = NULL, reorder = TRUE,
   save.output = NULL)
 }
 \arguments{
-\item{input}{Either a string containing the directory which holds the AMS results folder or a matrix containing the tested models along with the respective information criteria. Default to \code{getwd()}.}
+\item{input}{Either a string containing the directory which holds the "FAMoS-Results" folder or a matrix containing the tested models along with the respective information criteria. Default to \code{getwd()}.}
 
-\item{mrun}{A string giving the number of the corresponding FAMoS run, e.g "004". If NULL (default), all FAMoS runs in the "AMS/ModelsTested/" folder will be used for evaluation.}
+\item{mrun}{A string giving the number of the corresponding FAMoS run, e.g "004". If NULL (default), all FAMoS runs in the "FAMoS-Results/TestedModels/" folder will be used for evaluation.}
 
 \item{reorder}{If TRUE, results will be ordered by evidence ratios (descending). If FALSE, the order of parameters will be the same as the order specified in \code{init.par} in \code{\link{famos}}. Default to TRUE.}
 

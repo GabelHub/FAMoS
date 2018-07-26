@@ -19,8 +19,8 @@ get.most.distant <- function(input = getwd(), mrun = NULL, max.number = 100){
       if(length(filenames) == 0){
         stop("No files in the given folder!")
       }
-      store.res <-  readRDS(filenames[1])
-      for(i in 2:length(filenames)){
+      store.res <-  NULL
+      for(i in 1:length(filenames)){
         store.res <- cbind(store.res, readRDS(filenames[i]))
       }
       mt <- store.res

@@ -8,7 +8,7 @@ ic.order(input = getwd(), mrun = NULL, number = NULL, ic = "AICc",
   colour.par = NULL, save.output = NULL, log = FALSE)
 }
 \arguments{
-\item{input}{Either a string containing the directory which holds the AMS results folder or a matrix containing the tested models along with the respective information criteria. Default to \code{getwd()}.}
+\item{input}{Either a string containing the directory which holds the "FAMoS-Results" folder or a matrix containing the tested models along with the respective information criteria. Default to \code{getwd()}.}
 
 \item{mrun}{A string giving the number of the corresponding FAMoS run, e.g "004". If NULL (default), all FAMoS runs in the folder will be used for evaluation.}
 

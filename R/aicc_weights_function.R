@@ -75,32 +75,16 @@ aicc.weights <- function(input = getwd(), mrun = NULL, reorder = TRUE, save.outp
 
   }
 
-    graphics::par(mfrow = c(1,1),mai = c(1,0.2 + 0.08*max(nchar(all.names)),0.2,0.2))
-    graphics::plot(0,0,
-                   xlim = c(0,1),
-                   ylim = c(1,length(parms.support)),
-                   type = "n",
-                   axes = FALSE,
-                   xlab = "relative support",
-                   ylab = "")
-    for(i in 1:length(parms.support)){
-      graphics::lines(c(0,parms.support[parms.order[i]]),c(i,i),
-                      lwd = 2,
-                      col = aicc.col[parms.order[i]])
-    }
+    graphics::par(mfrow = c(1,1),mai = c(1,0.3 + 0.08*max(nchar(all.names)),0.2,0.2))
 
+    graphics::barplot(parms.support[parms.order],
+                      horiz = T,
+                      names.arg = all.names[parms.order],
+                      las = 1,
+                      xlab = "relative support",
+                      col = aicc.col[parms.order],
+                      xlim = c(-0.02,1.02))
     graphics::box()
-    graphics::axis(1, las = 1)
-
-    for(i in 1:length(all.names)){
-      graphics::axis(side   = 2,
-                     at     = i,
-                     labels = all.names[parms.order][i],
-                     tick   = TRUE,
-                     las = 2,
-                     cex.axis = 0.7,
-                     font = aicc.bold[parms.order[i]])
-    }
 
   if(is.null(save.output) == FALSE){
     grDevices::dev.off()

@@ -15,8 +15,8 @@
 #' @param swap.parameters A list specifying which parameters are interchangeable. Each swap set is given as a vector containing the names of the respective parameters. Default to NULL.
 #' @param critical.parameters A list specifying sets of critical parameters. Critical sets are parameters sets, of which at least one parameter per set has to be present in each tested model. Default to NULL.
 #' @param random.borders The ranges from which the random initial parameter conditions for all \code{optim.runs} larger than one are sampled. Can be either given as a vector containing the relative deviations for all parameters or as a matrix containing in its first column the lower and in its second column the upper border values. Parameters are uniformly sampled based on \code{\link{runif}}. Default to 1 (100\% deviation of all parameters).
-#' @param con.tol The absolute convergence tolerance of each fitting run (see Details). Default is set to 0.1.
 #' @param control.optim Control parameters passed along to \code{optim}. For more details, see \code{\link{optim}}.
+#' @param con.tol The absolute convergence tolerance of each fitting run (see Details). Default is set to 0.1.
 #' @param save.performance Logical. If TRUE, the performance of \code{FAMoS} will be evaluated in each iteration via \code{\link{famos.performance}}, which will save the corresponding plot into the folder "FAMoS-Results/Figures/" (starting from iteration 3) and simultaneously show it on screen. Default to TRUE.
 #' @param future.off Logical. If TRUE, FAMoS runs without the use of \code{futures}. Useful for debugging.
 #' @param ... Other arguments that will be passed along to \code{\link{future}}, \code{\link{optim}} or the user-specified cost function \code{fit.fn}.

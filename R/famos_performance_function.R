@@ -2,7 +2,7 @@
 #'
 #' For each FAMoS run \code{famos.performance} plots the corresponding best model and information criterion.
 #' @param input Either a string giving the three-digit number of the corresponding FAMoS run, e.g "004", or a matrix containing the tested models along with the respective information criteria.
-#' @param path If \code{input} is the string of an FAMoS run, the directory containing the "FAMoS-Results" folder needs to be supplied as well. Default to \code{\link{getwd()}}.
+#' @param path If \code{input} is the string of an FAMoS run, the directory containing the "FAMoS-Results" folder needs to be supplied as well. Default to \code{\link{getwd}}.
 #' @param ic The information criterion the model selection will be based on. Options are "AICc", "AIC" and "BIC". Default to "AICc".
 #' @param save.output A string containing the location and name under which the figure should be saved (format is .pdf). Default to NULL.
 #' @param log If true, the results are plotted on a logarithmic scale. Default to FALSE.
@@ -12,7 +12,7 @@
 #' @export
 #' @examples
 #' #plot the performance of an FAMoS run
-#' famos.performance(input = famos.run, log = T)
+#' famos.performance(input = famos.run, log = TRUE)
 
 
 famos.performance <- function(input, path = getwd(), ic = "AICc", save.output = NULL, log = FALSE, plot.style = "block"){
@@ -158,10 +158,11 @@ famos.performance <- function(input, path = getwd(), ic = "AICc", save.output = 
                      cex.axis = 0.7,
                      font = get.best[4 + i,ncol(get.best)] + 1)
     }
-
-    grid(nx = ncol(get.best), ny = 0, lty = 1)
+    for(i in 1:ncol(get.best)){
+      graphics::abline(v = i - 0.5, col = "lightgray")
+    }
     for(i in 2:(nrow(get.best) - 4)){
-      abline(h = i - 0.5, col = "lightgray")
+      graphics::abline(h = i - 0.5, col = "lightgray")
     }
 
   }else if(plot.style == "block"){
@@ -184,12 +185,12 @@ famos.performance <- function(input, path = getwd(), ic = "AICc", save.output = 
       plot.matrix[,i] <- rev(plot.matrix[,i])
     }
 
-    image( 1:ncol(get.best),1:(nrow(get.best) - 4), t(plot.matrix),
-           col = c("white", "gray40","red", "chartreuse4" , "blue"),
-           breaks = c(0,0.5,1.5,2.5,3.5,4.5),
-           xlab = c("iteration"),
-           ylab = c(""),
-           axes = F)
+    graphics::image( 1:ncol(get.best),1:(nrow(get.best) - 4), t(plot.matrix),
+                     col = c("white", "gray40","red", "chartreuse4" , "blue"),
+                     breaks = c(0,0.5,1.5,2.5,3.5,4.5),
+                     xlab = c("iteration"),
+                     ylab = c(""),
+                     axes = F)
 
     graphics::box()
     graphics::axis(1, las = 1)
@@ -204,7 +205,7 @@ famos.performance <- function(input, path = getwd(), ic = "AICc", save.output = 
                      font = get.best[4 + i,ncol(get.best)] + 1)
     }
 
-    grid(nx = ncol(plot.matrix), ny = nrow(plot.matrix), lty = 1)
+    graphics::grid(nx = ncol(plot.matrix), ny = nrow(plot.matrix), lty = 1)
   }
   if(is.null(save.output) == FALSE){
     grDevices::dev.off()

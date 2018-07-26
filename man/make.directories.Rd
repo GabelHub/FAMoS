@@ -16,13 +16,13 @@ Creates directories.
 Creates the directories, in which the results are going to be saved.
 }
 \details{
-All files will be stored in the main folder AMS (short for 'Automated model selection'). It contains the following subdirectories:
+All files will be stored in the main folder "FAMoS-Results". It contains the following subdirectories:
 \describe{
   \item{BestModel}{Contains the information criteria and the corresponding parameter estimates of the best fitting model.}
   \item{Figures}{Contains figures showing the performance of the FAMoS.}
   \item{Fits}{Contains the fitted parameter values of each of the tested models.}
   \item{LogFiles}{Contains the log files of the individual model fitting runs.}
-  \item{ModelsTested}{Contains the binary information of all of the tested models.}
+  \item{TestedModels}{Contains the binary information of all of the tested models.}
   \item{Status}{Contains the status files of the individual model fitting runs.}
   }
 }

@@ -7,9 +7,9 @@
 get.most.distant(input = getwd(), mrun = NULL, max.number = 100)
 }
 \arguments{
-\item{input}{Either a string containing the directory which holds the AMS results folder or a matrix containing the tested models along with the respective information criteria. Default to \code{getwd()}.}
+\item{input}{Either a string containing the directory which holds the "FAMoS-Results" folder or a matrix containing the tested models along with the respective information criteria. Default to \code{getwd()}.}
 
-\item{mrun}{A string giving the number of the corresponding FAMoS run, e.g "004". If NULL (default), all FAMoS runs in the "AMS/ModelsTested/" folder will be used for evaluation.}
+\item{mrun}{A string giving the number of the corresponding FAMoS run, e.g "004". If NULL (default), all FAMoS runs in the "FAMoS-Results/TestedModels/" folder will be used for evaluation.}
 
 \item{max.number}{The maximum number of times that the \code{get.most.distant} function tries to find the most distant model (see details). Default to 100.}
 }
@@ -20,7 +20,7 @@ A list containing in its first entry the maximal distance found, the second entr
 This function can be used to find a model that is most distinct from all previously tested models.
 }
 \details{
-Taking the order from the 'ModelsTested' files found in 'AMS/ModelsTested/', this function successively tries to obtain a previously untested model that is most distant from all previously tested ones (here, distance means the number of difference in fitted parameters). To this end, a model is taken from 'ModelsTested' and its corresponding complement model is calculated (i.e. the model containing all parameters that the original didn't fit). From thereon, the distance of neighbouring models is calculated and the path of increasing distances is followed. This process is repeated until all models in 'ModelsTested' have been assessed or the \code{max.number} is reached.
+Taking the order from the 'TestedModels' files found in 'FAMoS-Results/TestedModels/', this function successively tries to obtain a previously untested model that is most distant from all previously tested ones (here, distance means the number of difference in fitted parameters). To this end, a model is taken from 'TestedModels' and its corresponding complement model is calculated (i.e. the model containing all parameters that the original didn't fit). From thereon, the distance of neighbouring models is calculated and the path of increasing distances is followed. This process is repeated until all models in 'TestedModels' have been assessed or the \code{max.number} is reached.
 }
 \examples{
 get.most.distant(input = famos.run)

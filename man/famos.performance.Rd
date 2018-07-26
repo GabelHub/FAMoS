@@ -4,16 +4,21 @@
 \alias{famos.performance}
 \title{Plot FAMoS Performance}
 \usage{
-famos.performance(input, path = getwd(), ic = "AICc", save.output = NULL)
+famos.performance(input, path = getwd(), ic = "AICc", save.output = NULL,
+  log = FALSE, plot.style = "block")
 }
 \arguments{
 \item{input}{Either a string giving the three-digit number of the corresponding FAMoS run, e.g "004", or a matrix containing the tested models along with the respective information criteria.}
 
-\item{path}{If \code{input} is the string of an FAMoS run, the directory containing the AMS results folder needs to be supplied as well. Default to \code{\link{getwd()}}.}
+\item{path}{If \code{input} is the string of an FAMoS run, the directory containing the "FAMoS-Results" folder needs to be supplied as well. Default to \code{\link{getwd}}.}
 
 \item{ic}{The information criterion the model selection will be based on. Options are "AICc", "AIC" and "BIC". Default to "AICc".}
 
 \item{save.output}{A string containing the location and name under which the figure should be saved (format is .pdf). Default to NULL.}
+
+\item{log}{If true, the results are plotted on a logarithmic scale. Default to FALSE.}
+
+\item{plot.style}{Changes the style of the plot. Options are either "cross" or "block" (default).}
 }
 \value{
 A plot showing the value of the corresponding information criterion and best model of each FAMoS iteration.
@@ -26,5 +31,5 @@ The upper plot shows the improvement of the selected information criterion over 
 }
 \examples{
 #plot the performance of an FAMoS run
-famos.performance(input = famos.run)
+famos.performance(input = famos.run, log = TRUE)
 }

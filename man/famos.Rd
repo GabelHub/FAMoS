@@ -9,7 +9,7 @@ famos(init.par, fit.fn, nr.of.data, homedir = getwd(), do.not.fit = NULL,
   optim.runs = 5, information.criterion = "AICc", default.val = NULL,
   swap.parameters = NULL, critical.parameters = NULL, random.borders = 1,
   control.optim = list(maxit = 1000), con.tol = 0.1, save.performance = T,
-  ...)
+  future.off = F, ...)
 }
 \arguments{
 \item{init.par}{A named vector containing the initial parameter values.}
@@ -44,7 +44,9 @@ famos(init.par, fit.fn, nr.of.data, homedir = getwd(), do.not.fit = NULL,
 
 \item{con.tol}{The absolute convergence tolerance of each fitting run (see Details). Default is set to 0.1.}
 
-\item{save.performance}{Logical. If TRUE, the performance of \code{FAMoS} will be evaluated in each iteration via \code{\link{famos.performance}}, which will save the corresponding plot into the folder "AMS/Figures/" (starting from iteration 3). Default to TRUE.}
+\item{save.performance}{Logical. If TRUE, the performance of \code{FAMoS} will be evaluated in each iteration via \code{\link{famos.performance}}, which will save the corresponding plot into the folder "FAMoS-Results/Figures/" (starting from iteration 3) and simultaneously show it on screen. Default to TRUE.}
+
+\item{future.off}{Logical. If TRUE, FAMoS runs without the use of \code{futures}. Useful for debugging.}
 
 \item{...}{Other arguments that will be passed along to \code{\link{future}}, \code{\link{optim}} or the user-specified cost function \code{fit.fn}.}
 }
@@ -82,7 +84,7 @@ cost_function <- function(parms, x.vals, y.vals){
    return(NA)
  }
  with(as.list(c(parms)), {
-   res <- p1*4 + p2^2*x.vals^2 + p3*sin(x.vals) + p4*x.vals - exp(p5*x.vals)
+   res <- 4*p1 + p2^2*x.vals^2 + p3*sin(x.vals) + p4*x.vals - exp(p5*x.vals)
    diff <- sum((res - y.vals)^2)
  })
 }
