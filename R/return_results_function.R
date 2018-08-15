@@ -2,7 +2,7 @@
 #'
 #' Returns the results of one FAMoS run. Includes the best parameter sets and corresponding information criterion.
 #' @param homedir A string giving the directory in which the result folders are found. This is the same directory in which \code{\link{famos}} was run.
-#' @param mrun The number of the FAMoS run that is to be evaluated. Must be a three digit string in the form of '001'.
+#' @param mrun The number of the FAMoS run that is to be evaluated. Must be a three digit string in the form of '001'. Alternatively, supplying 'best' will return the best result that is found over several FAMoS runs.
 #' @param ic The information criterion used. Default is 'AICc". Other options are 'AIC' and 'BIC'.
 #' @return A list containing the following elements:
 #' \describe{
@@ -58,7 +58,18 @@ return.results <- function(homedir, mrun, ic = "AICc"){
           "BIC"  = {ic.index <- 3}
   )
 
-  cat("Best model found. Algorithm stopped.", sep = "\n")
+  if(mrun == "best"){
+    best.ic <- Inf
+    filenames <- list.files(paste0(homedir,"/FAMoS-Results/BestModel"), pattern="*.rds", full.names=TRUE)
+    for(i in 1:length(filenames)){
+      bm <- readRDS(filenames[[i]])
+      if(bm[ic.index] < best.ic){
+        best.ic <- bm[ic.index]
+        mrun <- gsub(paste0(homedir,"/FAMoS-Results/BestModel/BestModel"), "",filenames[[i]])
+        mrun <- gsub(".rds", "", mrun)
+      }
+    }
+  }
   cat(paste0("FAMoS run ", mrun), sep = "\n")
   #get information criterion of best model
   bm <- readRDS(paste0(homedir, "/FAMoS-Results/BestModel/BestModel", mrun,".rds"))

@@ -9,7 +9,7 @@
 #' @param optim.runs The number of times that each model will be fitted by \code{\link{optim}}. Default to 5.
 #' @param information.criterion The information criterion the model selection will be based on. Options are "AICc", "AIC" and "BIC". Default to "AICc".
 #' @param default.val A named list containing the values that the non-fitted parameters should take. If NULL, all non-fitted parameters will be set to zero. Default values can be either given by a numeric value or by the name of the corresponding parameter the value should be inherited from (NOTE: In this case the corresponding parameter entry has to contain a numeric value). Default to NULL.
-#' @param random.borders The ranges from which the random initial parameter conditions for all optim.runs > 1 are sampled. Can be either given as a vector containing the relative deviations for all parameters or as a matrix containing in its first column the lower and in its second column the upper border values. Parameters are uniformly sampled based on \code{\link{runif}}. Default to 1 (100\% deviation of all parameters).
+#' @param random.borders The ranges from which the random initial parameter conditions for all optim.runs > 1 are sampled. Can be either given as a vector containing the relative deviations for all parameters or as a matrix containing in its first column the lower and in its second column the upper border values. Parameters are uniformly sampled based on \code{\link{runif}}. Default to 1 (100\% deviation of all parameters). Alternatively, functions such as \code{\link{rnorm}}, \code{\link{rchisq}}, etc. can be used if the additional arguments are passed along as well.
 #' @param con.tol The convergence tolerance of each fitting run (see Details). Default is set to 0.1.
 #' @param control.optim Control parameters passed along to \code{optim}. For more details, see \code{\link{optim}}.
 #' @param ... Additional parameters.
@@ -126,6 +126,10 @@ base.optim <- function(binary,
             random.max <- fit.vector + random.borders[-no.fit]*abs(fit.vector)
           }
 
+          ran.par <- stats::runif(n = length(fit.vector),
+                                  min = random.min,
+                                  max = random.max)
+
         }else if(is.matrix(random.borders)){
           if(nrow(random.borders) == 1){
             random.min <- rep(random.borders[1,1], length(fit.vector))
@@ -134,12 +138,16 @@ base.optim <- function(binary,
             random.min <- random.borders[-no.fit,1]
             random.max <- random.borders[-no.fit,2]
           }
+
+          ran.par <- stats::runif(n = length(fit.vector),
+                                  min = random.min,
+                                  max = random.max)
+        }else if(is.function(random.borders)){
+          ran.par <- R.utils::doCall(random.borders, args = c(list(n = length(fit.vector)), list(...)))
         }else{
           stop("random.borders must be a number, a vector or a matrix!")
         }
-        ran.par <- stats::runif(n = length(fit.vector),
-                                min = random.min,
-                                max = random.max)
+
         names(ran.par) <- names(fit.vector)
         works <- is.finite(combine.and.fit(par = ran.par,
                                            par.names = names(parms),

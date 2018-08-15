@@ -334,6 +334,9 @@ random.bord2 <- c(0.1, 0.5, 0.2) # deviates the parameters by 10%, 50% and 20%, 
 random.bord3 <- matrix(c(1,2), nrow = 1) #uses the interval [1,2] for all parameter samples
 random.bord4 <- cbind(c(0,-10, 0.3), c(5, -9, 0.7)) #uses the intervals [0,5], [-10,-9] and [0.3, 0.7] to sample the respective parameters
 
+#use a function to sample the results
+random.bord5 <- rnorm #note that in this case, 'mean' and 'sd' need to passed to famos as well, if other values than the default settings should be used
+
 ```
 #### control.optim
 

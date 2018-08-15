@@ -118,6 +118,6 @@ ic.order <- function(input = getwd(), mrun = NULL, number = NULL, ic = "AICc", c
     grDevices::dev.off()
 
   }
-
+  return(aicc)
 }
 

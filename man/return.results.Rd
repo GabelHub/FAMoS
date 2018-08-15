@@ -9,7 +9,7 @@ return.results(homedir, mrun, ic = "AICc")
 \arguments{
 \item{homedir}{A string giving the directory in which the result folders are found. This is the same directory in which \code{\link{famos}} was run.}
 
-\item{mrun}{The number of the FAMoS run that is to be evaluated. Must be a three digit string in the form of '001'.}
+\item{mrun}{The number of the FAMoS run that is to be evaluated. Must be a three digit string in the form of '001'. Alternatively, supplying 'best' will return the best result that is found over several FAMoS runs.}
 
 \item{ic}{The information criterion used. Default is 'AICc". Other options are 'AIC' and 'BIC'.}
 }

@@ -14,7 +14,7 @@
 #' @param default.val A named list containing the values that the non-fitted parameters should take. If NULL, all non-fitted parameters will be set to zero. Default values can be either given by a numeric value or by the name of the corresponding parameter the value should be inherited from (NOTE: In this case the corresponding parameter entry has to contain a numeric value). Default to NULL.
 #' @param swap.parameters A list specifying which parameters are interchangeable. Each swap set is given as a vector containing the names of the respective parameters. Default to NULL.
 #' @param critical.parameters A list specifying sets of critical parameters. Critical sets are parameters sets, of which at least one parameter per set has to be present in each tested model. Default to NULL.
-#' @param random.borders The ranges from which the random initial parameter conditions for all \code{optim.runs} larger than one are sampled. Can be either given as a vector containing the relative deviations for all parameters or as a matrix containing in its first column the lower and in its second column the upper border values. Parameters are uniformly sampled based on \code{\link{runif}}. Default to 1 (100\% deviation of all parameters).
+#' @param random.borders The ranges from which the random initial parameter conditions for all \code{optim.runs} larger than one are sampled. Can be either given as a vector containing the relative deviations for all parameters or as a matrix containing in its first column the lower and in its second column the upper border values. Parameters are uniformly sampled based on \code{\link{runif}}. Default to 1 (100\% deviation of all parameters). Alternatively, functions such as \code{\link{rnorm}}, \code{\link{rchisq}}, etc. can be used if the additional arguments are passed along as well.
 #' @param control.optim Control parameters passed along to \code{optim}. For more details, see \code{\link{optim}}.
 #' @param con.tol The absolute convergence tolerance of each fitting run (see Details). Default is set to 0.1.
 #' @param save.performance Logical. If TRUE, the performance of \code{FAMoS} will be evaluated in each iteration via \code{\link{famos.performance}}, which will save the corresponding plot into the folder "FAMoS-Results/Figures/" (starting from iteration 3) and simultaneously show it on screen. Default to TRUE.
@@ -409,7 +409,13 @@ famos <- function(init.par,
         # if swap method fails to provide new valid models, the algorithm is being terminated
         if(sum(curr.model.all)==0) {
           cat("swap method does not yield any valid model. FAMoS terminated.", sep = "\n")
-          cat(paste0("Time needed: ", round(difftime(Sys.time(),start)[[1]],2), " ",units(difftime(Sys.time(),start))), sep = "\n")
+          timediff <- difftime(Sys.time(),start, units = "secs")[[1]]
+          cat(paste0("Time needed: ",
+                     sprintf("%02d:%02d:%02d",
+                             timediff %% 86400 %/% 3600,  # hours
+                             timediff %% 3600 %/% 60,  # minutes
+                             timediff %% 60 %/% 1), # seconds,
+                     sep = "\n"))
           final.results <- return.results(homedir, mrun, ic = information.criterion)
           #setwd(old.directory)
           return(final.results)
@@ -420,7 +426,13 @@ famos <- function(init.par,
 
     if(is.null(curr.model.all)) {
       cat("All neighbouring models have been tested during this run. Algorithm halted.", sep = "\n")
-      cat(paste0("Time needed: ", round(difftime(Sys.time(),start)[[1]],2), " ",units(difftime(Sys.time(),start))), sep = "\n")
+      timediff <- difftime(Sys.time(),start, units = "secs")[[1]]
+      cat(paste0("Time needed: ",
+                 sprintf("%02d:%02d:%02d",
+                         timediff %% 86400 %/% 3600,  # hours
+                         timediff %% 3600 %/% 60,  # minutes
+                         timediff %% 60 %/% 1), # seconds,
+                 sep = "\n"))
       break
     }
 
@@ -440,7 +452,14 @@ famos <- function(init.par,
     models.tested <- cbind(models.tested, curr.model.all)
     models.per.run <- cbind(models.per.run, rbind(model.run, curr.model.all))
 
-    cat(paste0("Time passed since start: ", round(difftime(Sys.time(),start)[[1]],2), " ",units(difftime(Sys.time(),start))), sep = "\n")
+    timediff <- difftime(Sys.time(),start, units = "secs")[[1]]
+    cat(paste0("Time passed since start: ",
+               sprintf("%02d:%02d:%02d",
+                       timediff %% 86400 %/% 3600,  # hours
+                       timediff %% 3600 %/% 60,  # minutes
+                       timediff %% 60 %/% 1), # seconds,
+               sep = "\n"))
+
     cat("Job submission:", sep = "\n")
     #Job submission####
     #submit each individual model to the cluster if it hasn't been tested before
@@ -505,7 +524,8 @@ famos <- function(init.par,
       waiting <- TRUE
       waited.models <- rep(1,ncol(curr.model.all))
       time.waited <- Sys.time()
-      time.passed <- 0
+      time.passed <- -1
+      ticker <- 0
 
       #check if the status file has been set to 'done', if not check if job is still running. If the job is not running anymore restart.
       while(waiting == TRUE){
@@ -525,7 +545,6 @@ famos <- function(init.par,
                                silent = T),
                            "try-error")){
               Sys.sleep(5)
-              time.passed <- time.passed + 5
             }
 
             #check if model is done
@@ -568,17 +587,28 @@ famos <- function(init.par,
         }
         if(waiting == TRUE){
           #print("Waiting ...")
-          if(time.passed == 0){
+          if(time.passed == -1){
             cat("Waiting for model fits ...", sep = "\n")
           }
           Sys.sleep(5)
-          time.passed <- time.passed + 5
         }
 
+        time.passed <- round(difftime(Sys.time(),time.waited, units = "secs")[[1]],2) - ticker*300
+
         #output the log for the models that is waited for (every 5 min)
-        if( (time.passed %% 300) == 0 && (time.passed != 0)){
+        if( (time.passed > 300) ){
+          ticker <- ticker + 1
           nr.running <-  length(which(waited.models == 1))
-          if(update.log == TRUE || time.passed == 300){
+
+          timediff <- difftime(Sys.time(),time.waited, units = "secs")[[1]]
+          cat(paste0("Time spent waiting so far: ",
+                     sprintf("%02d:%02d:%02d",
+                             timediff %% 86400 %/% 3600,  # hours
+                             timediff %% 3600 %/% 60,  # minutes
+                             timediff %% 60 %/% 1), # seconds,
+                     sep = "\n"))
+
+          if(update.log == TRUE){
             #calculate difference in time
             if(nr.running == ncol(curr.model.all)){
               cat("Waiting for fits of all models", sep = "\n")
@@ -586,11 +616,6 @@ famos <- function(init.par,
               cat("Waiting for fits of these models:", sep = "\n")
               cat(paste0(which(waited.models == 1)))
             }
-            cat(paste0("\nTime spent waiting: ",
-                       round(difftime(Sys.time(),time.waited)[[1]],2),
-                       " ",
-                       units(difftime(Sys.time(),time.waited))),
-                sep = "\n")
           }
         }
 
@@ -604,10 +629,17 @@ famos <- function(init.par,
       #this checks if the connection to the fit results file can be made and waits if this is not the case
       waiting <- T
       options(warn = -1)
-      while(inherits(try(readRDS(paste0(homedir, "/FAMoS-Results/Fits/Model",paste(curr.model.all[,j], collapse =""), ".rds")), silent = T), "try-error")){
+      while(inherits(try(readRDS(paste0(homedir,
+                                        "/FAMoS-Results/Fits/Model",
+                                        paste(curr.model.all[,j], collapse =""),
+                                        ".rds")),
+                         silent = T),
+                     "try-error")){
         if(waiting) {
           waiting <- F
-          cat(paste0("Trying to read in results file of model ", paste(curr.model.all[,j], collapse =""), "..."), sep = "\n")
+          cat(paste0("Trying to read in results file of model ",
+                     paste(curr.model.all[,j], collapse =""), "..."),
+              sep = "\n")
         }
         Sys.sleep(1)
       }
@@ -694,9 +726,17 @@ famos <- function(init.par,
             if(no.crit == FALSE || no.swap == FALSE){
               method <- "swap"
             }else{
-
+              cat("Best model found. Algorithm stopped.", sep = "\n")
               final.results <- return.results(homedir, mrun, ic = information.criterion)
-              cat(paste0("Time needed: ", round(difftime(Sys.time(),start)[[1]],2), " ",units(difftime(Sys.time(),start))), sep = "\n")
+
+              timediff <- difftime(Sys.time(),start, units = "secs")[[1]]
+              cat(paste0("Time needed: ",
+                         sprintf("%02d:%02d:%02d",
+                                 timediff %% 86400 %/% 3600,  # hours
+                                 timediff %% 3600 %/% 60,  # minutes
+                                 timediff %% 60 %/% 1), # seconds,
+                         sep = "\n"))
+
               #setwd(old.directory)
               return(final.results)
             }
@@ -713,7 +753,13 @@ famos <- function(init.par,
               cat("Best model found. Algorithm stopped.", sep = "\n")
 
               final.results <- return.results(homedir, mrun, ic = information.criterion)
-              cat(paste0("Time needed: ", round(difftime(Sys.time(),start)[[1]],2), " ",units(difftime(Sys.time(),start))), sep = "\n")
+              timediff <- difftime(Sys.time(),start, units = "secs")[[1]]
+              cat(paste0("Time needed: ",
+                         sprintf("%02d:%02d:%02d",
+                                 timediff %% 86400 %/% 3600,  # hours
+                                 timediff %% 3600 %/% 60,  # minutes
+                                 timediff %% 60 %/% 1), # seconds,
+                         sep = "\n"))
               #setwd(old.directory)
               return(final.results)
             }
@@ -725,8 +771,15 @@ famos <- function(init.par,
 
         }, "swap" = {#if swap failed
           # algorithm ends once swap method fails
+          cat("Best model found. Algorithm stopped.", sep = "\n")
           final.results <- return.results(homedir, mrun, ic = information.criterion)
-          cat(paste0("Time needed: ", round(difftime(Sys.time(),start)[[1]],2), " ",units(difftime(Sys.time(),start))), sep = "\n")
+          timediff <- difftime(Sys.time(),start, units = "secs")[[1]]
+          cat(paste0("Time needed: ",
+                     sprintf("%02d:%02d:%02d",
+                             timediff %% 86400 %/% 3600,  # hours
+                             timediff %% 3600 %/% 60,  # minutes
+                             timediff %% 60 %/% 1), # seconds,
+                     sep = "\n"))
           #setwd(old.directory)
           return(final.results)
 
@@ -752,7 +805,13 @@ famos <- function(init.par,
 
     #update model.run
     model.run <- model.run + 1
-    cat(paste0("Time passed since start: ", round(difftime(Sys.time(),start)[[1]],2), " ",units(difftime(Sys.time(),start))), sep = "\n")
+    timediff <- difftime(Sys.time(),start, units = "secs")[[1]]
+    cat(paste0("Time passed since start: ",
+               sprintf("%02d:%02d:%02d",
+                       timediff %% 86400 %/% 3600,  # hours
+                       timediff %% 3600 %/% 60,  # minutes
+                       timediff %% 60 %/% 1), # seconds,
+               sep = "\n"))
 
   }
 

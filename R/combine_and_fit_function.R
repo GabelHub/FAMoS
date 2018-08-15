@@ -29,9 +29,9 @@ combine.and.fit <- function(par, par.names, fit.fn, binary = NULL, default.val =
 
   # call user defined function while passing on user defined variables
   if(is.element("binary", names(formals(fit.fn)))){
-    diff <- do.call(fit.fn, c(list(parms = total.par, binary = binary), dots))
+    diff <- R.utils::doCall(fit.fn, args = c(list(parms = total.par, binary = binary), dots))
   }else{
-    diff <- do.call(fit.fn, c(list(parms = total.par), dots))
+    diff <- R.utils::doCall(fit.fn, args = c(list(parms = total.par), dots))
   }
 
   return(as.numeric(diff))
