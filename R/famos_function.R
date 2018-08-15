@@ -538,12 +538,11 @@ famos <- function(init.par,
             waiting <- TRUE
           }else{
 
-            while(inherits(try(readRDS(paste0(homedir,
-                                              "/FAMoS-Results/Status/status",
-                                              paste(curr.model.all[,j], collapse=""),
-                                              ".rds")),
-                               silent = T),
-                           "try-error")){
+            while(file.exists(paste0(homedir,
+                                     "/FAMoS-Results/Status/status",
+                                     paste(curr.model.all[,j], collapse=""),
+                                     ".rds"))
+                  == FALSE){
               Sys.sleep(5)
             }
 

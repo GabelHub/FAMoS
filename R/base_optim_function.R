@@ -91,7 +91,7 @@ base.optim <- function(binary,
     cat(paste0("\nFitting run # ", k, "\n"))
 
     # update status file to number of current fit run
-    saveRDS(object = k, file = paste0(homedir, "/FAMoS-Results/Status/status", paste(binary, collapse=""), ".rds"))
+    #saveRDS(object = k, file = paste0(homedir, "/FAMoS-Results/Status/status", paste(binary, collapse=""), ".rds"))
 
     #check if initial parameters set is working
     if(k == 1){
