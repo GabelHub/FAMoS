@@ -6,7 +6,8 @@
 \usage{
 base.optim(binary, parms, fit.fn, nr.of.data, homedir, optim.runs = 5,
   information.criterion = "AICc", default.val = NULL, random.borders = 1,
-  con.tol = 0.1, control.optim = list(maxit = 1000), ...)
+  con.tol = 0.1, control.optim = list(maxit = 1000), parscale.pars = TRUE,
+  scaling = NULL, ...)
 }
 \arguments{
 \item{binary}{A vector containing zeroes and ones. Zero indicates that the corresponding parameter is not fitted.}
@@ -25,11 +26,15 @@ base.optim(binary, parms, fit.fn, nr.of.data, homedir, optim.runs = 5,
 
 \item{default.val}{A named list containing the values that the non-fitted parameters should take. If NULL, all non-fitted parameters will be set to zero. Default values can be either given by a numeric value or by the name of the corresponding parameter the value should be inherited from (NOTE: In this case the corresponding parameter entry has to contain a numeric value). Default to NULL.}
 
-\item{random.borders}{The ranges from which the random initial parameter conditions for all optim.runs > 1 are sampled. Can be either given as a vector containing the relative deviations for all parameters or as a matrix containing in its first column the lower and in its second column the upper border values. Parameters are uniformly sampled based on \code{\link{runif}}. Default to 1 (100\% deviation of all parameters).}
+\item{random.borders}{The ranges from which the random initial parameter conditions for all optim.runs > 1 are sampled. Can be either given as a vector containing the relative deviations for all parameters or as a matrix containing in its first column the lower and in its second column the upper border values. Parameters are uniformly sampled based on \code{\link{runif}}. Default to 1 (100\% deviation of all parameters). Alternatively, functions such as \code{\link{rnorm}}, \code{\link{rchisq}}, etc. can be used if the additional arguments are passed along as well.}
 
 \item{con.tol}{The convergence tolerance of each fitting run (see Details). Default is set to 0.1.}
 
 \item{control.optim}{Control parameters passed along to \code{optim}. For more details, see \code{\link{optim}}.}
+
+\item{parscale.pars}{Logical. If TRUE (default), the \code{parscale} option will be used when fitting with \code{\link{optim}}. This is helpful, if the parameter values are on different scales.}
+
+\item{scaling}{Numeric vector determining how newly added model parameters are scaled. Only needed if \code{parscale.pars} is TRUE.}
 
 \item{...}{Additional parameters.}
 }

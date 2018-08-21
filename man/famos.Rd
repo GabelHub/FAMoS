@@ -8,8 +8,8 @@ famos(init.par, fit.fn, nr.of.data, homedir = getwd(), do.not.fit = NULL,
   method = "forward", init.model.type = "random", refit = FALSE,
   optim.runs = 5, information.criterion = "AICc", default.val = NULL,
   swap.parameters = NULL, critical.parameters = NULL, random.borders = 1,
-  control.optim = list(maxit = 1000), con.tol = 0.1, save.performance = T,
-  future.off = F, ...)
+  control.optim = list(maxit = 1000), parscale.pars = TRUE, con.tol = 0.1,
+  save.performance = TRUE, future.off = FALSE, ...)
 }
 \arguments{
 \item{init.par}{A named vector containing the initial parameter values.}
@@ -38,9 +38,11 @@ famos(init.par, fit.fn, nr.of.data, homedir = getwd(), do.not.fit = NULL,
 
 \item{critical.parameters}{A list specifying sets of critical parameters. Critical sets are parameters sets, of which at least one parameter per set has to be present in each tested model. Default to NULL.}
 
-\item{random.borders}{The ranges from which the random initial parameter conditions for all \code{optim.runs} larger than one are sampled. Can be either given as a vector containing the relative deviations for all parameters or as a matrix containing in its first column the lower and in its second column the upper border values. Parameters are uniformly sampled based on \code{\link{runif}}. Default to 1 (100\% deviation of all parameters).}
+\item{random.borders}{The ranges from which the random initial parameter conditions for all \code{optim.runs} larger than one are sampled. Can be either given as a vector containing the relative deviations for all parameters or as a matrix containing in its first column the lower and in its second column the upper border values. Parameters are uniformly sampled based on \code{\link{runif}}. Default to 1 (100\% deviation of all parameters). Alternatively, functions such as \code{\link{rnorm}}, \code{\link{rchisq}}, etc. can be used if the additional arguments are passed along as well.}
 
 \item{control.optim}{Control parameters passed along to \code{optim}. For more details, see \code{\link{optim}}.}
+
+\item{parscale.pars}{Logical. If TRUE (default), the \code{parscale} option will be used when fitting with \code{\link{optim}}. This is helpful, if the parameter values are on different scales.}
 
 \item{con.tol}{The absolute convergence tolerance of each fitting run (see Details). Default is set to 0.1.}
 

@@ -12,6 +12,8 @@
 #' @param random.borders The ranges from which the random initial parameter conditions for all optim.runs > 1 are sampled. Can be either given as a vector containing the relative deviations for all parameters or as a matrix containing in its first column the lower and in its second column the upper border values. Parameters are uniformly sampled based on \code{\link{runif}}. Default to 1 (100\% deviation of all parameters). Alternatively, functions such as \code{\link{rnorm}}, \code{\link{rchisq}}, etc. can be used if the additional arguments are passed along as well.
 #' @param con.tol The convergence tolerance of each fitting run (see Details). Default is set to 0.1.
 #' @param control.optim Control parameters passed along to \code{optim}. For more details, see \code{\link{optim}}.
+#' @param parscale.pars Logical. If TRUE (default), the \code{parscale} option will be used when fitting with \code{\link{optim}}. This is helpful, if the parameter values are on different scales.
+#' @param scaling Numeric vector determining how newly added model parameters are scaled. Only needed if \code{parscale.pars} is TRUE.
 #' @param ... Additional parameters.
 #' @details The fitting routine of \code{base.optim} is based on the function \code{\link{optim}}. The number of fitting runs can be specified by the \code{optim.runs} parameter in the \code{\link{famos}} function. Here, the first fitting run takes the parameters supplied in \code{parms} as a starting condition, while all following fitting runs sample new initial sets according to a uniform distribution based on the intervals [\code{parms} - \code{abs}(\code{parms}), \code{parms} + \code{abs}(\code{parms})].
 #' Additionally, each fitting run is based on a \code{while}-loop that compares the outcome of the previous and the current fit. Each fitting run is terminated when the specified convergence tolerance \code{con.tol} is reached.
@@ -60,6 +62,8 @@ base.optim <- function(binary,
                        random.borders = 1,
                        con.tol = 0.1,
                        control.optim = list(maxit = 1000),
+                       parscale.pars = TRUE,
+                       scaling = NULL,
                        ...) {
 
   #sink output to a log file
@@ -90,9 +94,6 @@ base.optim <- function(binary,
     #print number of successful runs
     cat(paste0("\nFitting run # ", k, "\n"))
 
-    # update status file to number of current fit run
-    #saveRDS(object = k, file = paste0(homedir, "/FAMoS-Results/Status/status", paste(binary, collapse=""), ".rds"))
-
     #check if initial parameters set is working
     if(k == 1){
       #take the parameter combination from the currently best model
@@ -116,6 +117,7 @@ base.optim <- function(binary,
     }else{
       #get random initial conditions and test if they work
       works <- FALSE
+      tries <- 0
       while(works == FALSE){
         if(is.vector(random.borders)){
           if(length(random.borders) == 1){
@@ -143,7 +145,8 @@ base.optim <- function(binary,
                                   min = random.min,
                                   max = random.max)
         }else if(is.function(random.borders)){
-          ran.par <- R.utils::doCall(random.borders, args = c(list(n = length(fit.vector)), list(...)))
+          ran.par <- R.utils::doCall(random.borders, args = c(list(n = length(parms)), list(...)))
+          ran.par <- ran.par[-no.fit]
         }else{
           stop("random.borders must be a number, a vector or a matrix!")
         }
@@ -155,6 +158,11 @@ base.optim <- function(binary,
                                            default.val = default.val,
                                            binary = binary,
                                            ...))
+
+        tries <- tries + 1
+        if(tries > 100){
+          stop("Tried 100 times to sample valid starting conditions for optim, but failed. Please check if 'random.borders' is correctly specified.")
+        }
       }
       #print parameter sets for the log files
       print(ran.par)
@@ -175,9 +183,16 @@ base.optim <- function(binary,
       #update run
       runs = runs + 1
 
+      #use scaled parameters for optim
+      if(parscale.pars == TRUE){
+        control.optim.x <- c(control.optim,
+                           list(parscale = parscale.famos(par = opt.par, scale = 0.1*abs(opt.par), correction = scaling)))
+      }else{
+        control.optim.x <- control.optim
+      }
+
+
       #run optim
-      #options(warn = -1)
-      #capture.output(
       opt <- stats::optim(par = opt.par,
                           fn = combine.and.fit,
                           par.names = names(parms),
@@ -185,8 +200,7 @@ base.optim <- function(binary,
                           default.val = default.val,
                           binary = binary,
                           ...,
-                          control = control.optim)
-      #)
+                          control = control.optim.x)
       opt.run <- opt$value
       opt.par <- opt$par
 
@@ -199,7 +213,6 @@ base.optim <- function(binary,
 
       cat(paste(opt.run, "\n"))
     }
-    #options(warn = 0)
     #test if current run was better
     if(k == 1 || opt.run < opt.min){
       opt.min <- opt.run
@@ -255,13 +268,6 @@ base.optim <- function(binary,
 
   }
 
-  #update the status file that corresponds with this model for the progression of the main routine
-  status <-"done"
-  saveRDS(object = status,
-          file = paste0(homedir,
-                        "/FAMoS-Results/Status/status",
-                        paste(binary, collapse=""),
-                        ".rds"))
-  cat("\nStatus file updated. Fitting done.\n")
+  cat("\nFitting done.\n")
   sink()
 }

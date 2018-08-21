@@ -23,6 +23,5 @@ All files will be stored in the main folder "FAMoS-Results". It contains the fol
   \item{Fits}{Contains the fitted parameter values of each of the tested models.}
   \item{LogFiles}{Contains the log files of the individual model fitting runs.}
   \item{TestedModels}{Contains the binary information of all of the tested models.}
-  \item{Status}{Contains the status files of the individual model fitting runs.}
   }
 }

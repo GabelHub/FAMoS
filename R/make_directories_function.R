@@ -9,7 +9,6 @@
 #'   \item{Fits}{Contains the fitted parameter values of each of the tested models.}
 #'   \item{LogFiles}{Contains the log files of the individual model fitting runs.}
 #'   \item{TestedModels}{Contains the binary information of all of the tested models.}
-#'   \item{Status}{Contains the status files of the individual model fitting runs.}
 #'   }
 #'
 #' @export
@@ -23,5 +22,4 @@ make.directories <- function(homedir) {
   dir.create(paste0(dir, "/Fits"), showWarnings = F)
   dir.create(paste0(dir, "/LogFiles"), showWarnings = F)
   dir.create(paste0(dir, "/TestedModels"), showWarnings = F)
-  dir.create(paste0(dir, "/Status"), showWarnings = F)
 }

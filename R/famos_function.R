@@ -16,6 +16,7 @@
 #' @param critical.parameters A list specifying sets of critical parameters. Critical sets are parameters sets, of which at least one parameter per set has to be present in each tested model. Default to NULL.
 #' @param random.borders The ranges from which the random initial parameter conditions for all \code{optim.runs} larger than one are sampled. Can be either given as a vector containing the relative deviations for all parameters or as a matrix containing in its first column the lower and in its second column the upper border values. Parameters are uniformly sampled based on \code{\link{runif}}. Default to 1 (100\% deviation of all parameters). Alternatively, functions such as \code{\link{rnorm}}, \code{\link{rchisq}}, etc. can be used if the additional arguments are passed along as well.
 #' @param control.optim Control parameters passed along to \code{optim}. For more details, see \code{\link{optim}}.
+#' @param parscale.pars Logical. If TRUE (default), the \code{parscale} option will be used when fitting with \code{\link{optim}}. This is helpful, if the parameter values are on different scales.
 #' @param con.tol The absolute convergence tolerance of each fitting run (see Details). Default is set to 0.1.
 #' @param save.performance Logical. If TRUE, the performance of \code{FAMoS} will be evaluated in each iteration via \code{\link{famos.performance}}, which will save the corresponding plot into the folder "FAMoS-Results/Figures/" (starting from iteration 3) and simultaneously show it on screen. Default to TRUE.
 #' @param future.off Logical. If TRUE, FAMoS runs without the use of \code{futures}. Useful for debugging.
@@ -83,9 +84,10 @@ famos <- function(init.par,
                   critical.parameters = NULL,
                   random.borders = 1,
                   control.optim = list(maxit = 1000),
+                  parscale.pars = TRUE,
                   con.tol = 0.1,
-                  save.performance = T,
-                  future.off = F,
+                  save.performance = TRUE,
+                  future.off = FALSE,
                   ...
 ) {
   #test the appropriateness of parameters
@@ -171,6 +173,10 @@ famos <- function(init.par,
   if(is.null(do.not.fit) != TRUE){
     do.not.fit <- which( (names(init.par) %in% do.not.fit) == TRUE)
   }
+
+  #set scaling values
+  scaling.values <- abs(init.par)
+  scaling.values[scaling.values == 0] <- 1
 
   if(length(init.model.type) == 1 && (init.model.type == "global" || init.model.type == "random")){
     switch (init.model.type,
@@ -464,17 +470,7 @@ famos <- function(init.par,
     #Job submission####
     #submit each individual model to the cluster if it hasn't been tested before
     for(j in 1:ncol(curr.model.all)){
-      if(file.exists(paste0(homedir, "/FAMoS-Results/Fits/Model",paste(curr.model.all[,j], collapse =""), ".rds")) == FALSE  ||
-         refit  ||
-         ifelse(file.exists(paste0(homedir,
-                                   "/FAMoS-Results/Status/status",
-                                   paste(curr.model.all[,j], collapse=""),
-                                   ".rds")),
-                readRDS(paste0(homedir,
-                               "/FAMoS-Results/Status/status",
-                               paste(curr.model.all[,j], collapse=""),
-                               ".rds")) != "done",
-                T)){
+      if(file.exists(paste0(homedir, "/FAMoS-Results/Fits/Model",paste(curr.model.all[,j], collapse =""), ".rds")) == FALSE  ||  refit){
         cat(paste0("Job ID for model ", formatC(j, width = 2, format = "d", flag = "0"), " - ", paste(curr.model.all[,j], collapse="")), sep = "\n")
 
         if(future.off == F){
@@ -490,6 +486,8 @@ famos <- function(init.par,
                               default.val = default.val,
                               random.borders = random.borders,
                               control.optim = control.optim,
+                              parscale.pars = parscale.pars,
+                              scaling = scaling.values,
                               con.tol = con.tol,
                               ...)
                  },
@@ -508,6 +506,8 @@ famos <- function(init.par,
                      default.val = default.val,
                      random.borders = random.borders,
                      control.optim = control.optim,
+                     parscale.pars = parscale.pars,
+                     scaling = scaling.values,
                      con.tol = con.tol,
                      ...)
         }
@@ -519,7 +519,7 @@ famos <- function(init.par,
       }
     }
 
-    if(future.off == F){
+    if(future.off == FALSE){
       #set looping variable
       waiting <- TRUE
       waited.models <- rep(1,ncol(curr.model.all))
@@ -527,7 +527,7 @@ famos <- function(init.par,
       time.passed <- -1
       ticker <- 0
 
-      #check if the status file has been set to 'done', if not check if job is still running. If the job is not running anymore restart.
+      #check if the job is still running. If the job is not running anymore restart.
       while(waiting == TRUE){
         update.log <- FALSE
         waiting <- FALSE
@@ -538,19 +538,11 @@ famos <- function(init.par,
             waiting <- TRUE
           }else{
 
-            while(file.exists(paste0(homedir,
-                                     "/FAMoS-Results/Status/status",
-                                     paste(curr.model.all[,j], collapse=""),
-                                     ".rds"))
-                  == FALSE){
-              Sys.sleep(5)
-            }
-
-            #check if model is done
-            if(readRDS(paste0(homedir,
-                              "/FAMoS-Results/Status/status",
-                              paste(curr.model.all[,j], collapse=""),
-                              ".rds")) != "done"){
+            #check if output was generated
+            if(!file.exists(paste0(homedir,
+                                   "/FAMoS-Results/Fits/Model",
+                                   paste(curr.model.all[,j], collapse=""),
+                                   ".rds"))){
 
               assign(paste0("model",j),
                      future::future({
@@ -564,6 +556,8 @@ famos <- function(init.par,
                                   default.val = default.val,
                                   random.borders = random.borders,
                                   control.optim = control.optim,
+                                  parscale.pars = parscale.pars,
+                                  scaling = scaling.values,
                                   con.tol = con.tol,
                                   ...)
                      },
@@ -571,7 +565,7 @@ famos <- function(init.par,
                      ...
                      )
               )
-              cat(paste0("Model ",j," was resubmitted"), sep = "\n")
+              cat(paste0("Future terminated but no output file was generated. Model ",j," was automatically resubmitted. If this message repeats, check the log file for more information or use 'future.off = TRUE' to debug."), sep = "\n")
 
               waiting <- TRUE
             }else{
