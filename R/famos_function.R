@@ -543,7 +543,13 @@ famos <- function(init.par,
                                    "/FAMoS-Results/Fits/Model",
                                    paste(curr.model.all[,j], collapse=""),
                                    ".rds"))){
+              Sys.sleep(5)
+            }
 
+            if(!file.exists(paste0(homedir,
+                                   "/FAMoS-Results/Fits/Model",
+                                   paste(curr.model.all[,j], collapse=""),
+                                   ".rds"))){
               assign(paste0("model",j),
                      future::future({
                        base.optim(binary = curr.model.all[,j],
@@ -586,10 +592,10 @@ famos <- function(init.par,
           Sys.sleep(5)
         }
 
-        time.passed <- round(difftime(Sys.time(),time.waited, units = "secs")[[1]],2) - ticker*300
+        time.passed <- round(difftime(Sys.time(),time.waited, units = "secs")[[1]],2) - ticker*600
 
         #output the log for the models that is waited for (every 5 min)
-        if( (time.passed > 300) ){
+        if( (time.passed > 600) ){
           ticker <- ticker + 1
           nr.running <-  length(which(waited.models == 1))
 
@@ -607,7 +613,7 @@ famos <- function(init.par,
               cat("Waiting for fits of all models", sep = "\n")
             }else{
               cat("Waiting for fits of these models:", sep = "\n")
-              cat(paste0(which(waited.models == 1)))
+              cat(paste0(which(waited.models == 1)), sep = "\n")
             }
           }
         }
