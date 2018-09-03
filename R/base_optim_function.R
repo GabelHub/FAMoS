@@ -169,7 +169,7 @@ base.optim <- function(binary,
     }
     #specify parameters (only for the first run)
     opt.run <- 10
-    opt.previous <- 100 # the difference of opt.run and opt.previous has to be bigger than 0.1, but the values are not important
+    opt.previous <- Inf # the difference of opt.run and opt.previous has to be bigger than 0.1, but the values are not important
     runs = 1
 
     while(abs(opt.run - opt.previous) > con.tol){#test if the current run yielded better results than the previous. If yes keep optimising
@@ -186,7 +186,7 @@ base.optim <- function(binary,
       #use scaled parameters for optim
       if(parscale.pars == TRUE){
         control.optim.x <- c(control.optim,
-                           list(parscale = parscale.famos(par = opt.par, scale = 0.1*abs(opt.par), correction = scaling)))
+                           list(parscale = parscale.famos(par = opt.par, scale = 0.5*abs(opt.par), correction = scaling)))
       }else{
         control.optim.x <- control.optim
       }

@@ -16,10 +16,22 @@
 
 make.directories <- function(homedir) {
   dir <- paste0(homedir, "/FAMoS-Results")
-  dir.create(dir, showWarnings = F)
-  dir.create(paste0(dir, "/BestModel"), showWarnings = F)
-  dir.create(paste0(dir, "/Figures"), showWarnings = F)
-  dir.create(paste0(dir, "/Fits"), showWarnings = F)
-  dir.create(paste0(dir, "/LogFiles"), showWarnings = F)
-  dir.create(paste0(dir, "/TestedModels"), showWarnings = F)
+  if(!dir.exists(dir)){
+    dir.create(dir, showWarnings = F)
+  }
+  if(!dir.exists(paste0(dir, "/BestModel"))){
+    dir.create(paste0(dir, "/BestModel"), showWarnings = F)
+  }
+  if(!dir.exists(paste0(dir, "/Figures"))){
+    dir.create(paste0(dir, "/Figures"), showWarnings = F)
+  }
+  if(!dir.exists(paste0(dir, "/Fits"))){
+    dir.create(paste0(dir, "/Fits"), showWarnings = F)
+  }
+  if(!dir.exists(paste0(dir, "/LogFiles"))){
+    dir.create(paste0(dir, "/LogFiles"), showWarnings = F)
+  }
+  if(!dir.exists(paste0(dir, "/TestedModels"))){
+    dir.create(paste0(dir, "/TestedModels"), showWarnings = F)
+  }
 }

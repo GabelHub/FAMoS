@@ -142,6 +142,7 @@ famos <- function(init.par,
     mrun <- max(mrun_old) + 1
   }
   mrun <- formatC(mrun, width = 3, format = "d", flag = "0") # width determines maximum amount of runs, 3 = 999, 4 = 9999 and so on
+  #mrun <- mrun.x
 
   cat(paste0("\nAlgorithm run: ", mrun), sep = "\n")
 
@@ -610,10 +611,11 @@ famos <- function(init.par,
           if(update.log == TRUE){
             #calculate difference in time
             if(nr.running == ncol(curr.model.all)){
-              cat("Waiting for fits of all models", sep = "\n")
+              cat("Waiting for fits of all models ...", sep = "\n")
             }else{
               cat("Waiting for fits of these models:", sep = "\n")
-              cat(paste0(which(waited.models == 1)), sep = "\n")
+              cat(paste0(which(waited.models == 1)))
+              cat("",sep = "\n")
             }
           }
         }
