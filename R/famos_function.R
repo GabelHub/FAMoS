@@ -16,10 +16,11 @@
 #' @param critical.parameters A list specifying sets of critical parameters. Critical sets are parameters sets, of which at least one parameter per set has to be present in each tested model. Default to NULL.
 #' @param random.borders The ranges from which the random initial parameter conditions for all \code{optim.runs} larger than one are sampled. Can be either given as a vector containing the relative deviations for all parameters or as a matrix containing in its first column the lower and in its second column the upper border values. Parameters are uniformly sampled based on \code{\link{runif}}. Default to 1 (100\% deviation of all parameters). Alternatively, functions such as \code{\link{rnorm}}, \code{\link{rchisq}}, etc. can be used if the additional arguments are passed along as well.
 #' @param control.optim Control parameters passed along to \code{optim}. For more details, see \code{\link{optim}}.
-#' @param parscale.pars Logical. If TRUE (default), the \code{parscale} option will be used when fitting with \code{\link{optim}}. This is helpful, if the parameter values are on different scales.
+#' @param parscale.pars Logical. If TRUE (default), the \code{parscale} option will be used when fitting with \code{\link{optim}}. This can help to speed up the fitting procedure, if the parameter values are on different scales.
 #' @param con.tol The absolute convergence tolerance of each fitting run (see Details). Default is set to 0.1.
 #' @param save.performance Logical. If TRUE, the performance of \code{FAMoS} will be evaluated in each iteration via \code{\link{famos.performance}}, which will save the corresponding plot into the folder "FAMoS-Results/Figures/" (starting from iteration 3) and simultaneously show it on screen. Default to TRUE.
 #' @param future.off Logical. If TRUE, FAMoS runs without the use of \code{futures}. Useful for debugging.
+#' @param log.interval The interval (in seconds) at which FAMoS informs about the current status, i.e. which models are still running and how much time has passed. Default to 600 (= 10 minutes).
 #' @param ... Other arguments that will be passed along to \code{\link{future}}, \code{\link{optim}} or the user-specified cost function \code{fit.fn}.
 #' @details In each iteration, the FAMoS finds all neighbouring models based on the current model and method, and subsequently tests them. If one of the tested models performs better than the current model, the model, but not the method, will be updated. Otherwise, the method, but not the model, will be adaptively changed, depending on the previously used methods.
 #' @export
@@ -88,6 +89,7 @@ famos <- function(init.par,
                   con.tol = 0.1,
                   save.performance = TRUE,
                   future.off = FALSE,
+                  log.interval = 600,
                   ...
 ) {
   #test the appropriateness of parameters
@@ -527,6 +529,7 @@ famos <- function(init.par,
       time.waited <- Sys.time()
       time.passed <- -1
       ticker <- 0
+      ticker.time <- log.interval
 
       #check if the job is still running. If the job is not running anymore restart.
       while(waiting == TRUE){
@@ -539,12 +542,12 @@ famos <- function(init.par,
             waiting <- TRUE
           }else{
 
-            #check if output was generated
+            #check if output was generated, including waiting period if the cluster is very busy
             if(!file.exists(paste0(homedir,
                                    "/FAMoS-Results/Fits/Model",
                                    paste(curr.model.all[,j], collapse=""),
                                    ".rds"))){
-              Sys.sleep(5)
+              Sys.sleep(10)
             }
 
             if(!file.exists(paste0(homedir,
@@ -593,10 +596,10 @@ famos <- function(init.par,
           Sys.sleep(5)
         }
 
-        time.passed <- round(difftime(Sys.time(),time.waited, units = "secs")[[1]],2) - ticker*600
+        time.passed <- round(difftime(Sys.time(),time.waited, units = "secs")[[1]],2) - ticker*ticker.time
 
         #output the log for the models that is waited for (every 5 min)
-        if( (time.passed > 600) ){
+        if( (time.passed > ticker.time) ){
           ticker <- ticker + 1
           nr.running <-  length(which(waited.models == 1))
 

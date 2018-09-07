@@ -335,6 +335,10 @@ random.bord5 <- rnorm #note that in this case, 'mean' and 'sd' need to passed to
 
 Specifies the control options used for *optim* (see *optim.runs* for more details).
 
+#### parscale.pars
+
+If parameters values span over several orders of magnitudes, using the built-in option *parscale* in *optim* can reduce the numbers of evaluations needed. Setting *parscale.pars = TRUE* automatically adjusts the scaling procedure in *optim*. However, if all parameters have the same order of magnitude, *parscale.pars = FALSE* is usually more suitable.
+
 #### con.tol
 
 Specifies the absolute convergence tolerance used for *optim* (see *optim.runs* for more details).
@@ -346,3 +350,7 @@ If true, a plot of the current FAMoS performance is stored in the folder "FAMoS-
 #### future.off
 
 Initially, FAMoS can be tricky to set up. To this end, the use of *futures* can be switched off, which prints all function output and error messages directly into the console. This can be quite useful for debugging.
+
+#### log.interval
+
+If futures are used during a FAMoS run, there will be a message printed every *X* seconds, informing the user which models fits are still running. *log.interval* allows to specify the interval of *X*. Default to 10 minutes (600 seconds).

@@ -186,7 +186,7 @@ base.optim <- function(binary,
       #use scaled parameters for optim
       if(parscale.pars == TRUE){
         control.optim.x <- c(control.optim,
-                           list(parscale = parscale.famos(par = opt.par, scale = 0.5*abs(opt.par), correction = scaling)))
+                           list(parscale = parscale.famos(par = opt.par, scale = abs(opt.par), correction = scaling)))
       }else{
         control.optim.x <- control.optim
       }

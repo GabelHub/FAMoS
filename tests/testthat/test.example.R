@@ -1,11 +1,11 @@
 context("Test basic example")
 library(future.batchtools)
-plan(sequential)
-
+#plan(sequential)
+plan(multiprocess, workers = availableCores() - 1)
 system("rm -r tests/testthat/FAMoS-Results")
 system("rm -r FAMoS-Results")
 
-inits <- c(p1 = 3, p2 = 4, p3 = -2, p4 = 2, p5 = 0)
+inits <- c(p1 = 3, p2 = 4, p3 = -2, p4 = 2, p5 = 1)
 
 #create data with standard deviation of 1
 x.values <- 1:7
@@ -38,9 +38,11 @@ res <- famos(init.par = inits,
              fit.fn = cost_function,
              nr.of.data = length(y.values),
              homedir = getwd(),
-             refit = T,
+             refit = TRUE,
              init.model.type = c("p1", "p3"),
              optim.runs = 1,
+             future.off = FALSE,
+             parscale.pars = FALSE,
              random.borders = ran.bord,
              #do.not.fit = dont.fit,
              x.vals = x.values,
