@@ -8,8 +8,9 @@ famos(init.par, fit.fn, nr.of.data, homedir = getwd(), do.not.fit = NULL,
   method = "forward", init.model.type = "random", refit = FALSE,
   optim.runs = 5, information.criterion = "AICc", default.val = NULL,
   swap.parameters = NULL, critical.parameters = NULL, random.borders = 1,
-  control.optim = list(maxit = 1000), parscale.pars = TRUE, con.tol = 0.1,
-  save.performance = TRUE, future.off = FALSE, log.interval = 600, ...)
+  control.optim = list(maxit = 1000), parscale.pars = FALSE,
+  con.tol = 0.01, save.performance = TRUE, future.off = FALSE,
+  log.interval = 600, ...)
 }
 \arguments{
 \item{init.par}{A named vector containing the initial parameter values.}
@@ -42,9 +43,9 @@ famos(init.par, fit.fn, nr.of.data, homedir = getwd(), do.not.fit = NULL,
 
 \item{control.optim}{Control parameters passed along to \code{optim}. For more details, see \code{\link{optim}}.}
 
-\item{parscale.pars}{Logical. If TRUE (default), the \code{parscale} option will be used when fitting with \code{\link{optim}}. This is helpful, if the parameter values are on different scales.}
+\item{parscale.pars}{Logical. If TRUE, the \code{parscale} option will be used when fitting with \code{\link{optim}}. This can help to speed up the fitting procedure, if the parameter values are on different scales. Default to FALSE.}
 
-\item{con.tol}{The absolute convergence tolerance of each fitting run (see Details). Default is set to 0.1.}
+\item{con.tol}{The relative convergence tolerance. \code{famos} will rerun \code{\link{optim}} until the relative improvement between the current and the last fit is less than \code{con.tol}. Default is set to 0.01, meaning the fitting will terminate if the improvement is less than 1\% of the previous value.}
 
 \item{save.performance}{Logical. If TRUE, the performance of \code{FAMoS} will be evaluated in each iteration via \code{\link{famos.performance}}, which will save the corresponding plot into the folder "FAMoS-Results/Figures/" (starting from iteration 3) and simultaneously show it on screen. Default to TRUE.}
 

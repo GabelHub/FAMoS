@@ -6,8 +6,8 @@
 \usage{
 base.optim(binary, parms, fit.fn, nr.of.data, homedir, optim.runs = 5,
   information.criterion = "AICc", default.val = NULL, random.borders = 1,
-  con.tol = 0.1, control.optim = list(maxit = 1000), parscale.pars = TRUE,
-  scaling = NULL, ...)
+  con.tol = 0.01, control.optim = list(maxit = 1000),
+  parscale.pars = TRUE, scaling = NULL, ...)
 }
 \arguments{
 \item{binary}{A vector containing zeroes and ones. Zero indicates that the corresponding parameter is not fitted.}

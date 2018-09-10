@@ -5,7 +5,7 @@
 \title{Plot Model Information Criteria}
 \usage{
 ic.order(input = getwd(), mrun = NULL, number = NULL, ic = "AICc",
-  colour.par = NULL, save.output = NULL, log = FALSE)
+  colour.par = NULL, save.output = NULL, ...)
 }
 \arguments{
 \item{input}{Either a string containing the directory which holds the "FAMoS-Results" folder or a matrix containing the tested models along with the respective information criteria. Default to \code{getwd()}.}
@@ -20,10 +20,10 @@ ic.order(input = getwd(), mrun = NULL, number = NULL, ic = "AICc",
 
 \item{save.output}{A string containing the location and name under which the figure should be saved (format is .pdf). Default to NULL.}
 
-\item{log}{If TRUE, the scale of the y-axis will be plotted logarithmically. Default to FALSE.}
+\item{...}{Additional parameters that will be passed on to \code{\link{barplot}}.}
 }
 \value{
-Barplot showing the ordered information criteria of the tested models.
+Barplot showing the ordered information criteria of the tested models. Also returns a data frame containing each unique tested model with its best information criteria.
 }
 \description{
 Plots the information criteria of the tested models in ascending order.

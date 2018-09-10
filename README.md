@@ -244,7 +244,7 @@ Refitting makes sense if the model optimisation is dependent on the initial para
 
 Finding the best fit for each model is crucial to guarantee a correct model selection procedure. Fitting in FAMoS is based on the built-in function *optim*, which is repeatedly evaluated. Here, *optim.runs* gives the number of fitting attempts with *different* starting conditions. Here, the first fitting attempt takes the inherited parameter vectors from previous runs, while all following fitting attempts randomly samples parameter vectors to test.
 
-As the default optimisation method is based on the Nelder-Mead approach, which - in my experience - tends to not give reliable results if only one optimisation is performed, the optimisation for each fitting attempt is wrapped into a while-loop, in which the fitting procedure is repeatedly halted and restarted (based on the options *control.optim*), until the absolute convergence tolerance in *con.tol* is reached.
+As the default optimisation method is based on the Nelder-Mead approach, which - in my experience - tends to not give reliable results if only one optimisation is performed, the optimisation for each fitting attempt is wrapped into a while-loop, in which the fitting procedure is repeatedly halted and restarted (based on the options *control.optim*), until the relative convergence tolerance in *con.tol* is reached.
 
 The skeleton of the underlying code looks like this:
 
@@ -253,7 +253,7 @@ The skeleton of the underlying code looks like this:
 for(i in 1:optim.runs){#number of fitting attempts specified by optim.runs
   start.parameters <- either the inherited or a randomly sampled set (for i > 2)
   
-  while((optim.old - optim.new) < con.tol){
+  while(abs((old.optim.value - new.optim.value)/old.optim.value) < con.tol){
     ... run optim with start.parameters ...
     start.parameters <- new parameters estimated by optim
   }
@@ -337,11 +337,11 @@ Specifies the control options used for *optim* (see *optim.runs* for more detail
 
 #### parscale.pars
 
-If parameters values span over several orders of magnitudes, using the built-in option *parscale* in *optim* can reduce the numbers of evaluations needed. Setting *parscale.pars = TRUE* automatically adjusts the scaling procedure in *optim*. However, if all parameters have the same order of magnitude, *parscale.pars = FALSE* is usually more suitable.
+If parameters values span over several orders of magnitudes, using the built-in option *parscale* in *optim* can reduce the numbers of evaluations needed. Setting *parscale.pars = TRUE* automatically adjusts the scaling procedure in *optim*. In our experience, using *parscale.pars = TRUE* is usually beneficial if a large number of parameters with different orders of magnitude need to be fitted. However, the actual performance is very problem-specific and therefore we would recommend initially testing both approaches to see which one performs better for the problem at hand. Also, one needs to make sure that the other options given in *control.optim* and *con.tol* are specified appropriately.
 
 #### con.tol
 
-Specifies the absolute convergence tolerance used for *optim* (see *optim.runs* for more details).
+Specifies the relative convergence tolerance and determines when the repeated use *optim* fits will be terminated (see *optim.runs* for more details).
 
 #### save.performance
 

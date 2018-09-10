@@ -10,7 +10,7 @@
 #' @param information.criterion The information criterion the model selection will be based on. Options are "AICc", "AIC" and "BIC". Default to "AICc".
 #' @param default.val A named list containing the values that the non-fitted parameters should take. If NULL, all non-fitted parameters will be set to zero. Default values can be either given by a numeric value or by the name of the corresponding parameter the value should be inherited from (NOTE: In this case the corresponding parameter entry has to contain a numeric value). Default to NULL.
 #' @param random.borders The ranges from which the random initial parameter conditions for all optim.runs > 1 are sampled. Can be either given as a vector containing the relative deviations for all parameters or as a matrix containing in its first column the lower and in its second column the upper border values. Parameters are uniformly sampled based on \code{\link{runif}}. Default to 1 (100\% deviation of all parameters). Alternatively, functions such as \code{\link{rnorm}}, \code{\link{rchisq}}, etc. can be used if the additional arguments are passed along as well.
-#' @param con.tol The convergence tolerance of each fitting run (see Details). Default is set to 0.1.
+#' @param con.tol The relative convergence tolerance. \code{famos} will rerun \code{\link{optim}} until the relative improvement between the current and the last fit is less than \code{con.tol}. Default is set to 0.01, meaning the fitting will terminate if the improvement is less than 1\% of the previous value.
 #' @param control.optim Control parameters passed along to \code{optim}. For more details, see \code{\link{optim}}.
 #' @param parscale.pars Logical. If TRUE (default), the \code{parscale} option will be used when fitting with \code{\link{optim}}. This is helpful, if the parameter values are on different scales.
 #' @param scaling Numeric vector determining how newly added model parameters are scaled. Only needed if \code{parscale.pars} is TRUE.
@@ -60,7 +60,7 @@ base.optim <- function(binary,
                        information.criterion = "AICc",
                        default.val = NULL,
                        random.borders = 1,
-                       con.tol = 0.1,
+                       con.tol = 0.01,
                        control.optim = list(maxit = 1000),
                        parscale.pars = TRUE,
                        scaling = NULL,
@@ -172,7 +172,7 @@ base.optim <- function(binary,
     opt.previous <- Inf # the difference of opt.run and opt.previous has to be bigger than 0.1, but the values are not important
     runs = 1
 
-    while(abs(opt.run - opt.previous) > con.tol){#test if the current run yielded better results than the previous. If yes keep optimising
+    repeat{#test if the current run yielded better results than the previous. If yes keep optimising
       # get initial parameter sets for optim
       if(runs == 1){
         opt.par <- ran.par
@@ -180,8 +180,6 @@ base.optim <- function(binary,
       if(runs > 1){
         opt.previous <- opt$value
       }
-      #update run
-      runs = runs + 1
 
       #use scaled parameters for optim
       if(parscale.pars == TRUE){
@@ -189,6 +187,24 @@ base.optim <- function(binary,
                            list(parscale = parscale.famos(par = opt.par, scale = abs(opt.par), correction = scaling)))
       }else{
         control.optim.x <- control.optim
+      }
+
+      if(runs == 1){
+        opt <- stats::optim(par = opt.par,
+                            fn = combine.and.fit,
+                            par.names = names(parms),
+                            fit.fn = fit.fn,
+                            default.val = default.val,
+                            binary = binary,
+                            ...,
+                            control = control.optim.x)
+        opt.par <- opt$par
+        if (opt$value > 1e34 || !is.finite(opt$value)) {
+          abort <- T
+          cat("optim failed. Run skipped.\n")
+          total.tries <- total.tries + 1
+          break
+        }
       }
 
 
@@ -204,13 +220,18 @@ base.optim <- function(binary,
       opt.run <- opt$value
       opt.par <- opt$par
 
-      if (opt.run > 1e34) {
+      if (opt.run > 1e34 || !is.finite(opt$value)) {
         abort <- T
         cat("optim failed. Run skipped.\n")
         total.tries <- total.tries + 1
         break
       }
 
+      if(abs((opt.run - opt.previous)/opt.previous) < con.tol){
+        break
+      }
+      #update run
+      runs = runs + 1
       cat(paste(opt.run, "\n"))
     }
     #test if current run was better
