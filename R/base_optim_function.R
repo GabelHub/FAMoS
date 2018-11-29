@@ -62,7 +62,7 @@ base.optim <- function(binary,
                        random.borders = 1,
                        con.tol = 0.01,
                        control.optim = list(maxit = 1000),
-                       parscale.pars = TRUE,
+                       parscale.pars = FALSE,
                        scaling = NULL,
                        ...) {
 

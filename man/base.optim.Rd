@@ -7,7 +7,7 @@
 base.optim(binary, parms, fit.fn, nr.of.data, homedir, optim.runs = 5,
   information.criterion = "AICc", default.val = NULL, random.borders = 1,
   con.tol = 0.01, control.optim = list(maxit = 1000),
-  parscale.pars = TRUE, scaling = NULL, ...)
+  parscale.pars = FALSE, scaling = NULL, ...)
 }
 \arguments{
 \item{binary}{A vector containing zeroes and ones. Zero indicates that the corresponding parameter is not fitted.}
@@ -28,7 +28,7 @@ base.optim(binary, parms, fit.fn, nr.of.data, homedir, optim.runs = 5,
 
 \item{random.borders}{The ranges from which the random initial parameter conditions for all optim.runs > 1 are sampled. Can be either given as a vector containing the relative deviations for all parameters or as a matrix containing in its first column the lower and in its second column the upper border values. Parameters are uniformly sampled based on \code{\link{runif}}. Default to 1 (100\% deviation of all parameters). Alternatively, functions such as \code{\link{rnorm}}, \code{\link{rchisq}}, etc. can be used if the additional arguments are passed along as well.}
 
-\item{con.tol}{The convergence tolerance of each fitting run (see Details). Default is set to 0.1.}
+\item{con.tol}{The relative convergence tolerance. \code{famos} will rerun \code{\link{optim}} until the relative improvement between the current and the last fit is less than \code{con.tol}. Default is set to 0.01, meaning the fitting will terminate if the improvement is less than 1\% of the previous value.}
 
 \item{control.optim}{Control parameters passed along to \code{optim}. For more details, see \code{\link{optim}}.}
 
