@@ -5,9 +5,9 @@
 \title{Fit Parameters of a Model}
 \usage{
 base.optim(binary, parms, fit.fn, nr.of.data, homedir, optim.runs = 5,
-  information.criterion = "AICc", default.val = NULL, random.borders = 1,
-  con.tol = 0.01, control.optim = list(maxit = 1000),
-  parscale.pars = FALSE, scaling = NULL, ...)
+  information.criterion = "AICc", default.val = NULL,
+  random.borders = 1, con.tol = 0.01, control.optim = list(maxit =
+  1000), parscale.pars = FALSE, scaling = NULL, ...)
 }
 \arguments{
 \item{binary}{A vector containing zeroes and ones. Zero indicates that the corresponding parameter is not fitted.}

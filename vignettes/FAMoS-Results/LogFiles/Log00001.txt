@@ -1,0 +1,8 @@
+
+Fitting run # 1
+p5 
+ 2 
+149798.089562179 
+No results file present. Current parameters saved.
+
+Fitting done.

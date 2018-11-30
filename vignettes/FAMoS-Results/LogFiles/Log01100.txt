@@ -1,0 +1,8 @@
+
+Fitting run # 1
+         p2          p3 
+4.98801e-11 3.00000e+00 
+1471965898217.25 
+No results file present. Current parameters saved.
+
+Fitting done.

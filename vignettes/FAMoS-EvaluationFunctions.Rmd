@@ -75,15 +75,15 @@ Note that the performance of FAMoS can also be checked while the algorithm is st
 In a next step, we can check how the tested models are distributed in terms of the used information criterion (here: AICc). To this end, we call the function _ic.order_.
 
 ```{r ic.order, fig.width = 4, fig.align= "center", fig.height=4}
- ic.order(input = getwd(), mrun = res$mrun, log = T)
+ ic.order(input = getwd(), mrun = res$mrun, log = "y")
 ```
 
 We can also use this function to check how certain parameters affect the value of the information criterion
 
 ```{r ic.order2,fig.width = 4, fig.align= "center", fig.height=4}
  par(mfrow = c(1,2))
- ic.order(input = getwd(), mrun = res$mrun, colour.par = "p1", log = T)
- ic.order(input = getwd(), mrun = res$mrun, colour.par = "p5", log = T)
+ ic.order(input = getwd(), mrun = res$mrun, colour.par = "p1", log = "y")
+ ic.order(input = getwd(), mrun = res$mrun, colour.par = "p5", log = "y")
 ```
 
 Here, we can see that all models that contain _p5_ perform much better than models that don't have this parameter.

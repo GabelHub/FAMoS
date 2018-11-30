@@ -12,8 +12,8 @@
 #' @export
 #' @examples
 #' #plot the information criteria
-#' ic.order(input = famos.run, log = TRUE)
-#' ic.order(input = famos.run, log = TRUE, colour.par = "p1")
+#' ic.order(input = famos.run, log = "y")
+#' ic.order(input = famos.run, log = "y", colour.par = "p1")
 
 ic.order <- function(input = getwd(), mrun = NULL, number = NULL, ic = "AICc", colour.par = NULL, save.output = NULL, ...){
 

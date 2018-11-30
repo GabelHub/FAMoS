@@ -4,8 +4,8 @@
 \alias{combine.and.fit}
 \title{Combine and Fit Parameters}
 \usage{
-combine.and.fit(par, par.names, fit.fn, binary = NULL, default.val = NULL,
-  ...)
+combine.and.fit(par, par.names, fit.fn, binary = NULL,
+  default.val = NULL, ...)
 }
 \arguments{
 \item{par}{A named vector containing all parameters that are supposed to be fitted.}

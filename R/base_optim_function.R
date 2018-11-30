@@ -169,7 +169,7 @@ base.optim <- function(binary,
     }
     #specify parameters (only for the first run)
     opt.run <- 10
-    opt.previous <- Inf # the difference of opt.run and opt.previous has to be bigger than 0.1, but the values are not important
+    opt.previous <- 10^300 # the difference of opt.run and opt.previous has to be bigger than 0.1, but the values are not important
     runs = 1
 
     repeat{#test if the current run yielded better results than the previous. If yes keep optimising

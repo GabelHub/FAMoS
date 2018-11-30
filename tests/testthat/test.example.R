@@ -2,7 +2,7 @@ context("Test basic example")
 library(future.batchtools)
 #plan(sequential)
 plan(multiprocess, workers = availableCores() - 1)
-system("rm -r tests/testthat/FAMoS-Results")
+##system("rm -r tests/testthat/FAMoS-Results")
 system("rm -r FAMoS-Results")
 
 inits <- c(p1 = 3, p2 = 4, p3 = -2, p4 = 2, p5 = 1)

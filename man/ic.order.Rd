@@ -30,6 +30,6 @@ Plots the information criteria of the tested models in ascending order.
 }
 \examples{
 #plot the information criteria
-ic.order(input = famos.run, log = TRUE)
-ic.order(input = famos.run, log = TRUE, colour.par = "p1")
+ic.order(input = famos.run, log = "y")
+ic.order(input = famos.run, log = "y", colour.par = "p1")
 }

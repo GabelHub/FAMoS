@@ -4,10 +4,11 @@
 \alias{famos}
 \title{Automated Model Selection}
 \usage{
-famos(init.par, fit.fn, nr.of.data, homedir = getwd(), do.not.fit = NULL,
-  method = "forward", init.model.type = "random", refit = FALSE,
-  optim.runs = 5, information.criterion = "AICc", default.val = NULL,
-  swap.parameters = NULL, critical.parameters = NULL, random.borders = 1,
+famos(init.par, fit.fn, nr.of.data, homedir = getwd(),
+  do.not.fit = NULL, method = "forward", init.model.type = "random",
+  refit = FALSE, optim.runs = 5, information.criterion = "AICc",
+  default.val = NULL, swap.parameters = NULL,
+  critical.parameters = NULL, random.borders = 1,
   control.optim = list(maxit = 1000), parscale.pars = FALSE,
   con.tol = 0.01, save.performance = TRUE, future.off = FALSE,
   log.interval = 600, ...)

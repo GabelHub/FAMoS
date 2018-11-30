@@ -4,8 +4,8 @@
 \alias{famos.performance}
 \title{Plot FAMoS Performance}
 \usage{
-famos.performance(input, path = getwd(), ic = "AICc", save.output = NULL,
-  log = FALSE, plot.style = "block")
+famos.performance(input, path = getwd(), ic = "AICc",
+  save.output = NULL, log = FALSE, plot.style = "block")
 }
 \arguments{
 \item{input}{Either a string giving the three-digit number of the corresponding FAMoS run, e.g "004", or a matrix containing the tested models along with the respective information criteria.}
