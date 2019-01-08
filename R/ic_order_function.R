@@ -12,11 +12,11 @@
 #' @export
 #' @examples
 #' #plot the information criteria
-#' ic.order(input = famos.run, log = "y")
-#' ic.order(input = famos.run, log = "y", colour.par = "p1")
+#' ic.order(input = famos.run, log = TRUE)
+#' ic.order(input = famos.run, log = TRUE, colour.par = "p1")
 
 ic.order <- function(input = getwd(), mrun = NULL, number = NULL, ic = "AICc", colour.par = NULL, save.output = NULL, ...){
-
+  
   switch (ic,
           "AICc" = {ic.index <- 1},
           "AIC"  = {ic.index <- 2},
@@ -42,7 +42,7 @@ ic.order <- function(input = getwd(), mrun = NULL, number = NULL, ic = "AICc", c
             store.res <- cbind(store.res, current.res[,j])
           }
         }
-
+        
       }
       mt <- store.res
     }else{
@@ -60,15 +60,15 @@ ic.order <- function(input = getwd(), mrun = NULL, number = NULL, ic = "AICc", c
   if(length(which(is.na(mt[1,]))) > 0){
     mt <- mt[,-c(which(is.na(mt[1,])))]
   }
-
+  
   mt <- mt[,order(mt[ic.index,])]
-
+  
   #reorder the input files according to the AICc
   aicc <- mt[ic.index,]
-
-
-
-
+  
+  
+  
+  
   #reduce the number of depicted models if specified
   if(is.null(number) == FALSE){
     if(number > ncol(mt)){
@@ -77,7 +77,7 @@ ic.order <- function(input = getwd(), mrun = NULL, number = NULL, ic = "AICc", c
     aicc <- aicc[1:number]
     mt <- mt[,1:number]
   }
-
+  
   #save output file if specified
   if(is.null(save.output) == FALSE){
     grDevices::pdf(file = save.output,
@@ -85,9 +85,9 @@ ic.order <- function(input = getwd(), mrun = NULL, number = NULL, ic = "AICc", c
                    height = 5,
                    useDingbats = F)
   }
-
+  
   row.colours <- rep("black", length(aicc))
-
+  
   #add color for the parameter if specified
   if(is.null(colour.par) == FALSE){
     if(is.element(colour.par, rownames(mt)) == FALSE){
@@ -98,9 +98,9 @@ ic.order <- function(input = getwd(), mrun = NULL, number = NULL, ic = "AICc", c
       row.colours[row.parms] <- "red"
     }
   }
-
-  graphics::par(mfrow = c(1,1), mai = c(1,0.9,0.2,0.2))
-
+  
+  graphics::par(mai = c(1,0.9,0.4,0.2))
+  
   #plot DeltaAICc in order
   do.call(graphics::barplot, c(list(height = as.numeric(aicc),
                                     col = row.colours,
@@ -109,9 +109,10 @@ ic.order <- function(input = getwd(), mrun = NULL, number = NULL, ic = "AICc", c
                                     ylab = ic,
                                     cex.axis = 0.7,
                                     cex.names = 0.7,
-                                    border = row.colours),
-                            list(...)))
-
+                                    border = row.colours,
+                                    main = "Model comparison"),
+                               list(...)))
+  
   #include legend if results are plotted with respect to a model parameter
   if(is.null(colour.par) == FALSE){
     graphics::legend("topleft",
@@ -119,10 +120,10 @@ ic.order <- function(input = getwd(), mrun = NULL, number = NULL, ic = "AICc", c
                      legend = c(paste0("Rate ", colour.par, " not included"),
                                 paste0("Rate ", colour.par, " included")), cex = 0.6)
   }
-
+  
   if(is.null(save.output) == FALSE){
     grDevices::dev.off()
-
+    
   }
   return(mt)
 }

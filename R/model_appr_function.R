@@ -40,5 +40,5 @@ model.appr <- function(current.parms, critical.parms, do.not.fit = NULL){
   }
   #return if model is valid or not
   return(model.valid)
-
+  
 }

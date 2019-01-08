@@ -75,5 +75,5 @@ retrieve.results <- function(model, homedir = getwd(), all.names = NULL){
     stop("Supply a correct model definition.")
   }
   options(warn = 0)
- return(res)
+  return(res)
 }

@@ -57,7 +57,7 @@ return.results <- function(homedir, mrun, ic = "AICc"){
           "AIC"  = {ic.index <- 2},
           "BIC"  = {ic.index <- 3}
   )
-
+  
   if(mrun == "best"){
     best.ic <- Inf
     filenames <- list.files(paste0(homedir,"/FAMoS-Results/BestModel"), pattern="*.rds", full.names=TRUE)
@@ -77,9 +77,9 @@ return.results <- function(homedir, mrun, ic = "AICc"){
   #get best model
   mt <- readRDS(paste0(homedir, "/FAMoS-Results/TestedModels/TestedModels", mrun,".rds"))
   min.index <- as.numeric(which(mt[ic.index,] == min(mt[ic.index,], na.rm = TRUE)))
-
+  
   cat(paste0("Best model (binary): ", paste(mt[-c(1:4), min.index], collapse="")), sep = "\n")
-
+  
   cat("Best model (vector):", sep = "\n")
   print(mt[-c(1:4), min.index])
   cat("Estimated parameter values:", sep = "\n")
@@ -93,6 +93,6 @@ return.results <- function(homedir, mrun, ic = "AICc"){
                  total.models.tested = ncol(mt),
                  mrun = mrun,
                  initial.model = mt[-c(1:4),1])
-
+  
   return(output)
 }

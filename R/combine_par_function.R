@@ -30,7 +30,7 @@ combine.par <- function(fit.par, all.names, default.val = NULL){
     return(all.par)
   }else{
     get.index <- which((all.names %in% names(fit.par)) == FALSE)
-
+    
     for(k in get.index){
       #if numeric set to the corresponding value
       if(is.numeric(default.val[[k]])){
@@ -42,7 +42,7 @@ combine.par <- function(fit.par, all.names, default.val = NULL){
         }else{#if not take the value specified in nofit_zero
           all.par[k] <- default.val[[which(names(default.val) == default.val[[k]])]]
         }
-
+        
       }
     }
     return(all.par)

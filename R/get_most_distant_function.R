@@ -11,7 +11,7 @@
 #' @examples
 #' get.most.distant(input = famos.run)
 get.most.distant <- function(input = getwd(), mrun = NULL, max.number = 100){
-
+  
   if(is.character(input)){
     #read in files (either a specific one or all)
     if(is.null(mrun)){
@@ -38,15 +38,15 @@ get.most.distant <- function(input = getwd(), mrun = NULL, max.number = 100){
   }else{
     stop("Input needs to be either a directory path or a matrix.")
   }
-
+  
   #cut off header with IC and iteration number
   mt <- mt[5:nrow(mt),]
   for(k in 1:min(max.number, ncol(mt))){
     complement <- abs(mt[,k] - 1)
     distance.comp <- min(as.numeric(colSums(abs(mt-complement))))
-
+    
     distance <- c()
-
+    
     repeat{
       for(i in 1:length(complement)){
         comp.new <- complement
@@ -59,19 +59,19 @@ get.most.distant <- function(input = getwd(), mrun = NULL, max.number = 100){
         }
       }
       if(i == length(complement)){
-
+        
         if(distance <= distance.comp){
           break
         }
-
+        
       }
     }
     if(k == 1 || (distance > best.distance)){
       best.distance <- distance
       best.comp <- complement
     }
-
+    
   }
-
+  
   return(list(c(distance = best.distance), names(which(best.comp == 1)), best.comp))
 }

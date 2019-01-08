@@ -13,7 +13,7 @@
 #' random.init.model(number.par = 20)
 #' random.init.model(number.par = 20, crit.parms = crits)
 random.init.model <- function(number.par, crit.parms = NULL, no.fit = NULL){
-
+  
   init.mod <- c()
   #grab one parameter from each critical set randomly
   if(length(crit.parms) > 0) {
@@ -25,7 +25,7 @@ random.init.model <- function(number.par, crit.parms = NULL, no.fit = NULL){
       }
     }
   }
-
+  
   samp.vec <- 1:number.par
   if(length(init.mod) == 0 && length(no.fit) == 0) {
     init.mod <- sample(x = samp.vec,
@@ -34,8 +34,8 @@ random.init.model <- function(number.par, crit.parms = NULL, no.fit = NULL){
     init.mod <- unique(c(init.mod, sample(x = samp.vec[-c(init.mod, no.fit)],
                                           size = sample(1:length(samp.vec[-c(init.mod, no.fit)]), 1))))
   }
-
-
+  
+  
   return(init.mod[order(init.mod)])
 }
 

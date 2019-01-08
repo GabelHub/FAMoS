@@ -16,7 +16,7 @@
 
 
 famos.performance <- function(input, path = getwd(), ic = "AICc", save.output = NULL, log = FALSE, plot.style = "block"){
-
+  
   switch (ic,
           "AICc" = {ic.index <- 1},
           "AIC"  = {ic.index <- 2},
@@ -49,7 +49,7 @@ famos.performance <- function(input, path = getwd(), ic = "AICc", save.output = 
     jobs.per.run <- c(jobs.per.run, length(which(mt[4,] == i)))
     split.run[[i]] <- mt[,which(mt[4,] == i)]
   }
-
+  
   #get the corresponding best model of each run
   get.best <- mt[,1]
   for(i in unique(mt[4,-1])){
@@ -60,7 +60,7 @@ famos.performance <- function(input, path = getwd(), ic = "AICc", save.output = 
       get.best <- cbind(get.best, runs[,which.min(runs[ic.index,])[1]])
     }
   }
-
+  
   #replace the model if no improvement in AICC is found
   for(i in 2:ncol(get.best)){
     if(get.best[ic.index,i] > get.best[ic.index,i-1]){
@@ -68,19 +68,19 @@ famos.performance <- function(input, path = getwd(), ic = "AICc", save.output = 
       get.best[4,i] <- get.best[4,i] + 1
     }
   }
-
+  
   if(is.null(save.output) == FALSE){
     grDevices::pdf(file = save.output,
                    width  = ifelse(1.5 + 0.2*max(mt[4,]) < 4, 4 ,1.5 + 0.2*max(mt[4,])),
                    height = 2.5 + 0.2*(nrow(mt)-2),
                    useDingbats = F)
   }
-
-
+  
+  
   #plot improvement in AICc and the corresponding models
   graphics::layout(matrix(c(1,1,2,2),ncol = 2, byrow = TRUE),
                    widths=c(3,1), heights=c(1,3))
-
+  
   graphics::par(mai = c(0,
                         0.5 + 0.06*max(nchar(all.names)),
                         0.2,
@@ -106,13 +106,13 @@ famos.performance <- function(input, path = getwd(), ic = "AICc", save.output = 
                  tick   = TRUE,
                  las = 1,
                  cex.axis = 0.7)
-
+  
   graphics::par(mai = c(1,
                         0.5 + 0.06 * max(nchar(all.names)),
                         0.2,
                         0.2 + 0.1 * nchar(as.character(round(get.best[ic.index,ncol(get.best)],1)))))
-
-
+  
+  
   if(plot.style == "cross"){
     #plot the corresponding models
     graphics::plot(0,0,
@@ -122,11 +122,11 @@ famos.performance <- function(input, path = getwd(), ic = "AICc", save.output = 
                    ylab = "",
                    xlim = c(1, max(mt[4,])),
                    ylim = c(1, nrow(mt) - 4))
-
+    
     #plot the first model
     start <- which(mt[5:nrow(mt),1] == 1)
     graphics::points(rep(1, length(start)), length(all.names) + 1 - start , pch = 4)
-
+    
     #plot the following best models and indicate the changes by coloured circles
     for(i in unique(mt[4,-1])){
       rowx <- which(get.best[4,] == i)
@@ -145,10 +145,10 @@ famos.performance <- function(input, path = getwd(), ic = "AICc", save.output = 
         graphics::points(rep(i, length(crcl)), length(all.names) + 1 - crcl , pch = 1, col = crcl.col, cex = 2, lwd = 2)
       }
     }
-
+    
     graphics::box()
     graphics::axis(1, las = 1)
-
+    
     for(i in 1:length(all.names)){
       graphics::axis(side   = 2,
                      at     = length(all.names) + 1 - i,
@@ -164,9 +164,9 @@ famos.performance <- function(input, path = getwd(), ic = "AICc", save.output = 
     for(i in 2:(nrow(get.best) - 4)){
       graphics::abline(h = i - 0.5, col = "lightgray")
     }
-
+    
   }else if(plot.style == "block"){
-
+    
     image.matrix <- get.best[-c(1:4),]
     plot.matrix <- image.matrix
     for(i in 2:ncol(image.matrix)){
@@ -180,21 +180,21 @@ famos.performance <- function(input, path = getwd(), ic = "AICc", save.output = 
         plot.matrix[which(image.matrix[,i] == 1),i] <- 3
       }
     }
-
+    
     for(i in 1:ncol(plot.matrix)){
       plot.matrix[,i] <- rev(plot.matrix[,i])
     }
-
+    
     graphics::image( 1:ncol(get.best),1:(nrow(get.best) - 4), t(plot.matrix),
                      col = c("white", "gray40","red", "chartreuse4" , "blue"),
                      breaks = c(0,0.5,1.5,2.5,3.5,4.5),
                      xlab = c("iteration"),
                      ylab = c(""),
                      axes = F)
-
+    
     graphics::box()
     graphics::axis(1, las = 1)
-
+    
     for(i in 1:length(all.names)){
       graphics::axis(side   = 2,
                      at     = length(all.names) + 1 - i,
@@ -204,12 +204,12 @@ famos.performance <- function(input, path = getwd(), ic = "AICc", save.output = 
                      cex.axis = 0.7,
                      font = get.best[4 + i,ncol(get.best)] + 1)
     }
-
+    
     graphics::grid(nx = ncol(plot.matrix), ny = nrow(plot.matrix), lty = 1)
   }
   if(is.null(save.output) == FALSE){
     grDevices::dev.off()
-
+    
   }
-
+  
 }

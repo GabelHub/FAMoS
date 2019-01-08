@@ -28,7 +28,7 @@ parscale.famos <- function(par, scale, fix = 1, correction = NULL){
   if(length(par) !=  length(scale)){
     stop("parscale.famos has parameter and scaling vectors of different sizes.")
   }
-
+  
   if(any(scale == 0)){
     if(!is.null(correction)){
       scale[scale == 0] <- correction[which(scale == 0)]
@@ -42,16 +42,16 @@ parscale.famos <- function(par, scale, fix = 1, correction = NULL){
   if(fix.value == 0){
     fix.value <- 1
   }
-
+  
   max.value <- abs(par[which.max(abs(par))[1]])
   if(max.value == 0){
     print("Warning: Vector contains only zeroes. Scaling is set to a default of 1.")
     max.value <- 1
   }
-
+  
   #fill in scaling vector
   par.scale <- scale/(0.1 * fix.value * max.value)
   par.scale[fix] <- 1 / max.value
-
+  
   return(abs(par.scale))
 }
