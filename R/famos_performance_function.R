@@ -17,6 +17,9 @@
 
 famos.performance <- function(input, path = getwd(), ic = "AICc", save.output = NULL, log = FALSE, plot.style = "block"){
   
+  old.par <- graphics::par("mai")
+  on.exit(graphics::par(mai = old.par))
+  
   switch (ic,
           "AICc" = {ic.index <- 1},
           "AIC"  = {ic.index <- 2},

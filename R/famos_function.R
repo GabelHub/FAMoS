@@ -18,7 +18,7 @@
 #' @param control.optim Control parameters passed along to \code{optim}. For more details, see \code{\link{optim}}.
 #' @param parscale.pars Logical. If TRUE (default), the \code{parscale} option will be used when fitting with \code{\link{optim}}. This can help to speed up the fitting procedure, if the parameter values are on different scales.
 #' @param con.tol The absolute convergence tolerance of each fitting run (see Details). Default is set to 0.1.
-#' @param save.performance Logical. If TRUE, the performance of \code{FAMoS} will be evaluated in each iteration via \code{\link{famos.performance}}, which will save the corresponding plot into the folder "FAMoS-Results/Figures/" (starting from iteration 3) and simultaneously show it on screen. Default to TRUE.
+#' @param save.performance Logical. If TRUE, the performance of \code{FAMoS} will be evaluated in each iteration via \code{\link{famos.performance}}, which will save the corresponding plots into the folder "FAMoS-Results/Figures/" (starting from iteration 3) and simultaneously show it on screen. Default to TRUE.
 #' @param future.off Logical. If TRUE, FAMoS runs without the use of \code{futures}. Useful for debugging.
 #' @param log.interval The interval (in seconds) at which FAMoS informs about the current status, i.e. which models are still running and how much time has passed. Default to 600 (= 10 minutes).
 #' @param ... Other arguments that will be passed along to \code{\link{future}}, \code{\link{optim}} or the user-specified cost function \code{fit.fn}.
@@ -542,6 +542,12 @@ famos <- function(init.par,
             waiting <- TRUE
           }else{
             
+            if(class(try(future::value(get(paste0("model", j)), std = FALSE))) == "try-error"){
+              stop(paste0("Future failed. The corresponding error message of job ",
+                          paste(curr.model.all[,j], collapse=""),
+                          " is shown above. If no output is shown, use 'future.off = TRUE' to debug."))
+            }
+            
             #check if output was generated, including waiting period if the cluster is very busy
             if(!file.exists(paste0(homedir,
                                    "/FAMoS-Results/Fits/Model",
@@ -554,30 +560,11 @@ famos <- function(init.par,
                                    "/FAMoS-Results/Fits/Model",
                                    paste(curr.model.all[,j], collapse=""),
                                    ".rds"))){
-              assign(paste0("model",j),
-                     future::future({
-                       base.optim(binary = curr.model.all[,j],
-                                  parms = best.par,
-                                  fit.fn = fit.fn,
-                                  nr.of.data = nr.of.data,
-                                  homedir = homedir,
-                                  optim.runs = optim.runs,
-                                  information.criterion = information.criterion,
-                                  default.val = default.val,
-                                  random.borders = random.borders,
-                                  control.optim = control.optim,
-                                  parscale.pars = parscale.pars,
-                                  scaling = scaling.values,
-                                  con.tol = con.tol,
-                                  ...)
-                     },
-                     label = paste0("Model", paste(curr.model.all[,j], collapse ="")),
-                     ...
-                     )
-              )
-              cat(paste0("Future terminated but no output file was generated. Model ",j," was automatically resubmitted. If this message repeats, check the log file for more information or use 'future.off = TRUE' to debug."), sep = "\n")
               
-              waiting <- TRUE
+
+              stop("Future is done but no output file to job ",
+                   paste(curr.model.all[,j], collapse=""),
+                   " was created. FAMoS halted.")
             }else{
               #update waiting variable
               waiting <- waiting || FALSE
@@ -892,4 +879,3 @@ famos <- function(init.par,
   }
   
 }
-

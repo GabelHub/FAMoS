@@ -13,6 +13,10 @@
 #' aicc.weights(input = famos.run)
 #' aicc.weights(input = famos.run, reorder = FALSE)
 aicc.weights <- function(input = getwd(), mrun = NULL, reorder = TRUE, save.output = NULL){
+  
+  old.par <- graphics::par("mai")
+  on.exit(graphics::par(mai = old.par))
+  
   if(is.character(input)){
     #read in files (either a specific one or all)
     if(is.null(mrun)){

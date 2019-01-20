@@ -17,6 +17,9 @@
 
 ic.order <- function(input = getwd(), mrun = NULL, number = NULL, ic = "AICc", colour.par = NULL, save.output = NULL, ...){
   
+  old.par <- graphics::par("mai")
+  on.exit(graphics::par(mai = old.par))
+  
   switch (ic,
           "AICc" = {ic.index <- 1},
           "AIC"  = {ic.index <- 2},

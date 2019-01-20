@@ -66,9 +66,6 @@ base.optim <- function(binary,
                        scaling = NULL,
                        ...) {
   
-  #sink output to a log file
-  sink(paste0(homedir, "/FAMoS-Results/LogFiles/Log", paste(binary, collapse=""), ".txt"), split = TRUE)
-  
   #get the vectors of the fitted and the not-fitted parameters
   no.fit <- which(binary == 0)
   
@@ -290,5 +287,5 @@ base.optim <- function(binary,
   }
   
   cat("\nFitting done.\n")
-  sink()
+  return("done")
 }
