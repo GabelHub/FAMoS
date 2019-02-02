@@ -102,6 +102,14 @@ ic.order <- function(input = getwd(), mrun = NULL, number = NULL, ic = "AICc", c
     }
   }
   
+  #log graphic scale if appropriate
+  if(min(aicc) > 0 && (min(aicc)/max(aicc)) < 3*10^-2 && 
+     !is.element("log", names(list(...)))){
+    graphics.list <- c(list(...), list(log = "y"))
+  }else{
+    graphics.list <- list(...)
+  }
+  
   graphics::par(mai = c(1,0.9,0.4,0.2))
   
   #plot DeltaAICc in order
@@ -114,7 +122,7 @@ ic.order <- function(input = getwd(), mrun = NULL, number = NULL, ic = "AICc", c
                                     cex.names = 0.7,
                                     border = row.colours,
                                     main = "Model comparison"),
-                               list(...)))
+                               graphics.list))
   
   #include legend if results are plotted with respect to a model parameter
   if(is.null(colour.par) == FALSE){

@@ -126,6 +126,11 @@ famos <- function(init.par,
   if(is.vector(random.borders) == FALSE && is.matrix(random.borders) == FALSE){
     stop("random.borders must either be a number, a vector or a matrix.")
   }
+  
+  #reset graphical parameters on exit
+  old.par <- graphics::par("mfrow")
+  on.exit(graphics::par(mfrow = old.par))
+  
   cat("\nInitializing...", sep = "\n")
   
   #set starting time
@@ -395,7 +400,7 @@ famos <- function(init.par,
               curr.model[pick.model.prev] <- 1
               curr.model[as.numeric(cmb[j,])] <- abs(curr.model[as.numeric(cmb[j,])]-1)
               
-              cat(paste0("Replace ", all.names[parms.left[j,1]], " by ", all.names[parms.left[j,2]], "\n"))
+              cat(paste0("Replace ", all.names[cmb[j,1]], " by ", all.names[cmb[j,2]], "\n"))
               #check if model has been tested before while refitting is not enabled
               if(is.element(0,colSums(abs(models.tested-curr.model))) && refit==FALSE){
                 cat("Combination has been tested before", sep = "\n")
@@ -561,7 +566,7 @@ famos <- function(init.par,
                                    paste(curr.model.all[,j], collapse=""),
                                    ".rds"))){
               
-
+              
               stop("Future is done but no output file to job ",
                    paste(curr.model.all[,j], collapse=""),
                    " was created. FAMoS halted.")
@@ -686,9 +691,10 @@ famos <- function(init.par,
       
     }else{# if it's not the first run, we know what the previous and current method are
       
-      if(save.performance == T){
-        #save FAMoS performance
-        if(ncol(saveTestedModels) > 3){
+      #save FAMoS performance
+      if(ncol(saveTestedModels) > 3){
+        
+        if(save.performance == T){
           famos.performance(input = saveTestedModels,
                             path = homedir,
                             ic = information.criterion,
@@ -696,11 +702,11 @@ famos <- function(init.par,
                                                  "/FAMoS-Results/Figures/Performance",
                                                  mrun,
                                                  ".pdf"))
-          
-          famos.performance(input = saveTestedModels,
-                            path = homedir,
-                            ic = information.criterion)
         }
+        famos.performance(input = saveTestedModels,
+                          path = homedir,
+                          ic = information.criterion)
+        
       }
       
       if((curr.AICC) < old.AICC ){#update the model if a better model is found
