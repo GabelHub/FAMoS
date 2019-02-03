@@ -51,8 +51,8 @@ aicc.weights <- function(input = getwd(), mrun = NULL, reorder = TRUE, save.outp
   #calculate akaike weights
   akaike.weights <- as.numeric(exp(-0.5 * (mt[1,] - min(mt[1,])))/sum(exp(-0.5 * (mt[1,] - min(mt[1,])))))
   #calculate normalised probability
-  parms.support <- as.vector(as.matrix(mt[5:nrow(mt),]) %*% akaike.weights)
-  names(parms.support) <- row.names(mt[5:nrow(mt),])
+  parms.support <- as.vector(as.matrix(mt[3:nrow(mt),]) %*% akaike.weights)
+  names(parms.support) <- row.names(mt[3:nrow(mt),])
   if(reorder == TRUE){
     parms.order <- order(parms.support, decreasing = FALSE)
   }else{
@@ -60,14 +60,14 @@ aicc.weights <- function(input = getwd(), mrun = NULL, reorder = TRUE, save.outp
   }
   
   #adjust color scheme
-  best.model <- mt[-c(1:4),which.min(mt[1,])]
+  best.model <- mt[-c(1:2),which.min(mt[1,])]
   aicc.col <- rep("blue", length(best.model))
   aicc.col[which(best.model == 1)] <- "red"
   #adjust boldness of parameters
   aicc.bold <- rep(1, length(best.model))
   aicc.bold[which(best.model == 1)] <- 2
   #get parameter names
-  all.names <- rownames(mt)[5:nrow(mt)]
+  all.names <- rownames(mt)[3:nrow(mt)]
   
   #save file if wanted
   if(is.null(save.output) == FALSE){
@@ -88,7 +88,7 @@ aicc.weights <- function(input = getwd(), mrun = NULL, reorder = TRUE, save.outp
                     xlab = "relative support",
                     col = aicc.col[parms.order],
                     xlim = c(-0.02,1.02),
-                    main = "Evidence ratio")
+                    main = "Evidence ratio (only valid for AICc)")
   graphics::box()
   
   if(is.null(save.output) == FALSE){

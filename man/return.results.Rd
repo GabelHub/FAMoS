@@ -4,30 +4,27 @@
 \alias{return.results}
 \title{Return Final Results}
 \usage{
-return.results(homedir, mrun, ic = "AICc")
+return.results(homedir, mrun)
 }
 \arguments{
 \item{homedir}{A string giving the directory in which the result folders are found. This is the same directory in which \code{\link{famos}} was run.}
 
 \item{mrun}{The number of the FAMoS run that is to be evaluated. Must be a three digit string in the form of '001'. Alternatively, supplying 'best' will return the best result that is found over several FAMoS runs.}
-
-\item{ic}{The information criterion used. Default is 'AICc". Other options are 'AIC' and 'BIC'.}
 }
 \value{
 A list containing the following elements:
 \describe{
-  \item{IC}{The value of the information criterion of the best model.}
+  \item{SCV}{The value of the selection criterion of the best model.}
   \item{par}{The values of the fitted parameter vector corresponding to the best model.}
-  \item{IC.type}{The type of information criterion used.}
   \item{binary}{The binary information of the best model.}
   \item{vector}{Vector indicating which parameters were fitted in the best model.}
   \item{total.models.tested}{The total number of different models that were analysed. May include repeats.}
-  \item{mrun}{The number of the current FAMoS run}
-  \item{initial.mode}{The first model evaluated by the FAMoS run}
+  \item{mrun}{The number of the current FAMoS run.}
+  \item{initial.mode}{The first model evaluated by the FAMoS run.}
 }
 }
 \description{
-Returns the results of one FAMoS run. Includes the best parameter sets and corresponding information criterion.
+Returns the results of one FAMoS run. Includes the best parameter sets and corresponding selection criterion.
 }
 \examples{
 future::plan(future::sequential)

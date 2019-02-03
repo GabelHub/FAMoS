@@ -4,21 +4,18 @@
 \alias{famos}
 \title{Automated Model Selection}
 \usage{
-famos(init.par, fit.fn, nr.of.data, homedir = getwd(),
-  do.not.fit = NULL, method = "forward", init.model.type = "random",
-  refit = FALSE, optim.runs = 5, information.criterion = "AICc",
-  default.val = NULL, swap.parameters = NULL,
-  critical.parameters = NULL, random.borders = 1,
-  control.optim = list(maxit = 1000), parscale.pars = FALSE,
-  con.tol = 0.01, save.performance = TRUE, future.off = FALSE,
-  log.interval = 600, ...)
+famos(init.par, fit.fn, homedir = getwd(), do.not.fit = NULL,
+  method = "forward", init.model.type = "random", refit = FALSE,
+  use.optim = TRUE, optim.runs = 5, default.val = NULL,
+  swap.parameters = NULL, critical.parameters = NULL,
+  random.borders = 1, control.optim = list(maxit = 1000),
+  parscale.pars = TRUE, con.tol = 0.1, save.performance = TRUE,
+  future.off = TRUE, log.interval = 600, ...)
 }
 \arguments{
 \item{init.par}{A named vector containing the initial parameter values.}
 
-\item{fit.fn}{A cost function. Has to take the complete parameter vector as an input (needs to be names \code{parms}) and must return the corresponding negative log-likelihood (-2LL, see Burnham and Anderson 2002). The binary vector, containing the information which parameters are currently fitted, can also be used by taking \code{binary} as an additional function input argument.}
-
-\item{nr.of.data}{The number of data points used for fitting.}
+\item{fit.fn}{A cost function. Has to take the complete parameter vector as an input (needs to be names \code{parms}) and must return a selection criterion value (e.g. AICc or BIC). See Details for more information.}
 
 \item{homedir}{The directory to which the results should be saved to.}
 
@@ -30,9 +27,9 @@ famos(init.par, fit.fn, nr.of.data, homedir = getwd(),
 
 \item{refit}{If TRUE, previously tested models will be tested again. Default to FALSE.}
 
-\item{optim.runs}{The number of times that each model will be fitted by \code{\link{optim}}. Default to 5.}
+\item{use.optim}{Logical. If true, the cost function \code{fit.fn} will be fitted via \code{\link{optim}}. If FALSE, the cost function will only be evaluated.}
 
-\item{information.criterion}{The information criterion the model selection will be based on. Options are "AICc", "AIC" and "BIC". Default to "AICc".}
+\item{optim.runs}{The number of times that each model will be fitted by \code{\link{optim}}. Default to 5.}
 
 \item{default.val}{A named list containing the values that the non-fitted parameters should take. If NULL, all non-fitted parameters will be set to zero. Default values can be either given by a numeric value or by the name of the corresponding parameter the value should be inherited from (NOTE: In this case the corresponding parameter entry has to contain a numeric value). Default to NULL.}
 
@@ -44,13 +41,13 @@ famos(init.par, fit.fn, nr.of.data, homedir = getwd(),
 
 \item{control.optim}{Control parameters passed along to \code{optim}. For more details, see \code{\link{optim}}.}
 
-\item{parscale.pars}{Logical. If TRUE, the \code{parscale} option will be used when fitting with \code{\link{optim}}. This can help to speed up the fitting procedure, if the parameter values are on different scales. Default to FALSE.}
+\item{parscale.pars}{Logical. If TRUE (default), the \code{parscale} option will be used when fitting with \code{\link{optim}}. This can help to speed up the fitting procedure, if the parameter values are on different scales.}
 
-\item{con.tol}{The relative convergence tolerance. \code{famos} will rerun \code{\link{optim}} until the relative improvement between the current and the last fit is less than \code{con.tol}. Default is set to 0.01, meaning the fitting will terminate if the improvement is less than 1\% of the previous value.}
+\item{con.tol}{The absolute convergence tolerance of each fitting run (see Details). Default is set to 0.1.}
 
-\item{save.performance}{Logical. If TRUE, the performance of \code{FAMoS} will be evaluated in each iteration via \code{\link{famos.performance}}, which will save the corresponding plot into the folder "FAMoS-Results/Figures/" (starting from iteration 3) and simultaneously show it on screen. Default to TRUE.}
+\item{save.performance}{Logical. If TRUE, the performance of \code{FAMoS} will be evaluated in each iteration via \code{\link{famos.performance}}, which will save the corresponding plots into the folder "FAMoS-Results/Figures/" (starting from iteration 3) and simultaneously show it on screen. Default to TRUE.}
 
-\item{future.off}{Logical. If TRUE, FAMoS runs without the use of \code{futures}. Useful for debugging.}
+\item{future.off}{Logical. If TRUE (default), FAMoS runs without the use of \code{futures}.}
 
 \item{log.interval}{The interval (in seconds) at which FAMoS informs about the current status, i.e. which models are still running and how much time has passed. Default to 600 (= 10 minutes).}
 
@@ -59,13 +56,12 @@ famos(init.par, fit.fn, nr.of.data, homedir = getwd(),
 \value{
 A list containing the following elements:
 \describe{
-  \item{IC}{The value of the information criterion of the best model.}
+  \item{SCV}{The value of the selection criterion of the best model.}
   \item{par}{The values of the fitted parameter vector corresponding to the best model.}
-  \item{IC.type}{The type of information criterion used.}
   \item{binary}{The binary information of the best model.}
   \item{vector}{Vector indicating which parameters were fitted in the best model.}
   \item{total.models.tested}{The total number of different models that were analysed. May include repeats.}
-   \item{mrun}{The number of the current FAMoS run.}
+  \item{mrun}{The number of the current FAMoS run.}
   \item{initial.model}{The first model evaluated by the FAMoS run.}
   }
 }
@@ -74,26 +70,44 @@ Given a vector containing all parameters of interest and a cost function, the \c
 }
 \details{
 In each iteration, the FAMoS finds all neighbouring models based on the current model and method, and subsequently tests them. If one of the tested models performs better than the current model, the model, but not the method, will be updated. Otherwise, the method, but not the model, will be adaptively changed, depending on the previously used methods.
+
+The cost function \code{fit.fn} can take the following inputs:
+\describe{
+  \item{parms}{A named vector containing all parameter values. This input is mandatory. If \code{use.optim = TRUE}, FAMos will automatically subset the complete parameter set into fitted and non-fitted parameters.} 
+  \item{binary}{Optional input. The binary vector contains the information which parameters are currently fitted. Fitted parameters are set to 1, non-fitted to 0. This input can be to split the complete parameter set into fitted and non-fitted parameters if a customised optimisation function is used (see \code{use.optim}).}
+  \item{...}{Other parameters that can should be passed to \code{fit.fn}}
+  }
+
+If \code{use.optim = TRUE}, the cost function needs to return a single numeric value, which corresponds to the selection criterion value. However, if \code{use.optim = FALSE}, the cost function needs to return a list containing in its first entry the selection criterion value and in its second entry the named vector of the fitted parameter values (non-fitted parameters are internally assessed).
 }
 \examples{
-future::plan(future::sequential)
 
 #setting data
-x.values <- 1:7
-y.values <-  3^2 * x.values^2 - exp(2 * x.values)
+true.p2 <- 3
+true.p5 <- 2
+sim.data <- cbind.data.frame(range = 1:10, 
+                             y = true.p2^2 * (1:10)^2 - exp(true.p5 * (1:10)))
 
-#define initial conditions and corresponding test function
+#define initial parameter values and corresponding test function
 inits <- c(p1 = 3, p2 = 4, p3 = -2, p4 = 2, p5 = 0)
 
-cost_function <- function(parms, x.vals, y.vals){
- if(max(abs(parms)) > 5){
-   return(NA)
- }
- with(as.list(c(parms)), {
-   res <- 4*p1 + p2^2*x.vals^2 + p3*sin(x.vals) + p4*x.vals - exp(p5*x.vals)
-   diff <- sum((res - y.vals)^2)
- })
+cost_function <- function(parms, binary, data){
+  if(max(abs(parms)) > 5){
+    return(NA)
+  }
+  with(as.list(c(parms)), {
+    res <- p1*4 + p2^2*data$range^2 + p3*sin(data$range) + p4*data$range - exp(p5*data$range)
+    diff <- sum((res - data$y)^2)
+    
+    #calculate AICC
+    nr.par <- length(which(binary == 1))
+    nr.data <- nrow(data)
+    AICC <- diff + 2*nr.par + 2*nr.par*(nr.par + 1)/(nr.data - nr.par -1)
+    
+    return(AICC)
+  })
 }
+
 
 #set swap set
 swaps <- list(c("p1", "p5"))
@@ -101,12 +115,10 @@ swaps <- list(c("p1", "p5"))
 #perform model selection
 res <- famos(init.par = inits,
             fit.fn = cost_function,
-            nr.of.data = length(y.values),
-            homedir = getwd(),
+            homedir = tempdir(),
             method = "swap",
             swap.parameters = swaps,
             init.model.type = c("p1", "p3"),
             optim.runs = 1,
-            x.vals = x.values,
-            y.vals = y.values)
+            data = sim.data)
 }

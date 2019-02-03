@@ -1,12 +1,12 @@
 Package: FAMoS
 Type: Package
-Title: A Flexible Algorithm for Model Selection (FAMoS)
-Version: 0.1.0
+Title: A Flexible Algorithm for Model Selection
+Version: 0.2.0
 Author: Michael Gabel, Tobias Hohl
 Maintainer: Michael Gabel <m_gabel@gmx.de>
 Description: Given a set of parameters describing model dynamics and a corresponding cost function,
     FAMoS attempts to find the most suitable parameter subset in terms of a specified information
-    criterion. Works on any cost function that returns a negative log-likelihood.
+    criterion. Works on any cost function.
 License: GPL-3
 Depends: R (>= 3.4)
 Encoding: UTF-8

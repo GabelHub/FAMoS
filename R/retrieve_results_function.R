@@ -5,7 +5,7 @@
 #' @param homedir  A string giving the directory in which the result folders are found. This is the same directory in which \code{\link{famos}} was run.
 #' @param all.names A vector containing the names of all parameters.
 #'
-#' @return A vector containing the calculated information criteria and estimated parameters of the specified model
+#' @return A vector containing the calculated selection criteria and estimated parameters of the specified model.
 #' @export
 #'
 #' @examples

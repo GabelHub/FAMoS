@@ -14,7 +14,7 @@ retrieve.results(model, homedir = getwd(), all.names = NULL)
 \item{all.names}{A vector containing the names of all parameters.}
 }
 \value{
-A vector containing the calculated information criteria and estimated parameters of the specified model
+A vector containing the calculated selection criteria and estimated parameters of the specified model.
 }
 \description{
 Returns the results of a specified model that was tested by \code{\link{famos}}.

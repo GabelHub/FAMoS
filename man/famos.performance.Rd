@@ -4,32 +4,27 @@
 \alias{famos.performance}
 \title{Plot FAMoS Performance}
 \usage{
-famos.performance(input, path = getwd(), ic = "AICc",
-  save.output = NULL, log = FALSE, plot.style = "block")
+famos.performance(input, path = getwd(), save.output = NULL, ...)
 }
 \arguments{
 \item{input}{Either a string giving the three-digit number of the corresponding FAMoS run, e.g "004", or a matrix containing the tested models along with the respective information criteria.}
 
 \item{path}{If \code{input} is the string of an FAMoS run, the directory containing the "FAMoS-Results" folder needs to be supplied as well. Default to \code{\link{getwd}}.}
 
-\item{ic}{The information criterion the model selection will be based on. Options are "AICc", "AIC" and "BIC". Default to "AICc".}
-
 \item{save.output}{A string containing the location and name under which the figure should be saved (format is .pdf). Default to NULL.}
 
-\item{log}{If true, the results are plotted on a logarithmic scale. Default to FALSE.}
-
-\item{plot.style}{Changes the style of the plot. Options are either "cross" or "block" (default).}
+\item{...}{Other graphical parameters.}
 }
 \value{
-A plot showing the value of the corresponding information criterion and best model of each FAMoS iteration.
+A plot showing the value of the selection criterion and best model of each FAMoS iteration.
 }
 \description{
-For each FAMoS run \code{famos.performance} plots the corresponding best model and information criterion.
+For each FAMoS run \code{famos.performance} plots the corresponding best model and selection criterion value.
 }
 \details{
-The upper plot shows the improvement of the selected information criterion over each FAMoS iteration. The best value is shown on the right axis. The lower plot depicts the corresponding best model of each iteration. Here, green circles show added, red circles removed and blue circles swapped parameters. The parameters of the final model are printed bold.
+The upper plot shows the improvement of the selection criterion over each FAMoS iteration. The best value is shown on the right axis. The lower plot depicts the corresponding best model of each iteration. Here, green colour shows added, red colour removed and blue colour swapped parameters. The parameters of the final model are printed bold.
 }
 \examples{
 #plot the performance of an FAMoS run
-famos.performance(input = famos.run, log = TRUE)
+famos.performance(input = famos.run)
 }

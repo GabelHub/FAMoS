@@ -24,6 +24,9 @@
 combine.and.fit <- function(par, par.names, fit.fn, binary = NULL, default.val = NULL, ...) {
   
   dots <- list(...)
+  if(!is.null(binary)){
+    names(par) <- par.names[which(binary == 1)]
+  }
   # combine fitted and non-fitted parameters
   total.par  <- combine.par(fit.par = par, all.names = par.names, default.val = default.val)
   
@@ -34,5 +37,5 @@ combine.and.fit <- function(par, par.names, fit.fn, binary = NULL, default.val =
     diff <- R.utils::doCall(fit.fn, args = c(list(parms = total.par), dots))
   }
   
-  return(as.numeric(diff))
+  return(diff)
 }
