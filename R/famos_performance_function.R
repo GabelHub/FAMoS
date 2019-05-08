@@ -55,13 +55,13 @@ famos.performance <- function(input, path = getwd(), save.output = NULL, ...){
     if(ncol(runs) == 1){
       get.best <- cbind(get.best, runs)
     }else{
-      get.best <- cbind(get.best, runs[,which.min(runs[1,])[1]])
+      get.best <- cbind(get.best, runs[,which.min(runs[1,])])
     }
   }
   
   #replace the model if no improvement in SCV is found
   for(i in 2:ncol(get.best)){
-    if(get.best[1,i] > get.best[1,i-1]){
+    if(get.best[1,i] >= get.best[1,i-1]){
       get.best[,i] <- get.best[,i-1]
       get.best[2,i] <- get.best[2,i] + 1
     }

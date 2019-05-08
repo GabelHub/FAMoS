@@ -68,7 +68,7 @@ return.results <- function(homedir, mrun){
   cat(paste0("Selection criterion value of best model: ", round(bm[1], 2)), sep = "\n")
   #get best model
   mt <- readRDS(paste0(homedir, "/FAMoS-Results/TestedModels/TestedModels", mrun,".rds"))
-  min.index <- as.numeric(which(mt[1,] == min(mt[1,], na.rm = TRUE)))
+  min.index <- as.numeric(which(mt[1,] == min(mt[1,], na.rm = TRUE)))[1]
   
   cat(paste0("Best model (binary): ", paste(mt[-c(1:2), min.index], collapse="")), sep = "\n")
   

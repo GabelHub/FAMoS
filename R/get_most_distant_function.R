@@ -40,7 +40,7 @@ get.most.distant <- function(input = getwd(), mrun = NULL, max.number = 100){
   }
   
   #cut off header with IC and iteration number
-  mt <- mt[5:nrow(mt),]
+  mt <- mt[3:nrow(mt),]
   for(k in 1:min(max.number, ncol(mt))){
     complement <- abs(mt[,k] - 1)
     distance.comp <- min(as.numeric(colSums(abs(mt-complement))))
