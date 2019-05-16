@@ -95,7 +95,7 @@ All that's left is calling FAMoS now:
 ```{r glmfamos, eval = FALSE}
 library(FAMoS)
 famos.glm <- famos(init.par = inits,
-             fit.fn = model_func,
+             fit.fn = fit_func,
              init.model.type = names(inits[1:8]),
              data = bwt,
              use.optim = FALSE,

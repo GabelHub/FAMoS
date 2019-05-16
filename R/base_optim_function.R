@@ -13,6 +13,7 @@
 #' @param control.optim Control parameters passed along to \code{optim}. For more details, see \code{\link{optim}}.
 #' @param parscale.pars Logical. If TRUE (default), the \code{parscale} option will be used when fitting with \code{\link{optim}}. This is helpful, if the parameter values are on different scales.
 #' @param scaling Numeric vector determining how newly added model parameters are scaled. Only needed if \code{parscale.pars} is TRUE.
+#' @param verbose Logical. If TRUE, FAMoS will output all details about the current fitting procedure.
 #' @param ... Additional parameters.
 #' @details The fitting routine of \code{base.optim} is based on the function \code{\link{optim}}. The number of fitting runs can be specified by the \code{optim.runs} parameter in the \code{\link{famos}} function. Here, the first fitting run takes the parameters supplied in \code{parms} as a starting condition, while all following fitting runs sample new initial sets according to a uniform distribution based on the intervals [\code{parms} - \code{abs}(\code{parms}), \code{parms} + \code{abs}(\code{parms})].
 #' Additionally, each fitting run is based on a \code{while}-loop that compares the outcome of the previous and the current fit. Each fitting run is terminated when the specified convergence tolerance \code{con.tol} is reached.
@@ -68,6 +69,7 @@ base.optim <- function(binary,
                        control.optim = list(maxit = 1000),
                        parscale.pars = FALSE,
                        scaling = NULL,
+                       verbose = FALSE,
                        ...) {
   
   #get the vectors of the fitted and the not-fitted parameters
@@ -93,7 +95,10 @@ base.optim <- function(binary,
     abort <- F
     
     #print number of successful runs
-    cat(paste0("\nFitting run # ", k, "\n"))
+    if(verbose){
+      cat(paste0("\nFitting run # ", k, "\n"))
+    }
+    
     
     #check if initial parameters set is working
     if(k == 1){
@@ -114,7 +119,10 @@ base.optim <- function(binary,
       
       #if not, skip the current set
       if(works == FALSE){
-        cat("Inherited parameters do not work and are being skipped.\n")
+        if(verbose){
+          cat("Inherited parameters do not work and are being skipped.\n")
+        }
+        
         k <- k + 1
         total.tries <- total.tries + 1
         next
@@ -227,7 +235,10 @@ base.optim <- function(binary,
       
       if (opt.run > 1e34 || !is.finite(opt.run)) {
         abort <- T
-        cat("Optimisation failed. Run skipped.\n")
+        if(verbose){
+          cat("Optimisation failed. Run skipped.\n")
+        }
+        
         total.tries <- total.tries + 1
         break
       }
@@ -237,7 +248,10 @@ base.optim <- function(binary,
       }
       #update run
       runs = runs + 1
-      cat(paste(opt.run, "\n"))
+      if(verbose){
+        cat(paste(opt.run, "\n"))
+      }
+      
     }
     #test if current run was better
     if(k == 1 || opt.run < opt.min){
@@ -258,7 +272,10 @@ base.optim <- function(binary,
                                             ".rds"))
         #overwrite output file only if current fit is better than the previous one
         if(result_old[1] > opt.min){
-          cat("Current fit better than previous best fit. Results overwritten.\n")
+          if(verbose){
+            cat("Current fit better than previous best fit. Results overwritten.\n")
+          }
+          
           saveRDS(object = result, file = paste0(homedir,
                                                  "/FAMoS-Results/Fits/Model",
                                                  paste(binary, collapse =""),
@@ -270,7 +287,10 @@ base.optim <- function(binary,
                                                "/FAMoS-Results/Fits/Model",
                                                paste(binary, collapse =""),
                                                ".rds"))
-        cat("No results file present. Current parameters saved.\n")
+        if(verbose){
+          cat("No results file present. Current parameters saved.\n")
+        }
+        
       }
       
       
@@ -284,7 +304,9 @@ base.optim <- function(binary,
     
     
   }
+  if(verbose){
+    cat("\nFitting done.\n")
+  }
   
-  cat("\nFitting done.\n")
   return("done")
 }

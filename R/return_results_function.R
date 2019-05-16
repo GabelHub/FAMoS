@@ -62,23 +62,24 @@ return.results <- function(homedir, mrun){
       }
     }
   }
-  cat(paste0("FAMoS run ", mrun), sep = "\n")
+  cat(paste0("\nFAMoS run ", mrun), sep = "\n")
   #get information criterion of best model
   bm <- readRDS(paste0(homedir, "/FAMoS-Results/BestModel/BestModel", mrun,".rds"))
   cat(paste0("Selection criterion value of best model: ", round(bm[1], 2)), sep = "\n")
   #get best model
   mt <- readRDS(paste0(homedir, "/FAMoS-Results/TestedModels/TestedModels", mrun,".rds"))
   min.index <- as.numeric(which(mt[1,] == min(mt[1,], na.rm = TRUE)))[1]
-  
+  cat(paste0("Number of tested models: ", ncol(mt)), sep = "\n")
   cat(paste0("Best model (binary): ", paste(mt[-c(1:2), min.index], collapse="")), sep = "\n")
   
-  cat("Best model (vector):", sep = "\n")
-  print(mt[-c(1:2), min.index])
+  cat("Selected parameters:", sep = "\n")
+  best.m <- mt[-c(1:2), min.index]
+  print(names(best.m[which(best.m == 1)]))
   cat("Estimated parameter values:", sep = "\n")
   print(bm[-1])
   #save output as list
   output <- list(SCV = round(bm[1], 2),
-                 par = bm[-1],
+                 par = names(best.m[which(best.m == 1)]),
                  binary = paste(mt[-c(1:2), min.index], collapse=""),
                  vector = mt[-c(1:2), min.index],
                  total.models.tested = ncol(mt),

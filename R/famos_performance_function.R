@@ -113,7 +113,8 @@ famos.performance <- function(input, path = getwd(), save.output = NULL, ...){
   graphics::par(mai = c(1,
                         0.5 + 0.06 * max(nchar(all.names)),
                         0.2,
-                        0.2 + 0.1 * nchar(as.character(round(get.best[1,ncol(get.best)],1)))))
+                        0.2 + 0.1 * nchar(as.character(round(get.best[1,ncol(get.best)],1)))),
+                xpd = FALSE)
   
   
   image.matrix <- get.best[-c(1:2),]

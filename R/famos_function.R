@@ -20,6 +20,7 @@
 #' @param save.performance Logical. If TRUE, the performance of \code{FAMoS} will be evaluated in each iteration via \code{\link{famos.performance}}, which will save the corresponding plots into the folder "FAMoS-Results/Figures/" (starting from iteration 3) and simultaneously show it on screen. Default to TRUE.
 #' @param future.off Logical. If TRUE (default), FAMoS runs without the use of \code{futures}.
 #' @param log.interval The interval (in seconds) at which FAMoS informs about the current status, i.e. which models are still running and how much time has passed. Default to 600 (= 10 minutes).
+#' @param verbose Logical. If TRUE, FAMoS will output all details about the current fitting procedure.
 #' @param ... Other arguments that will be passed along to \code{\link{future}}, \code{\link{optim}} or the user-specified cost function \code{fit.fn}.
 #' @details In each iteration, the FAMoS finds all neighbouring models based on the current model and method, and subsequently tests them. If one of the tested models performs better than the current model, the model, but not the method, will be updated. Otherwise, the method, but not the model, will be adaptively changed, depending on the previously used methods.
 #' 
@@ -104,6 +105,7 @@ famos <- function(init.par,
                   save.performance = TRUE,
                   future.off = TRUE,
                   log.interval = 600,
+                  verbose = FALSE,
                   ...
 ) {
   #test the appropriateness of parameters
@@ -311,7 +313,10 @@ famos <- function(init.par,
         curr.model.all <- c()
         for(j in 1:length(parms.left)){
           #print tested parameter
-          cat(paste0("Add parameter ", all.names[parms.left[j]]), sep = "\n")
+          if(verbose){
+            cat(paste0("Add parameter ", all.names[parms.left[j]]), sep = "\n")
+          }
+          
           
           #get the indices of the currently tested parameter set
           pick.model <- c(parms.left[j], pick.model.prev)
@@ -322,12 +327,18 @@ famos <- function(init.par,
           
           #test if model violates the critical conditions
           if(model.appr(pick.model, crit.parms, do.not.fit = do.not.fit) == FALSE){
-            cat(paste("Model ", paste0(curr.model, collapse=""), " violates critical parameter specifications. Model skipped."), sep = "\n")
+            if(verbose){
+              cat(paste("Model ", paste0(curr.model, collapse=""), " violates critical parameter specifications. Model skipped."), sep = "\n")
+            }
+            
             next
           }
           #check if model has been tested before
           if(is.element(0,colSums(abs(models.tested-curr.model))) && refit==FALSE){
-            cat("Combination has been tested before", sep = "\n")
+            if(verbose){
+              cat("Combination has been tested before", sep = "\n")
+            }
+            
             next
           }
           #if model was neither skipped nor tested before, add to the testing catalogue
@@ -348,7 +359,10 @@ famos <- function(init.par,
         curr.model.all <- c()
         #get all suitable parameter combinations
         for(j in 1:length(parms.left)){
-          cat(paste0("Remove parameter ", all.names[parms.left[j]]), sep = "\n")
+          if(verbose){
+            cat(paste0("Remove parameter ", all.names[parms.left[j]]), sep = "\n")
+          }
+          
           
           # pick.model <- c(sample(x = samp.vec[-pick.model.prev], size = 1), pick.model.prev)
           pick.model <- c(parms.left[-j])
@@ -359,13 +373,19 @@ famos <- function(init.par,
           
           #test if model violates the critical conditions
           if(model.appr(pick.model, crit.parms, do.not.fit = do.not.fit) == FALSE){
-            cat(paste("Model ", paste0(curr.model, collapse=""), " violates critical parameter specifications. Model skipped."), sep = "\n")
+            if(verbose){
+              cat(paste("Model ", paste0(curr.model, collapse=""), " violates critical parameter specifications. Model skipped."), sep = "\n")
+            }
+           
             nosub <- c(nosub, j)
             next
           }
           #check if model has been tested before
           if(is.element(0,colSums(abs(models.tested-curr.model))) && refit==FALSE){
-            cat("Combination has been tested before", sep = "\n")
+            if(verbose){
+              cat("Combination has been tested before", sep = "\n")
+            }
+            
             nosub <- c(nosub, j)
             next
           }
@@ -417,17 +437,26 @@ famos <- function(init.par,
               curr.model[pick.model.prev] <- 1
               curr.model[as.numeric(cmb[j,])] <- abs(curr.model[as.numeric(cmb[j,])]-1)
               
-              cat(paste0("Replace ", all.names[cmb[j,1]], " by ", all.names[cmb[j,2]], "\n"))
+              if(verbose){
+                cat(paste0("Replace ", all.names[cmb[j,1]], " by ", all.names[cmb[j,2]], "\n"))
+              }
+              
               #check if model has been tested before while refitting is not enabled
               if(is.element(0,colSums(abs(models.tested-curr.model))) && refit==FALSE){
-                cat("Combination has been tested before", sep = "\n")
+                if(verbose){
+                  cat("Combination has been tested before", sep = "\n")
+                }
+                
                 next
               }
               
               #test if model violates the critical conditions
               pick.model <- which(curr.model != 0)
               if(model.appr(pick.model, crit.parms,do.not.fit = do.not.fit) == FALSE){
-                cat(paste("Model ", paste0(curr.model, collapse=""), " violates critical parameter specifications. Model skipped."), sep = "\n")
+                if(verbose){
+                  cat(paste("Model ", paste0(curr.model, collapse=""), " violates critical parameter specifications. Model skipped."), sep = "\n")
+                }
+               
                 next
               }
               
@@ -491,12 +520,19 @@ famos <- function(init.par,
                        timediff %% 60 %/% 1), # seconds,
                sep = "\n"))
     
-    cat("Job submission:", sep = "\n")
+    if(verbose){
+      cat("Job submission:", sep = "\n")
+    }
+    
     #Job submission####
     #submit each individual model to the cluster if it hasn't been tested before
     for(j in 1:ncol(curr.model.all)){
       if(file.exists(paste0(homedir, "/FAMoS-Results/Fits/Model",paste(curr.model.all[,j], collapse =""), ".rds")) == FALSE  ||  refit){
-        cat(paste0("Job ID for model ", formatC(j, width = 2, format = "d", flag = "0"), " - ", paste(curr.model.all[,j], collapse="")), sep = "\n")
+        
+        if(verbose){
+          cat(paste0("Job ID for model ", formatC(j, width = 2, format = "d", flag = "0"), " - ", paste(curr.model.all[,j], collapse="")), sep = "\n")
+        }
+        
         
         if(future.off == F){
           assign(paste0("model",j),
@@ -513,6 +549,7 @@ famos <- function(init.par,
                               parscale.pars = parscale.pars,
                               scaling = scaling.values,
                               con.tol = con.tol,
+                              verbose = verbose,
                               ...)
                  },
                  label = paste0("Model", paste(curr.model.all[,j], collapse ="")),
@@ -532,13 +569,17 @@ famos <- function(init.par,
                      parscale.pars = parscale.pars,
                      scaling = scaling.values,
                      con.tol = con.tol,
+                     verbose = verbose,
                      ...)
         }
         
         
       }else{
         assign(paste0("model",j), "no.refit")
-        cat(paste0("Model fit for ", paste(curr.model.all[,j], collapse="")," exists and refitting is not enabled."), sep = "\n")
+        if(verbose){
+          cat(paste0("Model fit for ", paste(curr.model.all[,j], collapse="")," exists and refitting is not enabled."), sep = "\n")
+        }
+        
       }
     }
     
