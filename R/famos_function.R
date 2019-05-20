@@ -9,13 +9,13 @@
 #' @param init.model.type The starting model. Options are "global" (starts with the complete model) or "random" (creates a randomly sampled starting model). Alternatively, a specific model can be used by giving the corresponding names of the parameters one wants to start with. Default to "random".
 #' @param refit If TRUE, previously tested models will be tested again. Default to FALSE.
 #' @param use.optim Logical. If true, the cost function \code{fit.fn} will be fitted via \code{\link{optim}}. If FALSE, the cost function will only be evaluated.
-#' @param optim.runs The number of times that each model will be fitted by \code{\link{optim}}. Default to 5.
+#' @param optim.runs The number of times that each model will be optimised. Default to 1. Numbers larger than 1 use random initial conditions (see \code{random.borders}).
 #' @param default.val A named list containing the values that the non-fitted parameters should take. If NULL, all non-fitted parameters will be set to zero. Default values can be either given by a numeric value or by the name of the corresponding parameter the value should be inherited from (NOTE: In this case the corresponding parameter entry has to contain a numeric value). Default to NULL.
 #' @param swap.parameters A list specifying which parameters are interchangeable. Each swap set is given as a vector containing the names of the respective parameters. Default to NULL.
 #' @param critical.parameters A list specifying sets of critical parameters. Critical sets are parameters sets, of which at least one parameter per set has to be present in each tested model. Default to NULL.
 #' @param random.borders The ranges from which the random initial parameter conditions for all \code{optim.runs} larger than one are sampled. Can be either given as a vector containing the relative deviations for all parameters or as a matrix containing in its first column the lower and in its second column the upper border values. Parameters are uniformly sampled based on \code{\link{runif}}. Default to 1 (100\% deviation of all parameters). Alternatively, functions such as \code{\link{rnorm}}, \code{\link{rchisq}}, etc. can be used if the additional arguments are passed along as well.
 #' @param control.optim Control parameters passed along to \code{optim}. For more details, see \code{\link{optim}}.
-#' @param parscale.pars Logical. If TRUE (default), the \code{parscale} option will be used when fitting with \code{\link{optim}}. This can help to speed up the fitting procedure, if the parameter values are on different scales.
+#' @param parscale.pars Logical. If TRUE, the \code{parscale} option will be used when fitting with \code{\link{optim}}. This can help to speed up the fitting procedure, if the parameter values are on different scales. Default to FALSE.
 #' @param con.tol The absolute convergence tolerance of each fitting run (see Details). Default is set to 0.1.
 #' @param save.performance Logical. If TRUE, the performance of \code{FAMoS} will be evaluated in each iteration via \code{\link{famos.performance}}, which will save the corresponding plots into the folder "FAMoS-Results/Figures/" (starting from iteration 3) and simultaneously show it on screen. Default to TRUE.
 #' @param future.off Logical. If TRUE (default), FAMoS runs without the use of \code{futures}.
@@ -100,7 +100,7 @@ famos <- function(init.par,
                   critical.parameters = NULL,
                   random.borders = 1,
                   control.optim = list(maxit = 1000),
-                  parscale.pars = TRUE,
+                  parscale.pars = FALSE,
                   con.tol = 0.1,
                   save.performance = TRUE,
                   future.off = TRUE,

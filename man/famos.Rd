@@ -10,7 +10,7 @@ famos(init.par, fit.fn, homedir = getwd(), do.not.fit = NULL,
   swap.parameters = NULL, critical.parameters = NULL,
   random.borders = 1, control.optim = list(maxit = 1000),
   parscale.pars = TRUE, con.tol = 0.1, save.performance = TRUE,
-  future.off = TRUE, log.interval = 600, ...)
+  future.off = TRUE, log.interval = 600, verbose = FALSE, ...)
 }
 \arguments{
 \item{init.par}{A named vector containing the initial parameter values.}
@@ -50,6 +50,8 @@ famos(init.par, fit.fn, homedir = getwd(), do.not.fit = NULL,
 \item{future.off}{Logical. If TRUE (default), FAMoS runs without the use of \code{futures}.}
 
 \item{log.interval}{The interval (in seconds) at which FAMoS informs about the current status, i.e. which models are still running and how much time has passed. Default to 600 (= 10 minutes).}
+
+\item{verbose}{Logical. If TRUE, FAMoS will output all details about the current fitting procedure.}
 
 \item{...}{Other arguments that will be passed along to \code{\link{future}}, \code{\link{optim}} or the user-specified cost function \code{fit.fn}.}
 }

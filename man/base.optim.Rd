@@ -7,7 +7,7 @@
 base.optim(binary, parms, fit.fn, homedir, use.optim = TRUE,
   optim.runs = 3, default.val = NULL, random.borders = 1,
   con.tol = 0.01, control.optim = list(maxit = 1000),
-  parscale.pars = FALSE, scaling = NULL, ...)
+  parscale.pars = FALSE, scaling = NULL, verbose = FALSE, ...)
 }
 \arguments{
 \item{binary}{A vector containing zeroes and ones. Zero indicates that the corresponding parameter is not fitted.}
@@ -33,6 +33,8 @@ base.optim(binary, parms, fit.fn, homedir, use.optim = TRUE,
 \item{parscale.pars}{Logical. If TRUE (default), the \code{parscale} option will be used when fitting with \code{\link{optim}}. This is helpful, if the parameter values are on different scales.}
 
 \item{scaling}{Numeric vector determining how newly added model parameters are scaled. Only needed if \code{parscale.pars} is TRUE.}
+
+\item{verbose}{Logical. If TRUE, FAMoS will output all details about the current fitting procedure.}
 
 \item{...}{Additional parameters.}
 }
@@ -81,6 +83,5 @@ base.optim(binary = c(0,1,1,0,1),
            parms = inits,
            fit.fn = cost_function,
            homedir = tempdir(),
-           future.off = TRUE,
            data = sim.data)
 }
