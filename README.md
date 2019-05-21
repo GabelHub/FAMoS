@@ -5,16 +5,9 @@
 
 FAMoS provides an automated and unbiased model selection algorithm that
 aims at determining the most appropriate subset of model parameters to
-describe a specific data set. It only needs three inputs:
-
-  - A vector containing all parameters
-  - A cost function that calculates the negative log-likelihood for a
-    given parameter set
-  - The number of data points used for analysis
-
-Due to its flexibility with respect to the cost function, the FAMoS can
-be used for nonlinear problems such as ordinary and partial differential
-equations.
+describe a specific data set. Due to its flexibility with respect to the
+cost/optimisation function, FAMoS can handle many different mathematical
+structures, including for example regression models and ODEs.
 
 ## Installation
 

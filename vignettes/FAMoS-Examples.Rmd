@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
-#Model selection on a system of ordinary differential equations
+# Model selection on a system of ordinary differential equations
 FAMoS was originally designed to perform model selection on systems of ODEs, which is why this tool is especially suited to tackle these kind of problems.
 Assume we have three different cell populations, _A_, _B_ and _C_. All of these cells types can divide and therefore increase in their numbers. Furthermore, it is possible that all of these cells can turn into each other. The underlying dynamics of these cell populations can be described by a system of ordinary differential equations:
 
@@ -27,7 +27,7 @@ global.dynamics <- function(x,t,parms){
 
 ```
 
-#Model selection based on logistic regression models
+# Model selection based on logistic regression models
 There are many R packages available that tackle the problem of model selection based on regression models and FAMoS is not meant to replace them. However, it is also possible (and not even that difficult) to apply FAMoS to these kind of problems.
 For our example, we will use the birthwt data set from the _MASS_ package, a standard test set for model selection. We will follow the modifications by Venables and Ripley in their book _Modern Applied Statistics with S-PLUS_ and transform the data set in the following way before using it:
 
