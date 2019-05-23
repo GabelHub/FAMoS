@@ -266,15 +266,18 @@ unsuccessful forward and backward search.
 To verify if the FAMoS results are consistent, it is important to run
 the algorithm with different starting models. To set the initial model,
 the user can either use the built-in options *random* (which generates a
-random model) or *global* (which uses the complete model as a starting
-point). Alternatively, the user can specify a model by supplying a
-parameter vector containing the names of the initial model.
+random model), *global* (which uses the complete model as a starting
+point) or *most.distant* (uses the model most dissimilar to all
+previously tested models). Alternatively, the user can specify a model
+by supplying a parameter vector containing the names of the initial
+model.
 
 ``` r
 #Three options for the starting model
 init.model1 <- "random" # generates a random starting model
 init.model2 <- "global" # uses all available parameters
-init.model3 <- c("p1", "p4") # a user-specified model
+init.model3 <- "most.distant" # uses the most dissimilar model
+init.model4 <- c("p1", "p4") # a user-specified model
 ```
 
 In case *random* or *global* are chosen, the FAMoS automatically applies

@@ -21,7 +21,13 @@ get.most.distant <- function(input = getwd(), mrun = NULL, max.number = 100){
       }
       store.res <-  NULL
       for(i in 1:length(filenames)){
-        store.res <- cbind(store.res, readRDS(filenames[i]))
+        mt.file <- readRDS(filenames[i])
+        if(sum(!is.finite(mt.file[1,])) > 0){
+          stop(paste0("File\n ", 
+                      filenames[i],
+                      "\n is corrupt!"))
+        }
+        store.res <- cbind(store.res, mt.file)
       }
       mt <- store.res
     }else{
@@ -32,6 +38,11 @@ get.most.distant <- function(input = getwd(), mrun = NULL, max.number = 100){
       if(is.null(mt)){
         stop("File is empty!")
       }
+      if(sum(!is.finite(mt[1,])) > 0 ){
+        stop(paste0("File\n ", 
+                    paste0(input,"/FAMoS-Results/TestedModels/TestedModels",mrun,".rds"),
+                    "\n is corrupt!"))
+      }
     }
   }else if(is.matrix(input)){
     mt <- input
@@ -39,10 +50,15 @@ get.most.distant <- function(input = getwd(), mrun = NULL, max.number = 100){
     stop("Input needs to be either a directory path or a matrix.")
   }
   
+  #order matrix
+  mt <- mt[, order(mt[1,])]
   #cut off header with IC and iteration number
   mt <- mt[3:nrow(mt),]
   for(k in 1:min(max.number, ncol(mt))){
     complement <- abs(mt[,k] - 1)
+    if(sum(complement) == 0){
+      next
+    }
     distance.comp <- min(as.numeric(colSums(abs(mt-complement))))
     
     distance <- c()

@@ -30,8 +30,13 @@ sc.order <- function(input = getwd(), mrun = NULL, number = NULL, colour.par = N
       for(i in 2:length(filenames)){
         current.res <- readRDS(filenames[i])
         for(j in 1:ncol(current.res)){
+          if(sum(!is.finite(current.res[1,])) > 0){
+            stop(paste0("File\n ", filenames[i], "\n is corrupt!"))
+          }
+        
           if(any(colSums(abs(store.res[-c(1:4),] - current.res[-c(1:4),j])) == 0)){
             get.index <- which(colSums(abs(store.res[-c(1:4),] - current.res[-c(1:4),j])) == 0)
+            get.index <- get.index[which.min(store.res[1,get.index])[1]]
             if(store.res[1, get.index] >= current.res[1,j]){
               store.res[1, get.index] <-  current.res[1,j]
             }

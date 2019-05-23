@@ -6,7 +6,7 @@
 #' @param homedir The directory to which the results should be saved to.
 #' @param do.not.fit The names of the parameters that are not supposed to be fitted. Default is NULL.
 #' @param method The starting method of the FAMoS. Options are "forward" (forward search), "backward" (backward elimination) and "swap" (only if \code{critical.parameters} or \code{swap.parameters} are supplied). Methods are adaptively changed over each iteration of the FAMoS. Default to "forward".
-#' @param init.model.type The starting model. Options are "global" (starts with the complete model) or "random" (creates a randomly sampled starting model). Alternatively, a specific model can be used by giving the corresponding names of the parameters one wants to start with. Default to "random".
+#' @param init.model.type The starting model. Options are "global" (starts with the complete model), "random" (creates a randomly sampled starting model) or "most.distant" (uses the model most dissimilar from all other previously tested models). Alternatively, a specific model can be used by giving the corresponding names of the parameters one wants to start with. Default to "random".
 #' @param refit If TRUE, previously tested models will be tested again. Default to FALSE.
 #' @param use.optim Logical. If true, the cost function \code{fit.fn} will be fitted via \code{\link{optim}}. If FALSE, the cost function will only be evaluated.
 #' @param optim.runs The number of times that each model will be optimised. Default to 1. Numbers larger than 1 use random initial conditions (see \code{random.borders}).
@@ -216,7 +216,7 @@ famos <- function(init.par,
   scaling.values <- abs(init.par)
   scaling.values[scaling.values == 0] <- 1
   
-  if(length(init.model.type) == 1 && (init.model.type == "global" || init.model.type == "random")){
+  if(length(init.model.type) == 1 && (init.model.type == "global" || init.model.type == "random" || init.model.type == "most.distant")){
     switch (init.model.type,
             "global" = {
               #take the global model
@@ -230,6 +230,17 @@ famos <- function(init.par,
               init.model <- random.init.model(number.par = length(init.par),
                                               crit.parms = crit.parms,
                                               no.fit = do.not.fit)
+            },
+            "most.distant" = {
+              #check if previous files exist
+              filenames <- list.files(paste0(homedir,"/FAMoS-Results/TestedModels/"), 
+                                      pattern="*.rds", 
+                                      full.names=TRUE)
+              if(length(filenames) == 0){
+                stop("No previously tested models available. Please use another option for init.model.type.")
+              }
+              #get a random initial model
+              init.model <- which(get.most.distant(input = homedir)[[3]] == 1)
             }
     )
   }else{
