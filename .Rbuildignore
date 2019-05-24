@@ -3,3 +3,4 @@
 ^revdep$
 ^.*\.Rproj$
 ^\.Rproj\.user$
+^News\.Rmd$

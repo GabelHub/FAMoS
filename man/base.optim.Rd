@@ -84,4 +84,7 @@ base.optim(binary = c(0,1,1,0,1),
            fit.fn = cost_function,
            homedir = tempdir(),
            data = sim.data)
+           
+#delete tempdir
+unlink(tempdir(), recursive = TRUE)          
 }

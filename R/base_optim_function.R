@@ -55,6 +55,9 @@
 #'            fit.fn = cost_function,
 #'            homedir = tempdir(),
 #'            data = sim.data)
+#'            
+#' #delete tempdir
+#' unlink(tempdir(), recursive = TRUE)          
 
 base.optim <- function(binary,
                        parms,

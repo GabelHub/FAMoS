@@ -216,8 +216,8 @@ be stored. The default is set to the current working directory.
 In order to exclude some parameters from the fitting procedures, their
 names can be specified in the *do.not.fit* option. This allows to test
 different model restrictions without needing to change either *init.par*
-or *fit.fn*. For example, if we wanted to exlude the parameter *p4* from
-our analysis, we would specify initially
+or *fit.fn*. For example, if we wanted to exclude the parameter *p4*
+from our analysis, we would specify initially
 
 ``` r
 #define initial parameter values
@@ -228,8 +228,8 @@ no.fit <- c("p4")
 and pass this option on to FAMoS. Note that excluded parameters are
 automatically removed from the initial model, if *init.model.type =
 “random”* or *init.model.type = “global”* is used. If the
-user-specfied initial model contains an exluded parameter, an error will
-be
+user-specified initial model contains an excluded parameter, an error
+will be
 returned.
 
 ``` r
@@ -245,7 +245,7 @@ iteration, the option *method* only specifies the starting method.
 
 If the algorithm is able to find a better model, the current method will
 be used in the next iteration as well (except the swap method, which
-always uses a forward serch next - if it doesn’t terminate in that
+always uses a forward search next - if it doesn’t terminate in that
 step). If no better model is found, the algorithm will change the method
 according to the following scheme:
 

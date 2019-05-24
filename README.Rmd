@@ -175,7 +175,7 @@ The FAMoS generates and saves many different files, in order to make results ava
 
 #### do.not.fit
 
-In order to exclude some parameters from the fitting procedures, their names can be specified in the _do.not.fit_ option. This allows to test different model restrictions without needing to change either _init.par_ or _fit.fn_. For example, if we wanted to exlude the parameter _p4_ from our analysis, we would specify initially
+In order to exclude some parameters from the fitting procedures, their names can be specified in the _do.not.fit_ option. This allows to test different model restrictions without needing to change either _init.par_ or _fit.fn_. For example, if we wanted to exclude the parameter _p4_ from our analysis, we would specify initially
 
 ```{r do.not.fit, eval = FALSE}
 #define initial parameter values
@@ -183,7 +183,7 @@ inits <- c(p1 = 3, p2 = 4, p3 = -2, p4 = 2, p5 = 0)
 no.fit <- c("p4")
 ```
 
-and pass this option on to FAMoS. Note that excluded parameters are automatically removed from the initial model, if _init.model.type = "random"_ or _init.model.type = "global"_ is used. If the user-specfied initial model contains an exluded parameter, an error will be returned.
+and pass this option on to FAMoS. Note that excluded parameters are automatically removed from the initial model, if _init.model.type = "random"_ or _init.model.type = "global"_ is used. If the user-specified initial model contains an excluded parameter, an error will be returned.
 
 ```{r donotfiterror, eval = FALSE}
 The specified initial model violates critical conditions or the do.not.fit specifications
@@ -192,7 +192,7 @@ The specified initial model violates critical conditions or the do.not.fit speci
 
 FAMoS can use three different methods to search for different models to test: Forward search, backward elimination and swap search. As the algorithm dynamically changes these methods over the course of each iteration, the option _method_ only specifies the starting method. 
 
-If the algorithm is able to find a better model, the current method will be used in the next iteration as well (except the swap method, which always uses a forward serch next - if it doesn't terminate in that step). If no better model is found, the algorithm will change the method according to the following scheme:
+If the algorithm is able to find a better model, the current method will be used in the next iteration as well (except the swap method, which always uses a forward search next - if it doesn't terminate in that step). If no better model is found, the algorithm will change the method according to the following scheme:
 
 | current method  | previous method | next method |
 | :-------------: |:-------------:| :-----:|
