@@ -5,7 +5,7 @@
 \title{Fit Parameters of a Model}
 \usage{
 base.optim(binary, parms, fit.fn, homedir, use.optim = TRUE,
-  optim.runs = 3, default.val = NULL, random.borders = 1,
+  optim.runs = 1, default.val = NULL, random.borders = 1,
   con.tol = 0.01, control.optim = list(maxit = 1000),
   parscale.pars = FALSE, scaling = NULL, verbose = FALSE, ...)
 }
@@ -20,7 +20,7 @@ base.optim(binary, parms, fit.fn, homedir, use.optim = TRUE,
 
 \item{use.optim}{Logical. If true, the cost function \code{fit.fn} will be fitted via \code{\link{optim}}. If FALSE, the cost function will only be evaluated.}
 
-\item{optim.runs}{The number of times that each model will be fitted by \code{\link{optim}}. Default to 3.}
+\item{optim.runs}{The number of times that each model will be optimised. Default to 1. Numbers larger than 1 use random initial conditions (see \code{random.borders}).}
 
 \item{default.val}{A named list containing the values that the non-fitted parameters should take. If NULL, all non-fitted parameters will be set to zero. Default values can be either given by a numeric value or by the name of the corresponding parameter the value should be inherited from (NOTE: In this case the corresponding parameter entry has to contain a numeric value). Default to NULL.}
 

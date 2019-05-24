@@ -77,14 +77,17 @@
 #' swaps <- list(c("p1", "p5"))
 #'
 #' #perform model selection
-#' res <- famos(init.par = inits,
-#'             fit.fn = cost_function,
-#'             homedir = tempdir(),
-#'             method = "swap",
-#'             swap.parameters = swaps,
-#'             init.model.type = c("p1", "p3"),
-#'             optim.runs = 1,
-#'             data = sim.data)
+#' famos(init.par = inits,
+#'       fit.fn = cost_function,
+#'       homedir = tempdir(),
+#'       method = "swap",
+#'       swap.parameters = swaps,
+#'       init.model.type = c("p1", "p3"),
+#'       optim.runs = 1,
+#'       data = sim.data)
+#'       
+#' #delete tempdir
+#' unlink(tempdir(), recursive = TRUE)
 
 famos <- function(init.par,
                   fit.fn,
@@ -769,6 +772,7 @@ famos <- function(init.par,
                                                  mrun,
                                                  ".pdf"))
         }
+
         famos.performance(input = saveTestedModels,
                           path = homedir)
         

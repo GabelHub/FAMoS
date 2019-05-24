@@ -5,8 +5,8 @@ Version: 0.2.0
 Author: Michael Gabel, Tobias Hohl
 Maintainer: Michael Gabel <m_gabel@gmx.de>
 Description: Given a set of parameters describing model dynamics and a corresponding cost function,
-    FAMoS attempts to find the most suitable parameter subset in terms of a specified information
-    criterion. Works on any cost function.
+    FAMoS performs a dynamic forward-backward model selection on a specified selection
+    criterion. It also applies a non-local swap search method. Works on any cost function.
 License: GPL-3
 Depends: R (>= 3.4)
 Encoding: UTF-8

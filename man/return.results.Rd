@@ -27,8 +27,6 @@ A list containing the following elements:
 Returns the results of one FAMoS run. Includes the best parameter sets and corresponding selection criterion.
 }
 \examples{
-future::plan(future::sequential)
-
 #setting data
 x.values <- 1:7
 y.values <-  3^2 * x.values^2 - exp(2 * x.values)
@@ -51,13 +49,15 @@ cost_function <- function(parms, x.vals, y.vals){
 res <- famos(init.par = inits,
            fit.fn = cost_function,
            nr.of.data = length(y.values),
-           homedir = getwd(),
-           method = "forward",
+           homedir = tempdir(),
            init.model.type = c("p2", "p3"),
            optim.runs = 1,
            x.vals = x.values,
            y.vals = y.values)
 
 #get results
-return.results(homedir = getwd(), mrun = res$mrun)
+return.results(homedir = tempdir(), mrun = res$mrun)
+
+#delete tempdir
+unlink(tempdir(), recursive = TRUE)
 }

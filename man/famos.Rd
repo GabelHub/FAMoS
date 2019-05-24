@@ -9,7 +9,7 @@ famos(init.par, fit.fn, homedir = getwd(), do.not.fit = NULL,
   use.optim = TRUE, optim.runs = 5, default.val = NULL,
   swap.parameters = NULL, critical.parameters = NULL,
   random.borders = 1, control.optim = list(maxit = 1000),
-  parscale.pars = TRUE, con.tol = 0.1, save.performance = TRUE,
+  parscale.pars = FALSE, con.tol = 0.1, save.performance = TRUE,
   future.off = TRUE, log.interval = 600, verbose = FALSE, ...)
 }
 \arguments{
@@ -23,13 +23,13 @@ famos(init.par, fit.fn, homedir = getwd(), do.not.fit = NULL,
 
 \item{method}{The starting method of the FAMoS. Options are "forward" (forward search), "backward" (backward elimination) and "swap" (only if \code{critical.parameters} or \code{swap.parameters} are supplied). Methods are adaptively changed over each iteration of the FAMoS. Default to "forward".}
 
-\item{init.model.type}{The starting model. Options are "global" (starts with the complete model) or "random" (creates a randomly sampled starting model). Alternatively, a specific model can be used by giving the corresponding names of the parameters one wants to start with. Default to "random".}
+\item{init.model.type}{The starting model. Options are "global" (starts with the complete model), "random" (creates a randomly sampled starting model) or "most.distant" (uses the model most dissimilar from all other previously tested models). Alternatively, a specific model can be used by giving the corresponding names of the parameters one wants to start with. Default to "random".}
 
 \item{refit}{If TRUE, previously tested models will be tested again. Default to FALSE.}
 
 \item{use.optim}{Logical. If true, the cost function \code{fit.fn} will be fitted via \code{\link{optim}}. If FALSE, the cost function will only be evaluated.}
 
-\item{optim.runs}{The number of times that each model will be fitted by \code{\link{optim}}. Default to 5.}
+\item{optim.runs}{The number of times that each model will be optimised. Default to 1. Numbers larger than 1 use random initial conditions (see \code{random.borders}).}
 
 \item{default.val}{A named list containing the values that the non-fitted parameters should take. If NULL, all non-fitted parameters will be set to zero. Default values can be either given by a numeric value or by the name of the corresponding parameter the value should be inherited from (NOTE: In this case the corresponding parameter entry has to contain a numeric value). Default to NULL.}
 
@@ -41,7 +41,7 @@ famos(init.par, fit.fn, homedir = getwd(), do.not.fit = NULL,
 
 \item{control.optim}{Control parameters passed along to \code{optim}. For more details, see \code{\link{optim}}.}
 
-\item{parscale.pars}{Logical. If TRUE (default), the \code{parscale} option will be used when fitting with \code{\link{optim}}. This can help to speed up the fitting procedure, if the parameter values are on different scales.}
+\item{parscale.pars}{Logical. If TRUE, the \code{parscale} option will be used when fitting with \code{\link{optim}}. This can help to speed up the fitting procedure, if the parameter values are on different scales. Default to FALSE.}
 
 \item{con.tol}{The absolute convergence tolerance of each fitting run (see Details). Default is set to 0.1.}
 
@@ -115,12 +115,15 @@ cost_function <- function(parms, binary, data){
 swaps <- list(c("p1", "p5"))
 
 #perform model selection
-res <- famos(init.par = inits,
-            fit.fn = cost_function,
-            homedir = tempdir(),
-            method = "swap",
-            swap.parameters = swaps,
-            init.model.type = c("p1", "p3"),
-            optim.runs = 1,
-            data = sim.data)
+famos(init.par = inits,
+      fit.fn = cost_function,
+      homedir = tempdir(),
+      method = "swap",
+      swap.parameters = swaps,
+      init.model.type = c("p1", "p3"),
+      optim.runs = 1,
+      data = sim.data)
+      
+#delete tempdir
+unlink(tempdir(), recursive = TRUE)
 }

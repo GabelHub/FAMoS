@@ -9,8 +9,7 @@
 #' @export
 #'
 #' @examples
-#' future::plan(future::sequential)
-#'
+#' 
 #' #setting data
 #' x.values <- 1:7
 #' y.values <-  3^2 * x.values^2 - exp(2 * x.values)
@@ -33,18 +32,20 @@
 #' res <- famos(init.par = inits,
 #'             fit.fn = cost_function,
 #'             nr.of.data = length(y.values),
-#'             homedir = getwd(),
-#'             method = "forward",
+#'             homedir = tempdir(),
 #'             init.model.type = c("p2", "p3"),
 #'             optim.runs = 1,
 #'             x.vals = x.values,
 #'             y.vals = y.values)
 #'
 #' #get results
-#' retrieve.results(model = "01110", homedir = getwd())
-#' retrieve.results(model = c("p2", "p3", "p4"), homedir = getwd(),
+#' retrieve.results(model = "01110", homedir = tempdir())
+#' retrieve.results(model = c("p2", "p3", "p4"), homedir = tempdir(),
 #'                  all.names = c("p1","p2", "p3", "p4", "p5"))
-#' retrieve.results(model = c(0,1,1,1,0), homedir = getwd())
+#' retrieve.results(model = c(0,1,1,1,0), homedir = tempdir())
+#' 
+#' #delete tempdir
+#' unlink(tempdir(), recursive = TRUE)
 retrieve.results <- function(model, homedir = getwd(), all.names = NULL){
   options(warn = -1)
   if(is.numeric(model)){
