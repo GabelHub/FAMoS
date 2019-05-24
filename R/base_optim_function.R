@@ -23,12 +23,12 @@
 #' #setting data
 #' true.p2 <- 3
 #' true.p5 <- 2
-#' sim.data <- cbind.data.frame(range = 1:10, 
+#' sim.data <- cbind.data.frame(range = 1:10,
 #'                              y = true.p2^2 * (1:10)^2 - exp(true.p5 * (1:10)))
-#' 
+#'
 #' #define initial parameter values and corresponding test function
 #' inits <- c(p1 = 3, p2 = 4, p3 = -2, p4 = 2, p5 = 0)
-#' 
+#'
 #' cost_function <- function(parms, binary, data){
 #'   if(max(abs(parms)) > 5){
 #'     return(NA)
@@ -36,28 +36,28 @@
 #'   with(as.list(c(parms)), {
 #'     res <- p1*4 + p2^2*data$range^2 + p3*sin(data$range) + p4*data$range - exp(p5*data$range)
 #'     diff <- sum((res - data$y)^2)
-#'     
+#'
 #'     #calculate AICC
 #'     nr.par <- length(which(binary == 1))
 #'     nr.data <- nrow(data)
 #'     AICC <- diff + 2*nr.par + 2*nr.par*(nr.par + 1)/(nr.data - nr.par -1)
-#'     
+#'
 #'     return(AICC)
 #'   })
 #' }
-#' 
+#'
 #' #create directories if needed
 #' make.directories(tempdir())
-#' 
+#'
 #' #optimise the model parameters
 #' base.optim(binary = c(0,1,1,0,1),
 #'            parms = inits,
 #'            fit.fn = cost_function,
 #'            homedir = tempdir(),
 #'            data = sim.data)
-#'            
+#'
 #' #delete tempdir
-#' unlink(tempdir(), recursive = TRUE)          
+#' unlink(paste0(tempdir(),"/FAMoS-Results"), recursive = TRUE)
 
 base.optim <- function(binary,
                        parms,
@@ -73,35 +73,35 @@ base.optim <- function(binary,
                        scaling = NULL,
                        verbose = FALSE,
                        ...) {
-  
+
   #get the vectors of the fitted and the not-fitted parameters
   no.fit <- which(binary == 0)
-  
+
   if(length(no.fit) > 0){
     #specify fit vector
     fit.vector <- parms[-no.fit]
   }else{
     fit.vector <- parms
   }
-  
-  
+
+
   all.par <- combine.par(fit.par = fit.vector, all.names = names(parms), default.val = default.val)
   #number of succesful runs
   k <- 1
   #number of insuccessful runs
   total.tries <- 0
-  
+
   #try k = optim.runs different combinations
   while(k <= optim.runs && total.tries < (4*optim.runs)){
     #set failing status to FALSE
     abort <- F
-    
+
     #print number of successful runs
     if(verbose){
       cat(paste0("\nFitting run # ", k, "\n"))
     }
-    
-    
+
+
     #check if initial parameters set is working
     if(k == 1){
       #take the parameter combination from the currently best model
@@ -115,15 +115,15 @@ base.optim <- function(binary,
                                       binary = binary,
                                       ...)
         works <- is.finite(finite.val)
-        
-        
-        
+
+
+
         #if not, skip the current set
         if(works == FALSE){
           if(verbose){
             cat("Inherited parameters do not work and are being skipped.\n")
           }
-          
+
           k <- k + 1
           total.tries <- total.tries + 1
           next
@@ -142,11 +142,11 @@ base.optim <- function(binary,
             random.min <- fit.vector - random.borders[-no.fit]*abs(fit.vector)
             random.max <- fit.vector + random.borders[-no.fit]*abs(fit.vector)
           }
-          
+
           ran.par <- stats::runif(n = length(fit.vector),
                                   min = random.min,
                                   max = random.max)
-          
+
         }else if(is.matrix(random.borders)){
           if(nrow(random.borders) == 1){
             random.min <- rep(random.borders[1,1], length(fit.vector))
@@ -155,7 +155,7 @@ base.optim <- function(binary,
             random.min <- random.borders[-no.fit,1]
             random.max <- random.borders[-no.fit,2]
           }
-          
+
           ran.par <- stats::runif(n = length(fit.vector),
                                   min = random.min,
                                   max = random.max)
@@ -165,7 +165,7 @@ base.optim <- function(binary,
         }else{
           stop("random.borders must be a number, a vector or a matrix!")
         }
-        
+
         names(ran.par) <- names(fit.vector)
         if(use.optim == TRUE){
         finite.val <- combine.and.fit(par = ran.par,
@@ -174,12 +174,12 @@ base.optim <- function(binary,
                                       default.val = default.val,
                                       binary = binary,
                                       ...)
-        
+
           works <- is.finite(finite.val)
         }else{
           works <- TRUE
         }
-        
+
         tries <- tries + 1
         if(tries > 100){
           stop("Tried 100 times to sample valid starting conditions for optim, but failed. Please check if 'random.borders' is correctly specified.")
@@ -190,7 +190,7 @@ base.optim <- function(binary,
     opt.run <- 10
     opt.previous <- 10^300 # the difference of opt.run and opt.previous has to be bigger than 0.1, but the values are not important
     runs = 1
-    
+
     repeat{#test if the current run yielded better results than the previous. If yes keep optimising
       # get initial parameter sets for optim
       if(runs == 1){
@@ -199,20 +199,20 @@ base.optim <- function(binary,
       if(runs > 1){
         opt.previous <- opt.run
       }
-      
-      
+
+
       if(use.optim == TRUE){
-        
+
         #use scaled parameters for optim
         if(parscale.pars == TRUE){
           control.optim.x <- c(control.optim,
-                               list(parscale = parscale.famos(par = opt.par, 
-                                                              scale = abs(opt.par), 
+                               list(parscale = parscale.famos(par = opt.par,
+                                                              scale = abs(opt.par),
                                                               correction = scaling)))
         }else{
           control.optim.x <- control.optim
         }
-        
+
         opt <- stats::optim(par = opt.par,
                             fn = combine.and.fit,
                             par.names = names(parms),
@@ -230,26 +230,26 @@ base.optim <- function(binary,
                                binary = binary,
                                default.val = default.val,
                                ...)
-        
+
         if(!is.list(opt)){
           stop("The output of the user-defined optimisation function must be a list including the selection criterion value and a named vector of the returned parameter values.")
         }
-        
+
         opt.run <- opt[[1]]
         opt.par <- opt[[2]]
         break
       }
-      
+
       if (opt.run > 1e34 || !is.finite(opt.run)) {
         abort <- T
         if(verbose){
           cat("Optimisation failed. Run skipped.\n")
         }
-        
+
         total.tries <- total.tries + 1
         break
       }
-      
+
       if(abs((opt.run - opt.previous)/opt.previous) < con.tol){
         break
       }
@@ -258,18 +258,18 @@ base.optim <- function(binary,
       if(verbose){
         cat(paste(opt.run, "\n"))
       }
-      
+
     }
     #test if current run was better
     if(k == 1 || opt.run < opt.min){
       opt.min <- opt.run
       min.par <- opt.par
-      
+
       #get corresponding parameter values
       out.par <- combine.par(fit.par = opt.par, all.names = names(parms), default.val = default.val)
-      
+
       result <- c(SCV = opt.min, out.par)
-      
+
       #saves progress if the recent fit is the first or better than any previously saved one
       #check if this model has already been tested
       if(file.exists(paste0(homedir, "/FAMoS-Results/Fits/Model",paste(binary, collapse =""), ".rds")) == TRUE){
@@ -282,13 +282,13 @@ base.optim <- function(binary,
           if(verbose){
             cat("Current fit better than previous best fit. Results overwritten.\n")
           }
-          
+
           saveRDS(object = result, file = paste0(homedir,
                                                  "/FAMoS-Results/Fits/Model",
                                                  paste(binary, collapse =""),
                                                  ".rds"))
         }
-        
+
       }else{
         saveRDS(object = result, file = paste0(homedir,
                                                "/FAMoS-Results/Fits/Model",
@@ -297,23 +297,23 @@ base.optim <- function(binary,
         if(verbose){
           cat("No results file present. Current parameters saved.\n")
         }
-        
+
       }
-      
-      
+
+
     }
-    
-    
+
+
     if(!abort || k==1) {
       k <- k + 1
       total.tries <- total.tries + 1
     }
-    
-    
+
+
   }
   if(verbose){
     cat("\nFitting done.\n")
   }
-  
+
   return("done")
 }

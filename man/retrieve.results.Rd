@@ -56,5 +56,5 @@ retrieve.results(model = c("p2", "p3", "p4"), homedir = tempdir(),
 retrieve.results(model = c(0,1,1,1,0), homedir = tempdir())
 
 #delete tempdir
-unlink(tempdir(), recursive = TRUE)
+unlink(paste0(tempdir(),"/FAMoS-Results"), recursive = TRUE)
 }

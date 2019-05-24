@@ -75,7 +75,7 @@ In each iteration, the FAMoS finds all neighbouring models based on the current 
 
 The cost function \code{fit.fn} can take the following inputs:
 \describe{
-  \item{parms}{A named vector containing all parameter values. This input is mandatory. If \code{use.optim = TRUE}, FAMos will automatically subset the complete parameter set into fitted and non-fitted parameters.} 
+  \item{parms}{A named vector containing all parameter values. This input is mandatory. If \code{use.optim = TRUE}, FAMos will automatically subset the complete parameter set into fitted and non-fitted parameters.}
   \item{binary}{Optional input. The binary vector contains the information which parameters are currently fitted. Fitted parameters are set to 1, non-fitted to 0. This input can be to split the complete parameter set into fitted and non-fitted parameters if a customised optimisation function is used (see \code{use.optim}).}
   \item{...}{Other parameters that can should be passed to \code{fit.fn}}
   }
@@ -87,7 +87,7 @@ If \code{use.optim = TRUE}, the cost function needs to return a single numeric v
 #setting data
 true.p2 <- 3
 true.p5 <- 2
-sim.data <- cbind.data.frame(range = 1:10, 
+sim.data <- cbind.data.frame(range = 1:10,
                              y = true.p2^2 * (1:10)^2 - exp(true.p5 * (1:10)))
 
 #define initial parameter values and corresponding test function
@@ -100,12 +100,12 @@ cost_function <- function(parms, binary, data){
   with(as.list(c(parms)), {
     res <- p1*4 + p2^2*data$range^2 + p3*sin(data$range) + p4*data$range - exp(p5*data$range)
     diff <- sum((res - data$y)^2)
-    
+
     #calculate AICC
     nr.par <- length(which(binary == 1))
     nr.data <- nrow(data)
     AICC <- diff + 2*nr.par + 2*nr.par*(nr.par + 1)/(nr.data - nr.par -1)
-    
+
     return(AICC)
   })
 }
@@ -123,7 +123,7 @@ famos(init.par = inits,
       init.model.type = c("p1", "p3"),
       optim.runs = 1,
       data = sim.data)
-      
+
 #delete tempdir
-unlink(tempdir(), recursive = TRUE)
+unlink(paste0(tempdir(),"/FAMoS-Results"), recursive = TRUE)
 }

@@ -9,7 +9,7 @@
 #' @export
 #'
 #' @examples
-#' 
+#'
 #' #setting data
 #' x.values <- 1:7
 #' y.values <-  3^2 * x.values^2 - exp(2 * x.values)
@@ -43,9 +43,9 @@
 #' retrieve.results(model = c("p2", "p3", "p4"), homedir = tempdir(),
 #'                  all.names = c("p1","p2", "p3", "p4", "p5"))
 #' retrieve.results(model = c(0,1,1,1,0), homedir = tempdir())
-#' 
+#'
 #' #delete tempdir
-#' unlink(tempdir(), recursive = TRUE)
+#' unlink(paste0(tempdir(),"/FAMoS-Results"), recursive = TRUE)
 retrieve.results <- function(model, homedir = getwd(), all.names = NULL){
   options(warn = -1)
   if(is.numeric(model)){

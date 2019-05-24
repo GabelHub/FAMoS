@@ -45,11 +45,11 @@
 #'
 #' #get results
 #' return.results(homedir = tempdir(), mrun = res$mrun)
-#' 
+#'
 #' #delete tempdir
-#' unlink(tempdir(), recursive = TRUE)
+#' unlink(paste0(tempdir(),"/FAMoS-Results"), recursive = TRUE)
 return.results <- function(homedir, mrun){
-  
+
   mrun.old <- mrun
   best.sc <- Inf
   filenames <- list.files(paste0(homedir,"/FAMoS-Results/BestModel"), pattern="*.rds", full.names=TRUE)
@@ -63,7 +63,7 @@ return.results <- function(homedir, mrun){
       }
     }
   }
-  
+
   if(mrun.old == "best"){
     #get information criterion of best model
     cat(paste0("Selection criterion value of best model over all runs: ", round(best.sc, 2)), sep = "\n")
@@ -77,7 +77,7 @@ return.results <- function(homedir, mrun){
     min.index <- as.numeric(which(mt[1,] == min(mt[1,], na.rm = TRUE)))[1]
     cat(paste0("Total number of tested models (might include duplicates): ",mnumber, sep = "\n"))
     cat(paste0("Best model (binary): ", paste(mt[-c(1:2), min.index], collapse="")), sep = "\n")
-    
+
     cat("Selected parameters:", sep = "\n")
     best.m <- mt[-c(1:2), min.index]
     print(names(best.m[which(best.m == 1)]))
@@ -92,7 +92,7 @@ return.results <- function(homedir, mrun){
                    total.models.tested = ncol(mt),
                    mrun = mrun,
                    initial.model = mt[-c(1:2),1])
-    
+
     return(output)
   }else{
     cat(paste0("\nFAMoS run ", mrun), sep = "\n")
@@ -105,7 +105,7 @@ return.results <- function(homedir, mrun){
     min.index <- as.numeric(which(mt[1,] == min(mt[1,], na.rm = TRUE)))[1]
     cat(paste0("Number of tested models during this run: ", ncol(mt)), sep = "\n")
     cat(paste0("Best model (binary): ", paste(mt[-c(1:2), min.index], collapse="")), sep = "\n")
-    
+
     cat("Selected parameters:", sep = "\n")
     best.m <- mt[-c(1:2), min.index]
     print(names(best.m[which(best.m == 1)]))
@@ -120,8 +120,8 @@ return.results <- function(homedir, mrun){
                    total.models.tested = ncol(mt),
                    mrun = mrun,
                    initial.model = mt[-c(1:2),1])
-    
+
     return(output)
   }
-  
+
 }

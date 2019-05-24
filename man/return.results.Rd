@@ -59,5 +59,5 @@ res <- famos(init.par = inits,
 return.results(homedir = tempdir(), mrun = res$mrun)
 
 #delete tempdir
-unlink(tempdir(), recursive = TRUE)
+unlink(paste0(tempdir(),"/FAMoS-Results"), recursive = TRUE)
 }
