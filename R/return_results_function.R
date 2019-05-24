@@ -83,9 +83,10 @@ return.results <- function(homedir, mrun){
     print(names(best.m[which(best.m == 1)]))
     cat("Estimated parameter values:", sep = "\n")
     print(bm[-1])
+    bm.out <- bm[-1]
     #save output as list
     output <- list(SCV = round(bm[1], 2),
-                   par = names(best.m[which(best.m == 1)]),
+                   par = bm.out[which(best.m == 1)],
                    binary = paste(mt[-c(1:2), min.index], collapse=""),
                    vector = mt[-c(1:2), min.index],
                    total.models.tested = ncol(mt),
@@ -110,9 +111,10 @@ return.results <- function(homedir, mrun){
     print(names(best.m[which(best.m == 1)]))
     cat("Estimated parameter values:", sep = "\n")
     print(bm[-1])
+    bm.out <- bm[-1]
     #save output as list
     output <- list(SCV = round(bm[1], 2),
-                   par = names(best.m[which(best.m == 1)]),
+                   par = bm.out[which(best.m == 1)],
                    binary = paste(mt[-c(1:2), min.index], collapse=""),
                    vector = mt[-c(1:2), min.index],
                    total.models.tested = ncol(mt),
