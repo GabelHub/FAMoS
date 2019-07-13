@@ -38,11 +38,13 @@ combine.par <- function(fit.par, all.names, default.val = NULL){
       }else if(is.character(default.val[[k]])){#if character find the corresponding value
         #check if the corresponding entry is part of the fit vector
         if(is.element(default.val[[k]], names(fit.par))){
-          all.par[k] <- fit.par[which(names(fit.par) == default.val[[k]])]
+          all.par[k] <- fit.par[default.val[[k]]]
         }else{#if not take the value specified in nofit_zero
-          all.par[k] <- default.val[[which(names(default.val) == default.val[[k]])]]
+          all.par[k] <- default.val[[default.val[[k]]]]
         }
         
+      }else{
+        stop("Default values must either be character or numeric variables")
       }
     }
     return(all.par)
