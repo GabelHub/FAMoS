@@ -18,27 +18,21 @@
 #' model.appr(current.parms = model2, critical.parms = crits)
 
 model.appr <- function(current.parms, critical.parms, do.not.fit = NULL){
-  if(is.null(do.not.fit) == FALSE){
-    if(sum(is.element(do.not.fit, current.parms))> 0){
-      return(FALSE)
-    }
+  if(is.null(do.not.fit) == FALSE && any(is.element(do.not.fit, current.parms))){
+    return(FALSE)
   }
   if(length(critical.parms) == 0){
     return(TRUE)
   }
-  model.valid <- TRUE
+
   #cycle through all the list entries
   for(i in 1:length(critical.parms)){
-    #get list entry
-    test.set <- critical.parms[[i]]
     #test if intersection is empty
-    if(length(intersect(current.parms, test.set)) == 0){
-      #print(i)
-      model.valid <- FALSE
+    if(length(intersect(current.parms, critical.parms[[i]])) == 0){
       return(FALSE)
     }
   }
   #return if model is valid or not
-  return(model.valid)
+  return(TRUE)
   
 }
