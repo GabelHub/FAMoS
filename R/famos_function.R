@@ -97,7 +97,7 @@ famos <- function(init.par,
                   init.model.type = "random",
                   refit = FALSE,
                   use.optim = TRUE,
-                  optim.runs = 5,
+                  optim.runs = 1,
                   default.val = NULL,
                   swap.parameters = NULL,
                   critical.parameters = NULL,
@@ -220,6 +220,10 @@ famos <- function(init.par,
     do.not.fit <- which( (names(init.par) %in% do.not.fit) == TRUE)
   }
 
+  if(!is.null(crit.parms) && !is.null(do.not.fit) && length(intersect(unlist(crit.parms), do.not.fit)) > 0){
+    stop("The critical set contains parameters that are not supposed to be fitted. Please change either 'critical.parameters' or 'do.not.fit'!")
+  }
+  
   #set scaling values
   scaling.values <- abs(init.par)
   scaling.values[scaling.values == 0] <- 1

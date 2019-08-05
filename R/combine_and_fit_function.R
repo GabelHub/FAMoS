@@ -3,12 +3,12 @@
 #' Combines fitted and non-fitted parameters and calls the fitting function. Serves as a wrapping function for the user-specified fitting function \code{fit.fn} (see \code{\link{famos}}).
 #' @param par A named vector containing all parameters that are supposed to be fitted.
 #' @param par.names The names of all parameters
-#' @param fit.fn The cost function (see \code{\link{famos}} for more details).
+#' @param fit.fn The cost or optimisation function (see \code{\link{famos}} for more details).
 #' @param binary A vector containing zeroes and ones. Zero indicates that the corresponding parameter is not fitted.
 #' @param default.val A named list containing the values that the non-fitted parameters should take. If NULL, all non-fitted parameters will be set to zero. Default values can be either given by a numeric value or by the name of the corresponding parameter the value should be inherited from (NOTE: In this case the corresponding parameter entry has to contain a numeric value). Default to NULL.
 #' @param ... Other arguments.
 #' @export
-#' @return Returns the negative log-likelihood as calculated by the specified cost function
+#' @return Returns the value calculated by the user-supplied cost or optimisation function
 #' @examples
 #' #set parameters and cost function
 #' fit.par <- c(p1 = 2, p2 = 4)
