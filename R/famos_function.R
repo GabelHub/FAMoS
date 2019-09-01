@@ -5,7 +5,7 @@
 #' @param fit.fn A cost function. Has to take the complete parameter vector as an input (needs to be names \code{parms}) and must return a selection criterion value (e.g. AICc or BIC). See Details for more information.
 #' @param homedir The directory to which the results should be saved to.
 #' @param do.not.fit The names of the parameters that are not supposed to be fitted. Default is NULL.
-#' @param method The starting method of the FAMoS. Options are "forward" (forward search), "backward" (backward elimination) and "swap" (only if \code{critical.parameters} or \code{swap.parameters} are supplied). Methods are adaptively changed over each iteration of the FAMoS. Default to "forward".
+#' @param method The starting method of FAMoS. Options are "forward" (forward search), "backward" (backward elimination) and "swap" (only if \code{critical.parameters} or \code{swap.parameters} are supplied). Methods are adaptively changed over each iteration of FAMoS. Default to "forward".
 #' @param init.model.type The starting model. Options are "global" (starts with the complete model), "random" (creates a randomly sampled starting model) or "most.distant" (uses the model most dissimilar from all other previously tested models). Alternatively, a specific model can be used by giving the corresponding names of the parameters one wants to start with. Default to "random".
 #' @param refit If TRUE, previously tested models will be tested again. Default to FALSE.
 #' @param use.optim Logical. If true, the cost function \code{fit.fn} will be fitted via \code{\link{optim}}. If FALSE, the cost function will only be evaluated.
@@ -22,13 +22,13 @@
 #' @param log.interval The interval (in seconds) at which FAMoS informs about the current status, i.e. which models are still running and how much time has passed. Default to 600 (= 10 minutes).
 #' @param verbose Logical. If TRUE, FAMoS will output all details about the current fitting procedure.
 #' @param ... Other arguments that will be passed along to \code{\link{future}}, \code{\link{optim}} or the user-specified cost function \code{fit.fn}.
-#' @details In each iteration, the FAMoS finds all neighbouring models based on the current model and method, and subsequently tests them. If one of the tested models performs better than the current model, the model, but not the method, will be updated. Otherwise, the method, but not the model, will be adaptively changed, depending on the previously used methods.
+#' @details In each iteration, FAMoS finds all neighbouring models based on the current model and method, and subsequently tests them. If one of the tested models performs better than the current model, the model, but not the method, will be updated. Otherwise, the method, but not the model, will be adaptively changed, depending on the previously used methods.
 #'
 #' The cost function \code{fit.fn} can take the following inputs:
 #' \describe{
 #'   \item{parms}{A named vector containing all parameter values. This input is mandatory. If \code{use.optim = TRUE}, FAMos will automatically subset the complete parameter set into fitted and non-fitted parameters.}
-#'   \item{binary}{Optional input. The binary vector contains the information which parameters are currently fitted. Fitted parameters are set to 1, non-fitted to 0. This input can be to split the complete parameter set into fitted and non-fitted parameters if a customised optimisation function is used (see \code{use.optim}).}
-#'   \item{...}{Other parameters that can should be passed to \code{fit.fn}}
+#'   \item{binary}{Optional input. The binary vector contains the information which parameters are currently fitted. Fitted parameters are set to 1, non-fitted to 0. This input can be used to split the complete parameter set into fitted and non-fitted parameters if a customised optimisation function is used (see \code{use.optim}).}
+#'   \item{...}{Other parameters that should be passed to \code{fit.fn}}
 #'   }
 #'
 #'If \code{use.optim = TRUE}, the cost function needs to return a single numeric value, which corresponds to the selection criterion value. However, if \code{use.optim = FALSE}, the cost function needs to return a list containing in its first entry the selection criterion value and in its second entry the named vector of the fitted parameter values (non-fitted parameters are internally assessed).
@@ -253,6 +253,18 @@ famos <- function(init.par,
               }
               #get a random initial model
               init.model <- which(get.most.distant(input = homedir)[[3]] == 1)
+              init.model <- setdiff(init.model,do.not.fit)
+              if(length(init.model) == 0){
+                stop("No untested model was found. Please change the init.model.type option.")
+              }
+              if(model.appr(current.parms = init.model,
+                            critical.parms = crit.parms,
+                            do.not.fit = do.not.fit) == FALSE){
+                for(i in 1:length(crit.parms)){
+                  init.model <- unique(c(init.model, crit.parms[[i]][1]))
+                }
+                init.model <- init.model[order(init.model)]
+              }
             }
     )
   }else{
@@ -325,10 +337,11 @@ famos <- function(init.par,
         } else {
           parms.left <- samp.vec[-c(pick.model.prev, do.not.fit)]
         }
-
+        failed.global = FALSE
         #check if the current model is the global model
         if(length(parms.left) == 0){
           method = "backward"
+          failed.global = TRUE
           next
         }
 
@@ -426,6 +439,17 @@ famos <- function(init.par,
           previous <- method
           method <- "forward"
           model.run <- model.run + 1
+          if(exists("failed.global") && failed.global == TRUE){
+            cat("FAMoS can neither add nor remove parameters. Algorithm terminated", sep = "\n")
+            timediff <- difftime(Sys.time(),start, units = "secs")[[1]]
+            cat(paste0("Time needed: ",
+                       sprintf("%02d:%02d:%02d",
+                               timediff %% 86400 %/% 3600,  # hours
+                               timediff %% 3600 %/% 60,  # minutes
+                               timediff %% 60 %/% 1), # seconds,
+                       sep = "\n"))
+            break
+          }
           cat("All removable parameters are critical - switch to forward search.", sep = "\n")
           next
         }
