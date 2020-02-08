@@ -6,11 +6,12 @@
 \usage{
 famos(init.par, fit.fn, homedir = getwd(), do.not.fit = NULL,
   method = "forward", init.model.type = "random", refit = FALSE,
-  use.optim = TRUE, optim.runs = 5, default.val = NULL,
+  use.optim = TRUE, optim.runs = 1, default.val = NULL,
   swap.parameters = NULL, critical.parameters = NULL,
   random.borders = 1, control.optim = list(maxit = 1000),
   parscale.pars = FALSE, con.tol = 0.1, save.performance = TRUE,
-  future.off = TRUE, log.interval = 600, verbose = FALSE, ...)
+  future.off = TRUE, log.interval = 600, interactive.session = TRUE,
+  verbose = FALSE, ...)
 }
 \arguments{
 \item{init.par}{A named vector containing the initial parameter values.}
@@ -21,7 +22,7 @@ famos(init.par, fit.fn, homedir = getwd(), do.not.fit = NULL,
 
 \item{do.not.fit}{The names of the parameters that are not supposed to be fitted. Default is NULL.}
 
-\item{method}{The starting method of the FAMoS. Options are "forward" (forward search), "backward" (backward elimination) and "swap" (only if \code{critical.parameters} or \code{swap.parameters} are supplied). Methods are adaptively changed over each iteration of the FAMoS. Default to "forward".}
+\item{method}{The starting method of FAMoS. Options are "forward" (forward search), "backward" (backward elimination) and "swap" (only if \code{critical.parameters} or \code{swap.parameters} are supplied). Methods are adaptively changed over each iteration of FAMoS. Default to "forward".}
 
 \item{init.model.type}{The starting model. Options are "global" (starts with the complete model), "random" (creates a randomly sampled starting model) or "most.distant" (uses the model most dissimilar from all other previously tested models). Alternatively, a specific model can be used by giving the corresponding names of the parameters one wants to start with. Default to "random".}
 
@@ -51,6 +52,8 @@ famos(init.par, fit.fn, homedir = getwd(), do.not.fit = NULL,
 
 \item{log.interval}{The interval (in seconds) at which FAMoS informs about the current status, i.e. which models are still running and how much time has passed. Default to 600 (= 10 minutes).}
 
+\item{interactive.session}{Logical. If TRUE (default), FAMoS assumes it is running in an interactive session and users can supply input. If FALSE, no input is expected from the user, which can be helpful when running the script non-locally.}
+
 \item{verbose}{Logical. If TRUE, FAMoS will output all details about the current fitting procedure.}
 
 \item{...}{Other arguments that will be passed along to \code{\link{future}}, \code{\link{optim}} or the user-specified cost function \code{fit.fn}.}
@@ -71,13 +74,13 @@ A list containing the following elements:
 Given a vector containing all parameters of interest and a cost function, the \code{FAMoS} looks for the most appropriate subset model to describe the given data.
 }
 \details{
-In each iteration, the FAMoS finds all neighbouring models based on the current model and method, and subsequently tests them. If one of the tested models performs better than the current model, the model, but not the method, will be updated. Otherwise, the method, but not the model, will be adaptively changed, depending on the previously used methods.
+In each iteration, FAMoS finds all neighbouring models based on the current model and method, and subsequently tests them. If one of the tested models performs better than the current model, the model, but not the method, will be updated. Otherwise, the method, but not the model, will be adaptively changed, depending on the previously used methods.
 
 The cost function \code{fit.fn} can take the following inputs:
 \describe{
   \item{parms}{A named vector containing all parameter values. This input is mandatory. If \code{use.optim = TRUE}, FAMos will automatically subset the complete parameter set into fitted and non-fitted parameters.}
-  \item{binary}{Optional input. The binary vector contains the information which parameters are currently fitted. Fitted parameters are set to 1, non-fitted to 0. This input can be to split the complete parameter set into fitted and non-fitted parameters if a customised optimisation function is used (see \code{use.optim}).}
-  \item{...}{Other parameters that can should be passed to \code{fit.fn}}
+  \item{binary}{Optional input. The binary vector contains the information which parameters are currently fitted. Fitted parameters are set to 1, non-fitted to 0. This input can be used to split the complete parameter set into fitted and non-fitted parameters if a customised optimisation function is used (see \code{use.optim}).}
+  \item{...}{Other parameters that should be passed to \code{fit.fn}}
   }
 
 If \code{use.optim = TRUE}, the cost function needs to return a single numeric value, which corresponds to the selection criterion value. However, if \code{use.optim = FALSE}, the cost function needs to return a list containing in its first entry the selection criterion value and in its second entry the named vector of the fitted parameter values (non-fitted parameters are internally assessed).
