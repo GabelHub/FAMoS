@@ -18,7 +18,7 @@
 #' @param parscale.pars Logical. If TRUE, the \code{parscale} option will be used when fitting with \code{\link{optim}}. This can help to speed up the fitting procedure, if the parameter values are on different scales. Default to FALSE.
 #' @param con.tol The absolute convergence tolerance of each fitting run (see Details). Default is set to 0.1.
 #' @param save.performance Logical. If TRUE, the performance of \code{FAMoS} will be evaluated in each iteration via \code{\link{famos.performance}}, which will save the corresponding plots into the folder "FAMoS-Results/Figures/" (starting from iteration 3) and simultaneously show it on screen. Default to TRUE.
-#' @param future.off Logical. If TRUE (default), FAMoS runs without the use of \code{futures}.
+#' @param use.futures Logical. If TRUE, FAMoS submits model evaluations via \code{futures}. For more information, see the \code{\link{future}} package.
 #' @param log.interval The interval (in seconds) at which FAMoS informs about the current status, i.e. which models are still running and how much time has passed. Default to 600 (= 10 minutes).
 #' @param interactive.session Logical. If TRUE (default), FAMoS assumes it is running in an interactive session and users can supply input. If FALSE, no input is expected from the user, which can be helpful when running the script non-locally.
 #' @param verbose Logical. If TRUE, FAMoS will output all details about the current fitting procedure.
@@ -107,7 +107,7 @@ famos <- function(init.par,
                   parscale.pars = FALSE,
                   con.tol = 0.1,
                   save.performance = TRUE,
-                  future.off = TRUE,
+                  use.futures = FALSE,
                   log.interval = 600,
                   interactive.session = TRUE,
                   verbose = FALSE,
@@ -138,7 +138,11 @@ famos <- function(init.par,
   if(method == "swap" && is.null(swap.parameters) && is.null(critical.parameters) ){
     stop("Please supply either a swap or a critical parameter set or change the initial search method.")
   }
-  if(future.off == F && class(try(future::plan()))[1] == "try-error"){
+  if("future.off" %in% names(list(...))){
+    .Deprecated(new = "use.futures", old = "future.off")
+    use.futures = ifelse(list(...)$future.off,  FALSE, TRUE) 
+  }
+  if(use.futures == TRUE && class(try(future::plan()))[1] == "try-error"){
     stop("Please specify a plan from the future-package. See ?future::plan for more information.")
   }
   if(is.vector(random.borders) == FALSE && is.matrix(random.borders) == FALSE){
@@ -587,7 +591,7 @@ famos <- function(init.par,
         }
 
 
-        if(future.off == F){
+        if(use.futures == TRUE){
           submitted.futures <- c(submitted.futures, j)
           assign(paste0("model",j),
                  future::future({
@@ -637,7 +641,7 @@ famos <- function(init.par,
       }
     }
 
-    if(future.off == FALSE){
+    if(use.futures == TRUE){
       #set looping variable
       waiting <- TRUE
       waited.models <- rep(0,ncol(curr.model.all))
@@ -661,7 +665,7 @@ famos <- function(init.par,
             if(class(try(future::value(get(paste0("model", j)), std = FALSE))) == "try-error"){
               stop(paste0("Future failed. The corresponding error message of job ",
                           paste(curr.model.all[,j], collapse=""),
-                          " is shown above. If no output is shown, use 'future.off = TRUE' to debug."))
+                          " is shown above. If no output is shown, use 'use.futures = FALSE' to debug."))
             }
 
             #check if output was generated, including waiting period if the cluster is very busy

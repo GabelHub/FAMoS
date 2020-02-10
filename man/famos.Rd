@@ -10,8 +10,8 @@ famos(init.par, fit.fn, homedir = getwd(), do.not.fit = NULL,
   swap.parameters = NULL, critical.parameters = NULL,
   random.borders = 1, control.optim = list(maxit = 1000),
   parscale.pars = FALSE, con.tol = 0.1, save.performance = TRUE,
-  future.off = TRUE, log.interval = 600, interactive.session = TRUE,
-  verbose = FALSE, ...)
+  use.futures = FALSE, log.interval = 600,
+  interactive.session = TRUE, verbose = FALSE, ...)
 }
 \arguments{
 \item{init.par}{A named vector containing the initial parameter values.}
@@ -48,7 +48,7 @@ famos(init.par, fit.fn, homedir = getwd(), do.not.fit = NULL,
 
 \item{save.performance}{Logical. If TRUE, the performance of \code{FAMoS} will be evaluated in each iteration via \code{\link{famos.performance}}, which will save the corresponding plots into the folder "FAMoS-Results/Figures/" (starting from iteration 3) and simultaneously show it on screen. Default to TRUE.}
 
-\item{future.off}{Logical. If TRUE (default), FAMoS runs without the use of \code{futures}.}
+\item{use.futures}{Logical. If TRUE, FAMoS submits model evaluations via \code{futures}. For more information, see the \code{\link{future}} package.}
 
 \item{log.interval}{The interval (in seconds) at which FAMoS informs about the current status, i.e. which models are still running and how much time has passed. Default to 600 (= 10 minutes).}
 
