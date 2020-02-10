@@ -50,8 +50,7 @@ res <- famos(init.par = inits,
              swap.parameters = swaps,
              init.model.type = c("p1", "p3"),
              optim.runs = 1,
-             data = sim.data,
-             future.off = TRUE) 
+             data = sim.data) 
 ```
 
 To assess the performance of a specific FAMoS run, the function
@@ -64,7 +63,7 @@ model.
 famos.performance(input = res$mrun, path = tempdir())
 ```
 
-<img src="FAMoS-EvaluationFunctions_files/figure-gfm/famosperformance-1.png" style="display: block; margin: auto;" />
+<img src="C:/Users/Meins/AppData/Local/Temp/Rtmp4atU4l/preview-1ef45d224279.dir/FAMoS-EvaluationFunctions_files/figure-gfm/famosperformance-1.png" style="display: block; margin: auto;" />
 
 The boxes in the lower plot what happened during each FAMoS iteration.
 Here, parameter *p1* was swapped for *p5* in the second iteration (blue
@@ -91,7 +90,7 @@ call the function
  fig.sc <- sc.order(input = tempdir(), mrun = res$mrun)
 ```
 
-<img src="FAMoS-EvaluationFunctions_files/figure-gfm/sc.order-1.png" style="display: block; margin: auto;" />
+<img src="C:/Users/Meins/AppData/Local/Temp/Rtmp4atU4l/preview-1ef45d224279.dir/FAMoS-EvaluationFunctions_files/figure-gfm/sc.order-1.png" style="display: block; margin: auto;" />
 
 We can also use this function to check how certain parameters affect the
 value of the information criterion
@@ -102,7 +101,7 @@ value of the information criterion
  fig.sc2 <- sc.order(input = tempdir(), mrun = res$mrun, colour.par = "p5")
 ```
 
-<img src="FAMoS-EvaluationFunctions_files/figure-gfm/sc.order2-1.png" style="display: block; margin: auto;" />
+<img src="C:/Users/Meins/AppData/Local/Temp/Rtmp4atU4l/preview-1ef45d224279.dir/FAMoS-EvaluationFunctions_files/figure-gfm/sc.order2-1.png" style="display: block; margin: auto;" />
 
 Here, we can see that all models that contain *p5* perform much better
 than models that don’t have this parameter.
@@ -120,4 +119,4 @@ parameters.
 fig.aicc <- aicc.weights(input = tempdir(), mrun = res$mrun)
 ```
 
-<img src="FAMoS-EvaluationFunctions_files/figure-gfm/aicc.weights-1.png" style="display: block; margin: auto;" />
+<img src="C:/Users/Meins/AppData/Local/Temp/Rtmp4atU4l/preview-1ef45d224279.dir/FAMoS-EvaluationFunctions_files/figure-gfm/aicc.weights-1.png" style="display: block; margin: auto;" />

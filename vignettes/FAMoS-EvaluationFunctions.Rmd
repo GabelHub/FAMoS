@@ -60,8 +60,7 @@ res <- famos(init.par = inits,
              swap.parameters = swaps,
              init.model.type = c("p1", "p3"),
              optim.runs = 1,
-             data = sim.data,
-             future.off = TRUE) 
+             data = sim.data) 
 ```
 
 ```{r createdata2, eval=FALSE}
@@ -105,8 +104,7 @@ res <- famos(init.par = inits,
              swap.parameters = swaps,
              init.model.type = c("p1", "p3"),
              optim.runs = 1,
-             data = sim.data,
-             future.off = TRUE) 
+             data = sim.data) 
 ```
 
 To assess the performance of a specific FAMoS run, the function _famos.performance_ can be used. This generates a plot showing the improvement in the information criterion over the course of each FAMoS iteration along with the corresponding best model.
