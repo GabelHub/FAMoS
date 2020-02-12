@@ -549,7 +549,8 @@ famos <- function(init.par,
                          timediff %% 3600 %/% 60,  # minutes
                          timediff %% 60 %/% 1), # seconds,
                  sep = "\n"))
-      break
+      final.results <- return.results(homedir, mrun)
+      return(final.results)
     }
 
     #check if current model does contain parameters. If not, method is changed to forward since a model with 0 parameters would not fit our data well enough.

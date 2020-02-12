@@ -4,7 +4,7 @@
 #' @param input Either a string containing the directory which holds the "FAMoS-Results" folder or a matrix containing the tested models along with the respective information criteria. Default to \code{getwd()}.
 #' @param mrun A string giving the number of the corresponding FAMoS run, e.g "004". If NULL (default), all FAMoS runs in the "FAMoS-Results/TestedModels/" folder will be used for evaluation.
 #' @param max.number The maximum number of times that the \code{get.most.distant} function tries to find the most distant model (see details). Default to 100.
-#' @details Taking the order from the 'TestedModels' files found in 'FAMoS-Results/TestedModels/', this function successively tries to obtain a previously untested model that is most distant from all previously tested ones (here, distance means the number of difference in fitted parameters). To this end, a model is taken from 'TestedModels' and its corresponding complement model is calculated (i.e. the model containing all parameters that the original didn't fit). From thereon, the distance of neighbouring models is calculated and the path of increasing distances is followed. This process is repeated until all models in 'TestedModels' have been assessed or the \code{max.number} is reached.
+#' @details Taking the order from the 'TestedModels' files found in 'FAMoS-Results/TestedModels/', this function successively tries to obtain a previously untested model that is most distant from all previously tested ones (here, distance means the number of difference in fitted parameters). To this end, the function collects all previously tested models and sorts them according to their information criterion value (duplicates get removed in the process). Starting with the best model, the corresponding complement model is generated (i.e. the model containing all parameters that the best model didn't use) and the distance to all other models is calculated. The total distance of this model is then taken to be the minimal distance of all calculated distances. This procedure is repeated for the second best model and so on until all models have been assessed or the \code{max.number} of models is reached. 
 #' @return A list containing in its first entry the maximal distance found, the second entry the parameter names and in its third entry the corresponding binary vector. Note that the model may not fulfill previously specified critical conditions.
 #' @export
 #'
@@ -54,6 +54,14 @@ get.most.distant <- function(input = getwd(), mrun = NULL, max.number = 100){
   mt <- mt[, order(mt[1,])]
   #cut off header with IC and iteration number
   mt <- mt[3:nrow(mt),]
+  
+  #remove duplicate entries
+  for(k in ncol(mt):2){
+    if(sum(abs(mt[,k] - mt[,k-1])) == 0){
+      mt <- mt[,-k]
+    }
+  }
+  #get the complement models
   for(k in 1:min(max.number, ncol(mt))){
     complement <- abs(mt[,k] - 1)
     if(sum(complement) == 0){
