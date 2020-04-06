@@ -347,6 +347,10 @@ If true, a plot of the current FAMoS performance is stored in the folder "FAMoS-
 
 To allow for parallelisation, FAMoS uses the _future_ package by Henrik Bengtsson (see https://github.com/HenrikBengtsson/future). To use futures, the option needs to be set to TRUE and a future plan needs to be specified.
 
+#### reattempt
+
+By default, FAMoS terminates once all search methods are exhausted. However, if _reattempts_ is set to true, FAMos will instead jump to a distant model and continues to search the model space from there. The algorithm is then terminated if the best model is re-encountered (or if no other models are available to test).
+
 #### log.interval
 
 If futures are used during a FAMoS run, there will be a message printed every _X_ seconds, informing the user which models fits are still running. _log.interval_ allows to specify the interval of _X_. Default to 10 minutes (600 seconds).

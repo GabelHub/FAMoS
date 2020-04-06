@@ -4,8 +4,7 @@
 \alias{aicc.weights}
 \title{Plot evidence ratios}
 \usage{
-aicc.weights(input = getwd(), mrun = NULL, reorder = TRUE,
-  save.output = NULL)
+aicc.weights(input = getwd(), mrun = NULL, reorder = TRUE, save.output = NULL)
 }
 \arguments{
 \item{input}{Either a string containing the directory which holds the "FAMoS-Results" folder or a matrix containing the tested models along with the respective information criteria. Default to \code{getwd()}.}

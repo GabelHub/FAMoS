@@ -3,6 +3,7 @@
 #' For each FAMoS run \code{famos.performance} plots the corresponding best model and selection criterion value.
 #' @param input Either a string giving the three-digit number of the corresponding FAMoS run, e.g "004", or a matrix containing the tested models along with the respective information criteria.
 #' @param path If \code{input} is the string of an FAMoS run, the directory containing the "FAMoS-Results" folder needs to be supplied as well. Default to \code{\link{getwd}}.
+#' @param reattempts A numeric vector containing other SCVs that should be plotted. Used mainly for reattempts in the main famos routine.
 #' @param save.output A string containing the location and name under which the figure should be saved (format is .pdf). Default to NULL.
 #' @param ... Other graphical parameters.
 #' @details The upper plot shows the improvement of the selection criterion over each FAMoS iteration. The best value is shown on the right axis. The lower plot depicts the corresponding best model of each iteration. Here, green colour shows added, red colour removed and blue colour swapped parameters. The parameters of the final model are printed bold.
@@ -13,7 +14,7 @@
 #' famos.performance(input = famos.run)
 
 
-famos.performance <- function(input, path = getwd(), save.output = NULL, ...){
+famos.performance <- function(input, path = getwd(), reattempts = NULL, save.output = NULL, ...){
   
   old.mai <- graphics::par("mai")
   old.mfrow <- graphics::par("mfrow")
@@ -102,6 +103,10 @@ famos.performance <- function(input, path = getwd(), save.output = NULL, ...){
                                  main = "FAMoS performance"),
                             graphics.list))
   
+  #plot additional attempts
+  if(!is.null(reattempts)){
+    graphics::lines(x = unique(mt[2,]), y = reattempts, type = "o", lty = 2, col = "gray")
+  }
   graphics::box()
   graphics::axis(2, las = 1, cex.axis = 0.7)
   graphics::axis(side   = 4,

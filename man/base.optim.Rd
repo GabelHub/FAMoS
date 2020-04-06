@@ -4,10 +4,22 @@
 \alias{base.optim}
 \title{Fit Parameters of a Model}
 \usage{
-base.optim(binary, parms, fit.fn, homedir, use.optim = TRUE,
-  optim.runs = 1, default.val = NULL, random.borders = 1,
-  con.tol = 0.01, control.optim = list(maxit = 1000),
-  parscale.pars = FALSE, scaling = NULL, verbose = FALSE, ...)
+base.optim(
+  binary,
+  parms,
+  fit.fn,
+  homedir,
+  use.optim = TRUE,
+  optim.runs = 1,
+  default.val = NULL,
+  random.borders = 1,
+  con.tol = 0.01,
+  control.optim = list(maxit = 1000),
+  parscale.pars = FALSE,
+  scaling = NULL,
+  verbose = FALSE,
+  ...
+)
 }
 \arguments{
 \item{binary}{A vector containing zeroes and ones. Zero indicates that the corresponding parameter is not fitted.}

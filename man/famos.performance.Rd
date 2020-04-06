@@ -4,12 +4,20 @@
 \alias{famos.performance}
 \title{Plot FAMoS Performance}
 \usage{
-famos.performance(input, path = getwd(), save.output = NULL, ...)
+famos.performance(
+  input,
+  path = getwd(),
+  reattempts = NULL,
+  save.output = NULL,
+  ...
+)
 }
 \arguments{
 \item{input}{Either a string giving the three-digit number of the corresponding FAMoS run, e.g "004", or a matrix containing the tested models along with the respective information criteria.}
 
 \item{path}{If \code{input} is the string of an FAMoS run, the directory containing the "FAMoS-Results" folder needs to be supplied as well. Default to \code{\link{getwd}}.}
+
+\item{reattempts}{A numeric vector containing other SCVs that should be plotted. Used mainly for reattempts in the main famos routine.}
 
 \item{save.output}{A string containing the location and name under which the figure should be saved (format is .pdf). Default to NULL.}
 

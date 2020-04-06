@@ -234,8 +234,7 @@ and pass this option on to FAMoS. Note that excluded parameters are
 automatically removed from the initial model, if *init.model.type =
 “random”*, *init.model.type = “global”* or *init.model.type =
 “most.distant”* is used. If the user-specified initial model contains
-an excluded parameter, an error will be
-returned.
+an excluded parameter, an error will be returned.
 
 ``` r
 The specified initial model violates critical conditions or the do.not.fit specifications
@@ -493,6 +492,14 @@ To allow for parallelisation, FAMoS uses the *future* package by Henrik
 Bengtsson (see <https://github.com/HenrikBengtsson/future>). To use
 futures, the option needs to be set to TRUE and a future plan needs to
 be specified.
+
+#### reattempt
+
+By default, FAMoS terminates once all search methods are exhausted.
+However, if *reattempts* is set to true, FAMos will instead jump to a
+distant model and continues to search the model space from there. The
+algorithm is then terminated if the best model is re-encountered (or if
+no other models are available to test).
 
 #### log.interval
 

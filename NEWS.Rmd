@@ -7,6 +7,28 @@ output: github_document
 knitr::opts_chunk$set(echo = FALSE)
 ```
 
+# FAMoS 0.3.0
+
+## Major changes
+
+* Users can now enable FAMoS reattempts: If all search methods are exhausted, FAMoS will look for a distant model, jump there and continue the search. The algorithm terminates if the best model is re-encountered or if no new models are available. 
+  
+* The option 'future.off' is now renamed to 'use.futures' to allow for a more intuitive use.
+  
+## Minor changes
+  
+* FAMoS introduces the option 'interactive.session', a logical which allows to turn off interactive requests, e.g. when running non-locally.
+
+* The function 'get.most.distant' now removes duplicates before looking for complementary models.
+
+* The plotting function 'famos.performance' has an additional option to specify SCVs for reattempts
+  
+## Bug fixes
+
+* FAMoS now correctly assesses the number of managed future jobs in each iteration when 'refit = FALSE'.
+
+* FAMoS now returns the best model if the algorithm terminates due to insufficient models for testing.
+
 # FAMoS 0.2.0
 
 ## Major changes

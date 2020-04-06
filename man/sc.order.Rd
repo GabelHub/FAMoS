@@ -4,8 +4,14 @@
 \alias{sc.order}
 \title{Plot Model selection Criteria}
 \usage{
-sc.order(input = getwd(), mrun = NULL, number = NULL,
-  colour.par = NULL, save.output = NULL, ...)
+sc.order(
+  input = getwd(),
+  mrun = NULL,
+  number = NULL,
+  colour.par = NULL,
+  save.output = NULL,
+  ...
+)
 }
 \arguments{
 \item{input}{Either a string containing the directory which holds the "FAMoS-Results" folder or a matrix containing the tested models along with the respective selection criteria. Default to \code{getwd()}.}

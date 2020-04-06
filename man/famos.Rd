@@ -4,14 +4,31 @@
 \alias{famos}
 \title{Automated Model Selection}
 \usage{
-famos(init.par, fit.fn, homedir = getwd(), do.not.fit = NULL,
-  method = "forward", init.model.type = "random", refit = FALSE,
-  use.optim = TRUE, optim.runs = 1, default.val = NULL,
-  swap.parameters = NULL, critical.parameters = NULL,
-  random.borders = 1, control.optim = list(maxit = 1000),
-  parscale.pars = FALSE, con.tol = 0.1, save.performance = TRUE,
-  use.futures = FALSE, log.interval = 600,
-  interactive.session = TRUE, verbose = FALSE, ...)
+famos(
+  init.par,
+  fit.fn,
+  homedir = getwd(),
+  do.not.fit = NULL,
+  method = "forward",
+  init.model.type = "random",
+  refit = FALSE,
+  use.optim = TRUE,
+  optim.runs = 1,
+  default.val = NULL,
+  swap.parameters = NULL,
+  critical.parameters = NULL,
+  random.borders = 1,
+  control.optim = list(maxit = 1000),
+  parscale.pars = FALSE,
+  con.tol = 0.1,
+  save.performance = TRUE,
+  use.futures = FALSE,
+  reattempt = FALSE,
+  log.interval = 600,
+  interactive.session = TRUE,
+  verbose = FALSE,
+  ...
+)
 }
 \arguments{
 \item{init.par}{A named vector containing the initial parameter values.}
@@ -49,6 +66,8 @@ famos(init.par, fit.fn, homedir = getwd(), do.not.fit = NULL,
 \item{save.performance}{Logical. If TRUE, the performance of \code{FAMoS} will be evaluated in each iteration via \code{\link{famos.performance}}, which will save the corresponding plots into the folder "FAMoS-Results/Figures/" (starting from iteration 3) and simultaneously show it on screen. Default to TRUE.}
 
 \item{use.futures}{Logical. If TRUE, FAMoS submits model evaluations via \code{futures}. For more information, see the \code{\link{future}} package.}
+
+\item{reattempt}{Logical. If TRUE, FAMoS will jump to a distant model, once the search methods are exhausted and continue from there. The algorithm terminates if the best model is encountered again or if all neighbouring models have been tested. If FALSE (default), FAMOS will terminate once the search methods are exhausted.}
 
 \item{log.interval}{The interval (in seconds) at which FAMoS informs about the current status, i.e. which models are still running and how much time has passed. Default to 600 (= 10 minutes).}
 
