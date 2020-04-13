@@ -1,27 +1,21 @@
-## Resubmission
-This is a resubmission. The following comments are addressed:
-
-Please only ship the CRAN template for the MIT license.
-
-* File LICENSE now only contains the YEAR and COPYRIGHT HOLDER
-
-Is there some reference about the method you can add in the Description field in the form Authors (year) <doi:.....>?
-
-* A publication describing the FAMoS algorithm is currently under review. I will include the reference as soon as it is published.
-
-
 ## Test environments
-* local OS X install, R 3.6.0
+* local Windows 10 install, R 3.6.3
 * ubuntu 14.04 (on travis-ci), R 3.6.0
+* Rhub
+  * Fedora Linux, R-devel, clang, gfortran
+  * Windows Server 2008 R2 SP1, R-devel, 32/64 bit
+  * Ubuntu Linux 16.04 LTS, R-release, GCC
 * win-builder (devel and release)
 
 ## R CMD check results
 
-Duration: 42s
+Duration: 25s
 
-0 errors ✔ | 0 warnings ✔ | 0 notes ✔
+0 errors v | 0 warnings v | 0 notes v
 
 R CMD check succeeded
+
+ * On some platform tests, there is a note about a possible mis-spelling of 'Gabel' in the DESCRIPTION, which, however, is my last name. 
 
 ## Downstream dependencies
 No problems or failures occurred.
