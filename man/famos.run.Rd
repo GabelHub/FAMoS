@@ -4,7 +4,9 @@
 \name{famos.run}
 \alias{famos.run}
 \title{FAMoS performance test run}
-\format{A matrix with 7 rows and 17 columns}
+\format{
+A matrix with 7 rows and 17 columns
+}
 \source{
 Created by \code{\link{famos}}.
 }

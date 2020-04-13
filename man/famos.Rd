@@ -97,7 +97,7 @@ In each iteration, FAMoS finds all neighbouring models based on the current mode
 
 The cost function \code{fit.fn} can take the following inputs:
 \describe{
-  \item{parms}{A named vector containing all parameter values. This input is mandatory. If \code{use.optim = TRUE}, FAMos will automatically subset the complete parameter set into fitted and non-fitted parameters.}
+  \item{parms}{A named vector containing all parameter values. This input is mandatory. If \code{use.optim = TRUE}, FAMoS will automatically subset the complete parameter set into fitted and non-fitted parameters.}
   \item{binary}{Optional input. The binary vector contains the information which parameters are currently fitted. Fitted parameters are set to 1, non-fitted to 0. This input can be used to split the complete parameter set into fitted and non-fitted parameters if a customised optimisation function is used (see \code{use.optim}).}
   \item{...}{Other parameters that should be passed to \code{fit.fn}}
   }

@@ -71,7 +71,7 @@ NEWS
   - Included an option to silence the verbose output of FAMoS (*verbose
     = FALSE*).
 
-  - FAMos now returns the total number of tested models.
+  - FAMoS now returns the total number of tested models.
 
   - If a custom fitting routine is used, no previous applicability
     checks are performed.
