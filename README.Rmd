@@ -345,7 +345,7 @@ If true, a plot of the current FAMoS performance is stored in the folder "FAMoS-
 
 #### use.futures
 
-To allow for parallelisation, FAMoS uses the _future_ package by Henrik Bengtsson (see https://github.com/HenrikBengtsson/future). To use futures, the option needs to be set to TRUE and a future plan needs to be specified.
+To allow for parallelisation, FAMoS uses the _future_ package by Henrik Bengtsson (see https://github.com/futureverse/future). To use futures, the option needs to be set to TRUE and a future plan needs to be specified.
 
 #### reattempt
 
