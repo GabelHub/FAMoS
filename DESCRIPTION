@@ -1,7 +1,7 @@
 Package: FAMoS
 Type: Package
 Title: A Flexible Algorithm for Model Selection
-Version: 0.3.0
+Version: 0.3.1
 Author: Michael Gabel, Tobias Hohl
 Maintainer: Michael Gabel <m_gabel@gmx.de>
 Description: Given a set of parameters describing model dynamics and a corresponding cost function,
@@ -12,7 +12,7 @@ License: MIT + file LICENSE
 Depends: R (>= 3.6)
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.1.0
+RoxygenNote: 7.3.2
 Imports: future,
     R.utils
 Suggests: future.batchtools,

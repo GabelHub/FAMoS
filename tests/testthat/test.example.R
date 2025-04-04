@@ -1,7 +1,7 @@
 context("Test basic example")
 library(future.batchtools)
 #plan(sequential)
-plan(multiprocess, workers = availableCores() - 1)
+plan(multicore, workers = availableCores() - 1)
 ##system("rm -r tests/testthat/FAMoS-Results")
 system("rm -r FAMoS-Results")
 
@@ -41,7 +41,7 @@ res <- famos(init.par = inits,
              refit = TRUE,
              init.model.type = c("p1", "p3"),
              optim.runs = 1,
-             future.off = FALSE,
+             use.futures = FALSE,
              parscale.pars = FALSE,
              random.borders = ran.bord,
              #do.not.fit = dont.fit,

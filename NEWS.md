@@ -1,6 +1,11 @@
 NEWS
 ================
 
+# FAMoS 0.3.1
+
+## Minor changes
+  - Updated documentation links.
+
 # FAMoS 0.3.0
 
 ## Major changes

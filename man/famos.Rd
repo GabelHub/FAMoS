@@ -65,7 +65,7 @@ famos(
 
 \item{save.performance}{Logical. If TRUE, the performance of \code{FAMoS} will be evaluated in each iteration via \code{\link{famos.performance}}, which will save the corresponding plots into the folder "FAMoS-Results/Figures/" (starting from iteration 3) and simultaneously show it on screen. Default to TRUE.}
 
-\item{use.futures}{Logical. If TRUE, FAMoS submits model evaluations via \code{futures}. For more information, see the \code{\link{future}} package.}
+\item{use.futures}{Logical. If TRUE, FAMoS submits model evaluations via \code{futures}. For more information, see the \code{\link[future]{future}} package.}
 
 \item{reattempt}{Logical. If TRUE, FAMoS will jump to a distant model, once the search methods are exhausted and continue from there. The algorithm terminates if the best model is encountered again or if all neighbouring models have been tested. If FALSE (default), FAMOS will terminate once the search methods are exhausted.}
 
