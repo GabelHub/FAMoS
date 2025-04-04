@@ -83,7 +83,7 @@ base.optim <- function(binary,
   }else{
     fit.vector <- parms
   }
-  
+
   #number of succesful runs
   k <- 1
   #number of insuccessful runs
@@ -129,7 +129,7 @@ base.optim <- function(binary,
       #get random initial conditions and test if they work
       works <- FALSE
       tries <- 0
-      
+
       while(works == FALSE){
         if(is.vector(random.borders)){
           if(length(random.borders) == 1){
@@ -157,8 +157,8 @@ base.optim <- function(binary,
                                   min = random.min,
                                   max = random.max)
         }else if(is.function(random.borders)){
-          ran.par <- R.utils::doCall(random.borders, 
-                                     args = c(list(n = length(parms)), 
+          ran.par <- R.utils::doCall(random.borders,
+                                     args = c(list(n = length(parms)),
                                               list(...)))
           ran.par <- ran.par[-no.fit]
         }else{
@@ -270,12 +270,12 @@ base.optim <- function(binary,
 
       #saves progress if the recent fit is the first or better than any previously saved one
       #check if this model has already been tested
-      if(file.exists(paste0(homedir, 
+      if(file.exists(paste0(homedir,
                             "/FAMoS-Results/Fits/Model",
-                            paste(binary, collapse =""), 
-                            ".rds")) 
+                            paste(binary, collapse =""),
+                            ".rds"))
          == TRUE){
-        
+
         result_old <- readRDS(file = paste0(homedir,
                                             "/FAMoS-Results/Fits/Model",
                                             paste(binary, collapse =""),
