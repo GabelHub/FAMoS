@@ -26,12 +26,11 @@ devtools::install_git("git://github.com/GabelHub/FAMoS.git", branch = "master")
 
 FAMoS uses three different methods to find appropriate models to test:
 
-  - Forward search: Add a parameter to the currently best model
-  - Backward elimination: Remove a parameter from the currently best
-    model
-  - Swap search: Replace a parameter of the currently best model by
-    another. The parameters that can be swapped need to be specified by
-    the user
+- Forward search: Add a parameter to the currently best model
+- Backward elimination: Remove a parameter from the currently best model
+- Swap search: Replace a parameter of the currently best model by
+  another. The parameters that can be swapped need to be specified by
+  the user
 
 FAMoS keeps track of the methods used in the previous iterations and
 dynamically changes them according to the outcome of each iteration.
@@ -233,8 +232,8 @@ no.fit <- c("p4")
 and pass this option on to FAMoS. Note that excluded parameters are
 automatically removed from the initial model, if *init.model.type =
 “random”*, *init.model.type = “global”* or *init.model.type =
-“most.distant”* is used. If the user-specified initial model contains
-an excluded parameter, an error will be returned.
+“most.distant”* is used. If the user-specified initial model contains an
+excluded parameter, an error will be returned.
 
 ``` r
 The specified initial model violates critical conditions or the do.not.fit specifications
@@ -254,7 +253,7 @@ step). If no better model is found, the algorithm will change the method
 according to the following scheme:
 
 | current method |   previous method   |     next method     |
-| :------------: | :-----------------: | :-----------------: |
+|:--------------:|:-------------------:|:-------------------:|
 |    forward     |      backward       | swap (or terminate) |
 |    forward     |   forward or swap   |      backward       |
 |    backward    |      backward       |       forward       |
@@ -489,9 +488,9 @@ If true, a plot of the current FAMoS performance is stored in the folder
 #### use.futures
 
 To allow for parallelisation, FAMoS uses the *future* package by Henrik
-Bengtsson (see <https://github.com/HenrikBengtsson/future>). To use
-futures, the option needs to be set to TRUE and a future plan needs to
-be specified.
+Bengtsson (see <https://github.com/futureverse/future>). To use futures,
+the option needs to be set to TRUE and a future plan needs to be
+specified.
 
 #### reattempt
 

@@ -5,7 +5,6 @@ Version: 0.3.1
 Authors@R: 
     c(person(given = "Michael", family = "Gabel", role = c("aut", "cre"), email = "m_gabel@gmx.de"),
       person(given = "Tobias", family = "Hohl", role = "aut"))
-Author: Michael Gabel, Tobias Hohl
 Maintainer: Michael Gabel <m_gabel@gmx.de>
 Description: Given a set of parameters describing model dynamics and a corresponding cost function,
     FAMoS performs a dynamic forward-backward model selection on a specified selection
